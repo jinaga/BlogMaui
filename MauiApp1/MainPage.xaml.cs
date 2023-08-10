@@ -4,7 +4,6 @@ namespace MauiApp1;
 
 public partial class MainPage : ContentPage
 {
-    int count = 0;
     readonly PostListViewModel viewModel = new();
 
     public MainPage()

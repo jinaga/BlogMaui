@@ -30,16 +30,19 @@ internal class PostListViewModel : ObservableObject
         watch = JinagaConfig.j.Watch(postsInBlog, site, projection =>
         {
             var postHeaderViewModel = new PostHeaderViewModel();
-            Posts.Add(postHeaderViewModel);
-            projection.titles.OnAdded(title =>
+            projection.titles.OnAdded(title => MainThread.BeginInvokeOnMainThread(() =>
             {
                 postHeaderViewModel.Title = title;
+            }));
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Posts.Add(postHeaderViewModel);
             });
 
-            return () =>
+            return () => MainThread.BeginInvokeOnMainThread(() =>
             {
                 Posts.Remove(postHeaderViewModel);
-            };
+            });
         });
     }
 
