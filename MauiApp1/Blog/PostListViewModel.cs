@@ -5,8 +5,9 @@ using System.Collections.ObjectModel;
 namespace MauiApp1.Blog;
 internal class PostListViewModel : ObservableObject
 {
-    private ObservableCollection<PostHeaderViewModel> postHeaders = new();
     private IWatch watch;
+
+    public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
 
     public void Load(string domain)
     {
@@ -29,7 +30,7 @@ internal class PostListViewModel : ObservableObject
         watch = JinagaConfig.j.Watch(postsInBlog, site, projection =>
         {
             var postHeaderViewModel = new PostHeaderViewModel();
-            postHeaders.Add(postHeaderViewModel);
+            Posts.Add(postHeaderViewModel);
             projection.titles.OnAdded(title =>
             {
                 postHeaderViewModel.Title = title;
@@ -37,7 +38,7 @@ internal class PostListViewModel : ObservableObject
 
             return () =>
             {
-                postHeaders.Remove(postHeaderViewModel);
+                Posts.Remove(postHeaderViewModel);
             };
         });
     }
@@ -45,6 +46,6 @@ internal class PostListViewModel : ObservableObject
     public async Task Unload()
     {
         await watch.Stop();
-        postHeaders.Clear();
+        Posts.Clear();
     }
 }
