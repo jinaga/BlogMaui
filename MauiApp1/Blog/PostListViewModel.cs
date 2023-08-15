@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace MauiApp1.Blog;
 internal class PostListViewModel : ObservableObject
@@ -20,7 +21,8 @@ internal class PostListViewModel : ObservableObject
                 post,
                 titles = facts.Observable(
                     from title in facts.OfType<PostTitle>()
-                    where title.post == post
+                    where title.post == post &&
+                        !facts.Any<PostTitle>(next => next.prior.Contains(title))
                     select title.value
                 )
             }
@@ -41,14 +43,14 @@ internal class PostListViewModel : ObservableObject
 
             return () => MainThread.BeginInvokeOnMainThread(() =>
             {
-                Posts.Remove(postHeaderViewModel);
+                //Posts.Remove(postHeaderViewModel);
             });
         });
     }
 
-    public async Task Unload()
+    public void Unload()
     {
-        await watch.Stop();
+        watch.Stop();
         Posts.Clear();
     }
 }

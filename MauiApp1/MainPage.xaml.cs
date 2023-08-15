@@ -20,7 +20,7 @@ public partial class MainPage : ContentPage
 
     protected override void OnDisappearing()
     {
-        Task.Run(() => viewModel.Unload());
+        viewModel.Unload();
         base.OnDisappearing();
     }
 }

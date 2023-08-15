@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiApp1", "MauiApp1\MauiAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jinaga", "..\..\jinaga.net\Jinaga\Jinaga.csproj", "{3C045BAB-4A9A-4D59-8135-2AB3E0FE812A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jinaga.Store.SQLite", "..\..\jinaga.net\Jinaga.Store.SQLite\Jinaga.Store.SQLite.csproj", "{F01E1040-C151-4C7B-823E-B66BB2E0CF8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{3C045BAB-4A9A-4D59-8135-2AB3E0FE812A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C045BAB-4A9A-4D59-8135-2AB3E0FE812A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C045BAB-4A9A-4D59-8135-2AB3E0FE812A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F01E1040-C151-4C7B-823E-B66BB2E0CF8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F01E1040-C151-4C7B-823E-B66BB2E0CF8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F01E1040-C151-4C7B-823E-B66BB2E0CF8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F01E1040-C151-4C7B-823E-B66BB2E0CF8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
