@@ -1,12 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace MauiApp1.Blog;
-internal class PostListViewModel : ObservableObject
+internal partial class PostListViewModel : ObservableObject
 {
     private IWatch watch;
+
+    [ObservableProperty]
+    private string message = "Loading";
 
     public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
 
@@ -46,6 +48,27 @@ internal class PostListViewModel : ObservableObject
                 //Posts.Remove(postHeaderViewModel);
             });
         });
+
+        Monitor(watch.Loaded);
+    }
+
+    private async void Monitor(Task loaded)
+    {
+        try
+        {
+            await loaded;
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Message = "Loading complete";
+            });
+        }
+        catch (Exception ex)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Message = $"Error while loading: {ex.Message}";
+            });
+        }
     }
 
     public void Unload()
