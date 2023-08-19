@@ -49,7 +49,7 @@ internal partial class PostListViewModel : ObservableObject
             };
         });
 
-        Monitor(observer.Cached, observer.Loaded);
+        Monitor();
     }
 
     public ICommand Refresh => new Command(async () =>
@@ -69,17 +69,17 @@ internal partial class PostListViewModel : ObservableObject
         }
     });
 
-    private async void Monitor(Task<bool> cached, Task loaded)
+    private async void Monitor()
     {
         try
         {
-            bool wasInCache = await cached;
+            bool wasInCache = await observer.Cached;
             if (wasInCache)
             {
                 Loading = false;
                 Message = "Checking for updates...";
             }
-            await loaded;
+            await observer.Loaded;
             Loading = false;
             Message = "Posts loaded.";
         }
