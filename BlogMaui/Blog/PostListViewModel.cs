@@ -1,14 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace BlogMaui.Blog;
 internal partial class PostListViewModel : ObservableObject
 {
-    private IWatch watch;
+    private IObserver observer;
 
     [ObservableProperty]
     private bool loading = true;
+    [ObservableProperty]
+    private bool refreshing = false;
     [ObservableProperty]
     private string message = "Loading...";
 
@@ -33,7 +36,7 @@ internal partial class PostListViewModel : ObservableObject
         );
 
         var site = new Site(domain);
-        watch = JinagaConfig.j.Watch(postsInBlog, site, projection =>
+        observer = JinagaConfig.j.Watch(postsInBlog, site, projection =>
         {
             var postHeaderViewModel = new PostHeaderViewModel();
             projection.titles.OnAdded(title =>
@@ -48,8 +51,15 @@ internal partial class PostListViewModel : ObservableObject
             };
         });
 
-        Monitor(watch.Cached, watch.Loaded);
+        Monitor(observer.Cached, observer.Loaded);
     }
+
+    public ICommand Refresh => new Command(() =>
+    {
+        Refreshing = true;
+        observer.Refresh()
+            .ContinueWith(_ => Refreshing = false);
+    });
 
     private async void Monitor(Task<bool> cached, Task loaded)
     {
@@ -73,7 +83,7 @@ internal partial class PostListViewModel : ObservableObject
 
     public void Unload()
     {
-        watch.Stop();
+        observer.Stop();
         Posts.Clear();
     }
 }

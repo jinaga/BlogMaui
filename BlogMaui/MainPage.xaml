@@ -6,17 +6,20 @@
     <VerticalStackLayout Margin="10">
         <Label Text="{Binding Message}" FontSize="Large" />
         <ActivityIndicator IsRunning="{Binding Loading}" IsVisible="{Binding Loading}" />
-        <ScrollView>
-            <ListView ItemsSource="{Binding Posts}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Label Text="{Binding Title}" FontSize="Medium" />
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </ScrollView>
+        <RefreshView Command="{Binding Refresh}" IsRefreshing="{Binding Refreshing}">
+            <ScrollView>
+                <ListView ItemsSource="{Binding Posts}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Label Text="{Binding Title}" FontSize="Medium" />
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollView>
+        </RefreshView>
+        <Button Text="Refresh" Command="{Binding Refresh}" />
     </VerticalStackLayout>
 
 </ContentPage>
