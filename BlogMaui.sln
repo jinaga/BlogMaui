@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34003.232
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogMaui", "MauiApp1\BlogMaui.csproj", "{459E81F4-14F6-45A1-BDD0-B785E072DE79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogMaui", "BlogMaui\BlogMaui.csproj", "{459E81F4-14F6-45A1-BDD0-B785E072DE79}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jinaga", "..\..\jinaga.net\Jinaga\Jinaga.csproj", "{3C045BAB-4A9A-4D59-8135-2AB3E0FE812A}"
 EndProject
