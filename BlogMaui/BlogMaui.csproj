@@ -50,13 +50,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+		<PackageReference Include="Jinaga" Version="0.6.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.6-pre20230809203314" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\..\jinaga.net\Jinaga.Store.SQLite\Jinaga.Store.SQLite.csproj" />
-	  <ProjectReference Include="..\..\..\jinaga.net\Jinaga\Jinaga.csproj" />
 	</ItemGroup>
 
 </Project>
