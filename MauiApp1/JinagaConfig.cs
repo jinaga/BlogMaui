@@ -1,6 +1,6 @@
 ﻿using Jinaga;
 
-namespace MauiApp1;
+namespace BlogMaui;
 internal static class JinagaConfig
 {
     public static JinagaClient j = JinagaClient.Create(opt =>

@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace MauiApp1.Blog;
+namespace BlogMaui.Blog;
 internal partial class PostHeaderViewModel : ObservableObject
 {
     [ObservableProperty]

@@ -2,7 +2,7 @@
 using Jinaga;
 using System.Collections.ObjectModel;
 
-namespace MauiApp1.Blog;
+namespace BlogMaui.Blog;
 internal partial class PostListViewModel : ObservableObject
 {
     private IWatch watch;

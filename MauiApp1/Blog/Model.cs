@@ -1,6 +1,6 @@
 ﻿using Jinaga;
 
-namespace MauiApp1.Blog;
+namespace BlogMaui.Blog;
 
 [FactType("Blog.Site")]
 public record Site(string domain) { }

@@ -1,6 +1,6 @@
-﻿using MauiApp1.Blog;
+﻿using BlogMaui.Blog;
 
-namespace MauiApp1;
+namespace BlogMaui;
 
 public partial class MainPage : ContentPage
 {

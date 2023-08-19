@@ -1,4 +1,4 @@
-﻿namespace MauiApp1;
+﻿namespace BlogMaui;
 
 public partial class App : Application
 {
