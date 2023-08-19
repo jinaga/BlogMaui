@@ -34,19 +34,16 @@ internal partial class PostListViewModel : ObservableObject
         watch = JinagaConfig.j.Watch(postsInBlog, site, projection =>
         {
             var postHeaderViewModel = new PostHeaderViewModel();
-            projection.titles.OnAdded(title => MainThread.BeginInvokeOnMainThread(() =>
+            projection.titles.OnAdded(title =>
             {
                 postHeaderViewModel.Title = title;
-            }));
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Posts.Add(postHeaderViewModel);
             });
+            Posts.Add(postHeaderViewModel);
 
-            return () => MainThread.BeginInvokeOnMainThread(() =>
+            return () =>
             {
-                //Posts.Remove(postHeaderViewModel);
-            });
+                Posts.Remove(postHeaderViewModel);
+            };
         });
 
         Monitor(watch.Loaded);
@@ -57,17 +54,11 @@ internal partial class PostListViewModel : ObservableObject
         try
         {
             await loaded;
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Message = "Loading complete";
-            });
+            Message = "Loading complete";
         }
         catch (Exception ex)
         {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Message = $"Error while loading: {ex.Message}";
-            });
+            Message = $"Error while loading: {ex.Message}";
         }
     }
 
