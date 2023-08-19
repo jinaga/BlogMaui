@@ -11,8 +11,6 @@ internal partial class PostListViewModel : ObservableObject
     [ObservableProperty]
     private bool loading = true;
     [ObservableProperty]
-    private bool refreshing = false;
-    [ObservableProperty]
     private string message = "Loading...";
 
     public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
@@ -54,11 +52,21 @@ internal partial class PostListViewModel : ObservableObject
         Monitor(observer.Cached, observer.Loaded);
     }
 
-    public ICommand Refresh => new Command(() =>
+    public ICommand Refresh => new Command(async () =>
     {
-        Refreshing = true;
-        observer.Refresh()
-            .ContinueWith(_ => Refreshing = false);
+        try
+        {
+            Message = "Checking for updates...";
+            Loading = true;
+            await observer.Refresh();
+            Message = "Posts loaded.";
+            Loading = false;
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error while loading: {ex.Message}";
+            Loading = false;
+        }
     });
 
     private async void Monitor(Task<bool> cached, Task loaded)
