@@ -8,7 +8,9 @@ internal partial class PostListViewModel : ObservableObject
     private IWatch watch;
 
     [ObservableProperty]
-    private string message = "Loading";
+    private bool loading = true;
+    [ObservableProperty]
+    private string message = "Loading...";
 
     public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
 
@@ -46,15 +48,22 @@ internal partial class PostListViewModel : ObservableObject
             };
         });
 
-        Monitor(watch.Loaded);
+        Monitor(watch.Cached, watch.Loaded);
     }
 
-    private async void Monitor(Task loaded)
+    private async void Monitor(Task<bool> cached, Task loaded)
     {
         try
         {
+            bool wasInCache = await cached;
+            if (wasInCache)
+            {
+                Loading = false;
+                Message = "Checking for updates...";
+            }
             await loaded;
-            Message = "Loading complete";
+            Loading = false;
+            Message = "Posts loaded.";
         }
         catch (Exception ex)
         {
