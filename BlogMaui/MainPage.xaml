@@ -25,6 +25,7 @@
         </RefreshView>
         <HorizontalStackLayout Grid.Row="2">
             <Button Text="Refresh" Command="{Binding Refresh}" />
+            <Button Text="Login" Command="{Binding Login}" />
         </HorizontalStackLayout>
     </Grid>
 

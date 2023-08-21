@@ -69,6 +69,26 @@ internal partial class PostListViewModel : ObservableObject
         }
     });
 
+    public ICommand Login => new Command(async () =>
+    {
+        // Instructions at https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/communication/authentication
+        try
+        {
+            WebAuthenticatorResult authResult = await WebAuthenticator.Default.AuthenticateAsync(
+                new Uri("https://repdev.jinaga.com/N25EVWOs91edOIao79xosTUjEpDHF4HrxOx0GrpZtbMq3ZHqu7DyeiDmEgmhnbBLTdQCBS79OzdzOzTRLi54VQ/auth/apple"),
+                new Uri("blogmaui://callback"));
+
+            string accessToken = authResult?.AccessToken;
+
+            // Do something with the token
+            Message = $"Received access token {accessToken}";
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error while logging in: {ex.Message}";
+        }
+    });
+
     private async void Monitor()
     {
         try

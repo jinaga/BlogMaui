@@ -8,5 +8,5 @@
 			<action android:name="android.support.customtabs.action.CustomTabsService" />
 		</intent>
 	</queries>
-	<uses-sdk />
+	<uses-sdk android:minSdkVersion="21" />
 </manifest>
