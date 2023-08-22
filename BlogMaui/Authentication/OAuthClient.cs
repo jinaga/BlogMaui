@@ -59,6 +59,7 @@ public class OAuthClient
         tokenRequest.Content = new FormUrlEncodedContent(new Dictionary<string, string>
         {
             { "grant_type", "authorization_code" },
+            { "client_id", clientId },
             { "redirect_uri", callbackUrl },
             { "code_verifier", codeVerifier },
             { "code", code }
