@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BlogMaui.Authentication;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -74,14 +75,27 @@ internal partial class PostListViewModel : ObservableObject
         // Instructions at https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/communication/authentication
         try
         {
-            WebAuthenticatorResult authResult = await WebAuthenticator.Default.AuthenticateAsync(
-                new Uri("https://repdev.jinaga.com/N25EVWOs91edOIao79xosTUjEpDHF4HrxOx0GrpZtbMq3ZHqu7DyeiDmEgmhnbBLTdQCBS79OzdzOzTRLi54VQ/auth/apple"),
-                new Uri("blogmaui://callback"));
+            var settings = new Settings();
+            var client = new OAuthClient(
+                settings.AuthUrl,
+                settings.AccessTokenUrl,
+                settings.CallbackUrl,
+                settings.ClientId,
+                settings.Scope
+            );
+            string requestUrl = client.BuildRequestUrl();
+            var authResult = await WebAuthenticator.Default.AuthenticateAsync(
+                new Uri(requestUrl),
+                new Uri(settings.CallbackUrl));
 
-            string accessToken = authResult?.AccessToken;
+            string state = authResult.Properties["state"];
+            string code = authResult.Properties["code"];
+
+            client.ValidateState(state);
+            var tokenResponse = await client.GetTokenResponse(code);
 
             // Do something with the token
-            Message = $"Received access token {accessToken}";
+            Message = $"Received access token {tokenResponse.AccessToken}";
         }
         catch (Exception ex)
         {
