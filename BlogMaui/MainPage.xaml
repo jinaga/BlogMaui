@@ -8,24 +8,24 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Text="{Binding Message}" FontSize="Large" />
-        <RefreshView Grid.Row="1" Command="{Binding Refresh}" IsRefreshing="{Binding Loading}">
-            <ScrollView>
-                <ListView ItemsSource="{Binding Posts}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <Label Text="{Binding Title}" FontSize="Medium" />
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </ScrollView>
-        </RefreshView>
-        <HorizontalStackLayout Grid.Row="2">
-            <Button Text="Refresh" Command="{Binding Refresh}" />
-            <Button Text="Login" Command="{Binding Login}" />
+        <ScrollView Grid.Row="1">
+            <ListView ItemsSource="{Binding Posts}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label Text="{Binding Title}" FontSize="Medium" />
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollView>
+        <ActivityIndicator Grid.Row="2" IsVisible="{Binding Loading}" IsRunning="{Binding Loading}" Margin="10" />
+        <HorizontalStackLayout Grid.Row="3">
+            <Button Text="Refresh" Command="{Binding Refresh}" Margin="10" />
+            <Button Text="Login" Command="{Binding Login}" Margin="10" />
         </HorizontalStackLayout>
     </Grid>
 
