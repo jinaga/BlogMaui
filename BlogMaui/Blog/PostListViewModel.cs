@@ -1,5 +1,6 @@
 ﻿using BlogMaui.Authentication;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -15,6 +16,15 @@ internal partial class PostListViewModel : ObservableObject
     private string message = "Loading...";
 
     public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
+
+    public ICommand Refresh { get; }
+    public ICommand Login { get; }
+
+    public PostListViewModel()
+    {
+        Refresh = new AsyncRelayCommand(HandleRefresh);
+        Login = new AsyncRelayCommand(HandleLogin);
+    }
 
     public void Load(string domain)
     {
@@ -53,7 +63,7 @@ internal partial class PostListViewModel : ObservableObject
         Monitor();
     }
 
-    public ICommand Refresh => new Command(async () =>
+    private async Task HandleRefresh()
     {
         try
         {
@@ -68,9 +78,9 @@ internal partial class PostListViewModel : ObservableObject
             Message = $"Error while loading: {ex.Message}";
             Loading = false;
         }
-    });
+    }
 
-    public ICommand Login => new Command(async () =>
+    private async Task HandleLogin()
     {
         // Instructions at https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/communication/authentication
         try
@@ -101,7 +111,7 @@ internal partial class PostListViewModel : ObservableObject
         {
             Message = $"Error while logging in: {ex.Message}";
         }
-    });
+    }
 
     private async void Monitor()
     {
