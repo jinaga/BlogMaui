@@ -18,7 +18,7 @@ public static class JinagaConfig
         .Any<User>()
         .Type<Site>(site => site.creator)
         .Type<Post>(post => post.site.creator)
-        .Type<Publish>(publish => publish.post.site.creator)
         .Type<PostTitle>(title => title.post.site.creator)
-        ;
+        .Type<PostDeleted>(deleted => deleted.post.site.creator)
+        .Type<Publish>(publish => publish.post.site.creator);
 }

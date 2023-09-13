@@ -26,7 +26,7 @@ internal partial class PostListViewModel : ObservableObject
         Login = new AsyncRelayCommand(HandleLogin);
     }
 
-    public void Load(string domain)
+    public async void Load(string domain)
     {
         var postsInBlog = Given<Site>.Match((site, facts) =>
             from post in facts.OfType<Post>()
