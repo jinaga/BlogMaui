@@ -1,0 +1,5 @@
+POST {{replicatorUrl}}/write
+Authorization: oauth2 authorization_code
+Content-Type: text/plain
+
+site: Blog.Site = { creator: me, domain: "michaelperry.net" }
