@@ -44,7 +44,8 @@ internal partial class PostListViewModel : ObservableObject
             }
         );
 
-        var site = new Site(domain);
+        var user = new User("Fake public key");
+        var site = new Site(user, domain);
         observer = JinagaConfig.j.Watch(postsInBlog, site, projection =>
         {
             var postHeaderViewModel = new PostHeaderViewModel();
