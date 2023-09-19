@@ -44,7 +44,7 @@ internal partial class PostListViewModel : ObservableObject
             }
         );
 
-        var user = new User("Fake public key");
+        var (user, profile) = await JinagaConfig.j.Login();
         var site = new Site(user, domain);
         observer = JinagaConfig.j.Watch(postsInBlog, site, projection =>
         {
@@ -106,6 +106,7 @@ internal partial class PostListViewModel : ObservableObject
             var tokenResponse = await client.GetTokenResponse(code);
 
             // Do something with the token
+
             Message = $"Received access token {tokenResponse.AccessToken}";
         }
         catch (Exception ex)

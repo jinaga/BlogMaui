@@ -9,6 +9,7 @@ public static class JinagaConfig
         var settings = new Settings();
         settings.Verify();
         opt.HttpEndpoint = new Uri(settings.ReplicatorUrl);
+        opt.HttpAuthenticationProvider = new OAuth2HttpAuthenticationProvider();
     });
 
     public static string Authorization() =>
