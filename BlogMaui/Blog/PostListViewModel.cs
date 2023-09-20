@@ -8,7 +8,7 @@ using System.Windows.Input;
 namespace BlogMaui.Blog;
 internal partial class PostListViewModel : ObservableObject
 {
-    private IObserver observer;
+    private IObserver? observer;
 
     [ObservableProperty]
     private bool loading = true;
@@ -61,11 +61,16 @@ internal partial class PostListViewModel : ObservableObject
             };
         });
 
-        Monitor();
+        Monitor(observer);
     }
 
     private async Task HandleRefresh()
     {
+        if (observer == null)
+        {
+            return;
+        }
+
         try
         {
             Message = "Checking for updates...";
@@ -115,7 +120,7 @@ internal partial class PostListViewModel : ObservableObject
         }
     }
 
-    private async void Monitor()
+    private async void Monitor(IObserver observer)
     {
         try
         {
@@ -137,7 +142,7 @@ internal partial class PostListViewModel : ObservableObject
 
     public void Unload()
     {
-        observer.Stop();
+        observer?.Stop();
         Posts.Clear();
     }
 }
