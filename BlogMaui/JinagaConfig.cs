@@ -5,19 +5,28 @@ using Jinaga;
 namespace BlogMaui;
 public static class JinagaConfig
 {
-    public static JinagaClient j = JinagaClient.Create(opt =>
+    public static OAuth2HttpAuthenticationProvider AuthenticationProvider { get; }
+    public static JinagaClient j { get; }
+
+    static JinagaConfig()
     {
         var settings = new Settings();
         settings.Verify();
-        opt.HttpEndpoint = new Uri(settings.ReplicatorUrl);
+
         var oauth2Client = new OAuthClient(
             settings.AuthUrl,
             settings.AccessTokenUrl,
             settings.CallbackUrl,
             settings.ClientId,
             settings.Scope);
-        opt.HttpAuthenticationProvider = new OAuth2HttpAuthenticationProvider(oauth2Client);
-    });
+        AuthenticationProvider = new OAuth2HttpAuthenticationProvider(oauth2Client);
+
+        j = JinagaClient.Create(opt =>
+        {
+            opt.HttpEndpoint = new Uri(settings.ReplicatorUrl);
+            opt.HttpAuthenticationProvider = AuthenticationProvider;
+        });
+    }
 
     public static string Authorization() =>
         AuthorizationRules.Describe(Authorize);

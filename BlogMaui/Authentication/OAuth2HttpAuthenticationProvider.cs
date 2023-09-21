@@ -6,13 +6,13 @@ using System.Text.Json;
 
 namespace BlogMaui;
 
-internal class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
+public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 {
     private const string AuthenticationTokenKey = "BlogMaui.AuthenticationToken";
 
     private readonly OAuthClient oauthClient;
 
-    private SemaphoreSlim semaphore = new(1);
+    private readonly SemaphoreSlim semaphore = new(1);
     volatile private AuthenticationToken? authenticationToken;
 
     public OAuth2HttpAuthenticationProvider(OAuthClient oauthClient)
@@ -20,7 +20,7 @@ internal class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         this.oauthClient = oauthClient;
     }
 
-    public Task Initialize()
+    public Task<bool> Initialize()
     {
         return Lock(async () =>
         {
@@ -37,6 +37,31 @@ internal class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
                     }
                 }
             }
+            return authenticationToken != null;
+        });
+    }
+
+    public Task<bool> Login()
+    {
+        return Lock(async () =>
+        {
+            var client = oauthClient;
+            string requestUrl = client.BuildRequestUrl();
+            var authResult = await WebAuthenticator.Default.AuthenticateAsync(
+                new Uri(requestUrl),
+                new Uri(client.CallbackUrl));
+            if (authResult == null)
+            {
+                return false;
+            }
+
+            string state = authResult.Properties["state"];
+            string code = authResult.Properties["code"];
+
+            client.ValidateState(state);
+            var tokenResponse = await client.GetTokenResponse(code);
+            authenticationToken = ResponseToToken(tokenResponse);
+            await SaveToken();
             return true;
         });
     }
@@ -64,12 +89,11 @@ internal class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         });
     }
 
-    private async Task<bool> LoadToken()
+    private async Task LoadToken()
     {
         string tokenJson = await SecureStorage.GetAsync(AuthenticationTokenKey).ConfigureAwait(false);
         AuthenticationToken? authenticationToken = JsonSerializer.Deserialize<AuthenticationToken>(tokenJson);
         this.authenticationToken = authenticationToken;
-        return authenticationToken != null;
     }
 
     private async Task SaveToken()
@@ -93,13 +117,7 @@ internal class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         }
 
         var tokenResponse = await oauthClient.RequestNewToken(authenticationToken.RefreshToken).ConfigureAwait(false);
-        authenticationToken = new AuthenticationToken
-        {
-            AccessToken = tokenResponse.AccessToken,
-            RefreshToken = tokenResponse.RefreshToken,
-            ExpryDate = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
-                .ToString("O", CultureInfo.InvariantCulture)
-        };
+        authenticationToken = ResponseToToken(tokenResponse);
     }
 
     private async Task<T> Lock<T>(Func<Task<T>> action)
@@ -113,5 +131,16 @@ internal class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         {
             semaphore.Release();
         }
+    }
+
+    private static AuthenticationToken ResponseToToken(TokenResponse tokenResponse)
+    {
+        return new AuthenticationToken
+        {
+            AccessToken = tokenResponse.AccessToken,
+            RefreshToken = tokenResponse.RefreshToken,
+            ExpryDate = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
+                .ToString("O", CultureInfo.InvariantCulture)
+        };
     }
 }

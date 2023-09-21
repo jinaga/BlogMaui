@@ -16,6 +16,8 @@ public class OAuthClient
     private string codeVerifier = "";
     private string state = "";
 
+    public string CallbackUrl => callbackUrl;
+
     public OAuthClient(string authUrl, string accessTokenUrl, string callbackUrl, string clientId, string scope)
     {
         this.authUrl = authUrl;

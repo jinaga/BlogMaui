@@ -1,5 +1,4 @@
-﻿using BlogMaui.Authentication;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using System.Collections.ObjectModel;
@@ -18,12 +17,10 @@ internal partial class PostListViewModel : ObservableObject
     public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
 
     public ICommand Refresh { get; }
-    public ICommand Login { get; }
 
     public PostListViewModel()
     {
         Refresh = new AsyncRelayCommand(HandleRefresh);
-        Login = new AsyncRelayCommand(HandleLogin);
     }
 
     public async void Load(string domain)
@@ -83,40 +80,6 @@ internal partial class PostListViewModel : ObservableObject
         {
             Message = $"Error while loading: {ex.Message}";
             Loading = false;
-        }
-    }
-
-    private async Task HandleLogin()
-    {
-        // Instructions at https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/communication/authentication
-        try
-        {
-            var settings = new Settings();
-            var client = new OAuthClient(
-                settings.AuthUrl,
-                settings.AccessTokenUrl,
-                settings.CallbackUrl,
-                settings.ClientId,
-                settings.Scope
-            );
-            string requestUrl = client.BuildRequestUrl();
-            var authResult = await WebAuthenticator.Default.AuthenticateAsync(
-                new Uri(requestUrl),
-                new Uri(settings.CallbackUrl));
-
-            string state = authResult.Properties["state"];
-            string code = authResult.Properties["code"];
-
-            client.ValidateState(state);
-            var tokenResponse = await client.GetTokenResponse(code);
-
-            // Do something with the token
-
-            Message = $"Received access token {tokenResponse.AccessToken}";
-        }
-        catch (Exception ex)
-        {
-            Message = $"Error while logging in: {ex.Message}";
         }
     }
 
