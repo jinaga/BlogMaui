@@ -9,10 +9,30 @@
     <ContentPage.Behaviors>
         <mct:StatusBarBehavior StatusBarColor="{StaticResource Tertiary}"/>
     </ContentPage.Behaviors>
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <ActivityIndicator Color="{StaticResource Primary}"
+
+    <VerticalStackLayout
+        toolkit:StateContainer.CurrentState="{Binding State}"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+
+        <toolkit:StateContainer.StateViews>
+            <!-- When Loading, show the activity indicator -->
+            <VerticalStackLayout toolkit:StateView.StateKey="Loading" VerticalOptions="Center" HorizontalOptions="Center">
+                <ActivityIndicator Color="{StaticResource Primary}"
                                IsRunning="True" HeightRequest="50" WidthRequest="50"
                                IsVisible="True" />
-        <Label Text="Checking authentication..." HorizontalOptions="Center" />
+                <Label Text="Loading..." IsVisible="True" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <!-- When LoggedOut, show the login button -->
+            <VerticalStackLayout toolkit:StateView.StateKey="LoggedOut" VerticalOptions="Center" HorizontalOptions="Center">
+                <Button Text="Log In" Command="{Binding LogIn}" />
+            </VerticalStackLayout>
+
+            <!-- When LoggedIn, show the content -->
+            <VerticalStackLayout toolkit:StateView.StateKey="LoggedIn" HorizontalOptions="Center" VerticalOptions="Center">
+                <Label Text="You are logged in" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </toolkit:StateContainer.StateViews>
     </VerticalStackLayout>
 </ContentPage>

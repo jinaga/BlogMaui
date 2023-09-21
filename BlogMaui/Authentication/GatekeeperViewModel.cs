@@ -8,10 +8,7 @@ namespace BlogMaui.Authentication;
 internal partial class GatekeeperViewModel : ObservableObject
 {
     [ObservableProperty]
-    private bool loading = true;
-
-    [ObservableProperty]
-    private bool loggedIn = false;
+    private string state = "Loading";
 
     [ObservableProperty]
     private string error = string.Empty;
@@ -27,14 +24,13 @@ internal partial class GatekeeperViewModel : ObservableObject
     {
         try
         {
-            var loggedIn = await JinagaConfig.AuthenticationProvider.Initialize();
-            Loading = false;
-            LoggedIn = loggedIn;
+            bool loggedIn = await JinagaConfig.AuthenticationProvider.Initialize();
+            State = loggedIn ? "LoggedIn" : "LoggedOut";
         }
         catch (Exception ex)
         {
             Error = $"Error while initializing: {GetMessage(ex)}";
-            Loading = false;
+            State = "LoggedOut";
         }
     }
 
@@ -42,8 +38,8 @@ internal partial class GatekeeperViewModel : ObservableObject
     {
         try
         {
-            var loggedIn = await JinagaConfig.AuthenticationProvider.Login();
-            LoggedIn = loggedIn;
+            bool loggedIn = await JinagaConfig.AuthenticationProvider.Login();
+            State = loggedIn ? "LoggedIn" : "LoggedOut";
         }
         catch (Exception ex)
         {
