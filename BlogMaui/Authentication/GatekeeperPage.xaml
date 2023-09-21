@@ -26,7 +26,9 @@
 
             <!-- When LoggedOut, show the login button -->
             <VerticalStackLayout toolkit:StateView.StateKey="LoggedOut" VerticalOptions="Center" HorizontalOptions="Center">
-                <Button Text="Log In" Command="{Binding LogIn}" />
+                <Button Text="Log In" Command="{Binding LogIn}" HorizontalOptions="Center" />
+
+                <Label Text="{Binding Error}" />
             </VerticalStackLayout>
 
             <!-- When LoggedIn, show the content -->

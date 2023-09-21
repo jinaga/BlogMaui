@@ -91,9 +91,12 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 
     private async Task LoadToken()
     {
-        string tokenJson = await SecureStorage.GetAsync(AuthenticationTokenKey).ConfigureAwait(false);
-        AuthenticationToken? authenticationToken = JsonSerializer.Deserialize<AuthenticationToken>(tokenJson);
-        this.authenticationToken = authenticationToken;
+        string? tokenJson = await SecureStorage.GetAsync(AuthenticationTokenKey).ConfigureAwait(false);
+        if (tokenJson != null)
+        {
+            AuthenticationToken? authenticationToken = JsonSerializer.Deserialize<AuthenticationToken>(tokenJson);
+            this.authenticationToken = authenticationToken;
+        }
     }
 
     private async Task SaveToken()
