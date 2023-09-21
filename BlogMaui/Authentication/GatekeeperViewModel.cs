@@ -14,10 +14,12 @@ internal partial class GatekeeperViewModel : ObservableObject
     private string error = string.Empty;
 
     public ICommand LogIn { get; }
+    public ICommand LogOut { get; }
 
     public GatekeeperViewModel()
     {
         LogIn = new AsyncRelayCommand(HandleLogIn);
+        LogOut = new AsyncRelayCommand(HandleLogOut);
     }
 
     public async void Initialize()
@@ -44,6 +46,19 @@ internal partial class GatekeeperViewModel : ObservableObject
         catch (Exception ex)
         {
             Error = $"Error while logging in: {GetMessage(ex)}";
+        }
+    }
+
+    public async Task HandleLogOut()
+    {
+        try
+        {
+            await JinagaConfig.AuthenticationProvider.LogOut();
+            State = "LoggedOut";
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error while logging out: {GetMessage(ex)}";
         }
     }
 

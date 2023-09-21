@@ -34,6 +34,10 @@
             <!-- When LoggedIn, show the content -->
             <VerticalStackLayout toolkit:StateView.StateKey="LoggedIn" HorizontalOptions="Center" VerticalOptions="Center">
                 <Label Text="You are logged in" HorizontalOptions="Center" />
+
+                <Button Text="Log Out" Command="{Binding LogOut}" HorizontalOptions="Center" />
+
+                <Label Text="{Binding Error}" />
             </VerticalStackLayout>
         </toolkit:StateContainer.StateViews>
     </VerticalStackLayout>

@@ -66,6 +66,16 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         });
     }
 
+    public Task LogOut()
+    {
+        return Lock(async () =>
+        {
+            authenticationToken = null;
+            await SaveToken();
+            return true;
+        });
+    }
+
     public void SetRequestHeaders(HttpRequestHeaders headers)
     {
         var cachedAuthenticationToken = authenticationToken;
