@@ -84,6 +84,34 @@ public class OAuthClient
         return token;
     }
 
+    public async Task<TokenResponse> RequestNewToken(string refreshToken)
+    {
+        // Build the refresh request
+        var tokenRequest = new HttpRequestMessage(HttpMethod.Post, accessTokenUrl);
+        tokenRequest.Content = new FormUrlEncodedContent(new Dictionary<string, string>{
+            { "grant_type", "refresh_token" },
+            { "refresh_token", refreshToken }
+        });
+
+        // Send the refresh request
+        var client = new HttpClient();
+        var tokenResponse = await client.SendAsync(tokenRequest);
+        if (!tokenResponse.IsSuccessStatusCode)
+        {
+            throw new Exception($"Failed to refresh the token: {(int)tokenResponse.StatusCode} {tokenResponse.ReasonPhrase}");
+        }
+        var tokenContent = await tokenResponse.Content.ReadAsStringAsync();
+
+        // Get the access token
+        var token = JsonSerializer.Deserialize<TokenResponse>(tokenContent);
+        if (token == null)
+        {
+            throw new Exception("Unable to parse token response");
+        }
+
+        return token;
+    }
+
     private static string GenerateRandomString()
     {
         var randomBytes = RandomNumberGenerator.GetBytes(32);

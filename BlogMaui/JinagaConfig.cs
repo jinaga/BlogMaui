@@ -1,4 +1,5 @@
-﻿using BlogMaui.Blog;
+﻿using BlogMaui.Authentication;
+using BlogMaui.Blog;
 using Jinaga;
 
 namespace BlogMaui;
@@ -9,7 +10,13 @@ public static class JinagaConfig
         var settings = new Settings();
         settings.Verify();
         opt.HttpEndpoint = new Uri(settings.ReplicatorUrl);
-        opt.HttpAuthenticationProvider = new OAuth2HttpAuthenticationProvider();
+        var oauth2Client = new OAuthClient(
+            settings.AuthUrl,
+            settings.AccessTokenUrl,
+            settings.CallbackUrl,
+            settings.ClientId,
+            settings.Scope);
+        opt.HttpAuthenticationProvider = new OAuth2HttpAuthenticationProvider(oauth2Client);
     });
 
     public static string Authorization() =>
