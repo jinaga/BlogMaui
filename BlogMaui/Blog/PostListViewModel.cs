@@ -43,6 +43,16 @@ internal partial class PostListViewModel : ObservableObject
 
         var (user, profile) = await JinagaConfig.j.Login();
         var site = new Site(user, domain);
+        var userNames = await JinagaConfig.j.Query(Given<User>.Match((user, facts) =>
+            from name in facts.OfType<UserName>()
+            where name.user == user &&
+                !facts.Any<UserName>(next => next.prior.Contains(name))
+            select name
+        ), user);
+        if (userNames.Count != 1 || userNames.Single().value != profile.DisplayName)
+        {
+            await JinagaConfig.j.Fact(new UserName(user, profile.DisplayName, userNames.ToArray()));
+        }
         observer = JinagaConfig.j.Watch(postsInBlog, site, projection =>
         {
             var postHeaderViewModel = new PostHeaderViewModel();

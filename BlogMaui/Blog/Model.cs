@@ -2,6 +2,9 @@
 
 namespace BlogMaui.Blog;
 
+[FactType("Blog.User.Name")]
+public record UserName(User user, string value, UserName[] prior) { }
+
 [FactType("Blog.Site")]
 public record Site(User creator, string domain) { }
 
