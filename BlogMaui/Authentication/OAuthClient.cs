@@ -92,7 +92,8 @@ public class OAuthClient
         var tokenRequest = new HttpRequestMessage(HttpMethod.Post, accessTokenUrl);
         tokenRequest.Content = new FormUrlEncodedContent(new Dictionary<string, string>{
             { "grant_type", "refresh_token" },
-            { "refresh_token", refreshToken }
+            { "refresh_token", refreshToken },
+            { "client_id", clientId }
         });
 
         // Send the refresh request
