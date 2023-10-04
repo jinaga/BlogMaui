@@ -6,10 +6,16 @@ using Jinaga.Http;
 namespace BlogMaui;
 public static class JinagaConfig
 {
-    public static OAuth2HttpAuthenticationProvider CreateAuthenticationProvider(IServiceProvider services)
+    public static Settings CreateSettings(IServiceProvider _)
     {
         var settings = new Settings();
         settings.Verify();
+        return settings;
+    }
+
+    public static OAuth2HttpAuthenticationProvider CreateAuthenticationProvider(IServiceProvider services)
+    {
+        var settings = services.GetRequiredService<Settings>();
 
         var httpClientFactory = services.GetRequiredService<IHttpClientFactory>();
         var oauth2Client = new OAuthClient(
@@ -26,8 +32,7 @@ public static class JinagaConfig
     public static JinagaClient CreateJinagaClient(IServiceProvider services)
     {
         var authenticationProvider = services.GetRequiredService<IHttpAuthenticationProvider>();
-        var settings = new Settings();
-        settings.Verify();
+        var settings = services.GetRequiredService<Settings>();
 
         var jinagaClient = JinagaClient.Create(opt =>
         {

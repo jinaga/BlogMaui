@@ -1,5 +1,5 @@
 ﻿namespace BlogMaui;
-internal partial class Settings
+public partial class Settings
 {
     // Create a file named Settings.Local.cs
     // Set the properties in the Settings constructor
