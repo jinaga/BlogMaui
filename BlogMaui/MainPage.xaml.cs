@@ -11,11 +11,12 @@ namespace BlogMaui;
 
 public partial class MainPage : ContentPage
 {
-    readonly PostListViewModel viewModel = new();
+    private readonly PostListViewModel viewModel;
 
-    public MainPage()
+    public MainPage(PostListViewModel viewModel)
     {
         InitializeComponent();
+        this.viewModel = viewModel;
     }
 
     protected override void OnAppearing()
@@ -27,7 +28,10 @@ public partial class MainPage : ContentPage
 
     protected override void OnDisappearing()
     {
-        viewModel.Unload();
+        if (viewModel != null)
+        {
+            viewModel.Unload();
+        }
         base.OnDisappearing();
     }
 }

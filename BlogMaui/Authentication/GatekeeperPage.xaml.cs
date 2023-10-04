@@ -2,17 +2,17 @@ namespace BlogMaui.Authentication;
 
 public partial class GatekeeperPage : ContentPage
 {
-	private GatekeeperViewModel viewModel;
+	private readonly GatekeeperViewModel viewModel;
 
-	public GatekeeperPage()
-	{
-		InitializeComponent();
-        viewModel = new GatekeeperViewModel();
-        BindingContext = viewModel;
-	}
+    public GatekeeperPage(GatekeeperViewModel viewModel)
+    {
+        InitializeComponent();
+        this.viewModel = viewModel;
+    }
 
     protected override void OnAppearing()
     {
+        BindingContext = viewModel;
         viewModel.Initialize();
         base.OnAppearing();
     }

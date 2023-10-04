@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -13,18 +14,21 @@ public class OAuthClient
     private readonly string clientId;
     private readonly string scope;
 
+    private readonly IHttpClientFactory httpClientFactory;
+
     private string codeVerifier = "";
     private string state = "";
 
     public string CallbackUrl => callbackUrl;
 
-    public OAuthClient(string authUrl, string accessTokenUrl, string callbackUrl, string clientId, string scope)
+    public OAuthClient(string authUrl, string accessTokenUrl, string callbackUrl, string clientId, string scope, IHttpClientFactory httpClientFactory)
     {
         this.authUrl = authUrl;
         this.accessTokenUrl = accessTokenUrl;
         this.callbackUrl = callbackUrl;
         this.clientId = clientId;
         this.scope = scope;
+        this.httpClientFactory = httpClientFactory;
     }
 
     public string BuildRequestUrl()
@@ -68,7 +72,7 @@ public class OAuthClient
         });
 
         // Send the access token request
-        var client = new HttpClient();
+        var client = httpClientFactory.CreateClient();
         var tokenResponse = await client.SendAsync(tokenRequest);
         if (!tokenResponse.IsSuccessStatusCode)
         {
@@ -97,7 +101,7 @@ public class OAuthClient
         });
 
         // Send the refresh request
-        var client = new HttpClient();
+        var client = httpClientFactory.CreateClient();
         var tokenResponse = await client.SendAsync(tokenRequest);
         if (!tokenResponse.IsSuccessStatusCode)
         {

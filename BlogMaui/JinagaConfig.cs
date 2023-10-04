@@ -1,31 +1,40 @@
 ﻿using BlogMaui.Authentication;
 using BlogMaui.Blog;
 using Jinaga;
+using Jinaga.Http;
 
 namespace BlogMaui;
 public static class JinagaConfig
 {
-    public static OAuth2HttpAuthenticationProvider AuthenticationProvider { get; }
-    public static JinagaClient j { get; }
-
-    static JinagaConfig()
+    public static OAuth2HttpAuthenticationProvider CreateAuthenticationProvider(IServiceProvider services)
     {
         var settings = new Settings();
         settings.Verify();
 
+        var httpClientFactory = services.GetRequiredService<IHttpClientFactory>();
         var oauth2Client = new OAuthClient(
             settings.AuthUrl,
             settings.AccessTokenUrl,
             settings.CallbackUrl,
             settings.ClientId,
-            settings.Scope);
-        AuthenticationProvider = new OAuth2HttpAuthenticationProvider(oauth2Client);
+            settings.Scope,
+            httpClientFactory);
+        var authenticationProvider = new OAuth2HttpAuthenticationProvider(oauth2Client);
+        return authenticationProvider;
+    }
 
-        j = JinagaClient.Create(opt =>
+    public static JinagaClient CreateJinagaClient(IServiceProvider services)
+    {
+        var authenticationProvider = services.GetRequiredService<IHttpAuthenticationProvider>();
+        var settings = new Settings();
+        settings.Verify();
+
+        var jinagaClient = JinagaClient.Create(opt =>
         {
             opt.HttpEndpoint = new Uri(settings.ReplicatorUrl);
-            opt.HttpAuthenticationProvider = AuthenticationProvider;
+            opt.HttpAuthenticationProvider = authenticationProvider;
         });
+        return jinagaClient;
     }
 
     public static string Authorization() =>

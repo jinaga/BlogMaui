@@ -5,8 +5,10 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace BlogMaui.Blog;
-internal partial class PostListViewModel : ObservableObject
+public partial class PostListViewModel : ObservableObject
 {
+    private readonly JinagaClient jinagaClient;
+
     private IObserver? observer;
 
     [ObservableProperty]
@@ -18,8 +20,10 @@ internal partial class PostListViewModel : ObservableObject
 
     public ICommand Refresh { get; }
 
-    public PostListViewModel()
+    public PostListViewModel(JinagaClient jinagaClient)
     {
+        this.jinagaClient = jinagaClient;
+
         Refresh = new AsyncRelayCommand(HandleRefresh);
     }
 
@@ -41,9 +45,9 @@ internal partial class PostListViewModel : ObservableObject
             }
         );
 
-        var (user, profile) = await JinagaConfig.j.Login();
+        var (user, profile) = await jinagaClient.Login();
         var site = new Site(user, domain);
-        var userNames = await JinagaConfig.j.Query(Given<User>.Match((user, facts) =>
+        var userNames = await jinagaClient.Query(Given<User>.Match((user, facts) =>
             from name in facts.OfType<UserName>()
             where name.user == user &&
                 !facts.Any<UserName>(next => next.prior.Contains(name))
@@ -51,9 +55,9 @@ internal partial class PostListViewModel : ObservableObject
         ), user);
         if (userNames.Count != 1 || userNames.Single().value != profile.DisplayName)
         {
-            await JinagaConfig.j.Fact(new UserName(user, profile.DisplayName, userNames.ToArray()));
+            await jinagaClient.Fact(new UserName(user, profile.DisplayName, userNames.ToArray()));
         }
-        observer = JinagaConfig.j.Watch(postsInBlog, site, projection =>
+        observer = jinagaClient.Watch(postsInBlog, site, projection =>
         {
             var postHeaderViewModel = new PostHeaderViewModel();
             projection.titles.OnAdded(title =>

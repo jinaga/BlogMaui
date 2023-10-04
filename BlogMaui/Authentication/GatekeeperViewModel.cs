@@ -5,8 +5,10 @@ using System.Windows.Input;
 
 namespace BlogMaui.Authentication;
 
-internal partial class GatekeeperViewModel : ObservableObject
+public partial class GatekeeperViewModel : ObservableObject
 {
+    private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
+
     [ObservableProperty]
     private string state = "Loading";
 
@@ -16,17 +18,18 @@ internal partial class GatekeeperViewModel : ObservableObject
     public ICommand LogIn { get; }
     public ICommand LogOut { get; }
 
-    public GatekeeperViewModel()
+    public GatekeeperViewModel(OAuth2HttpAuthenticationProvider authenticationProvider)
     {
         LogIn = new AsyncRelayCommand(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
+        this.authenticationProvider = authenticationProvider;
     }
 
     public async void Initialize()
     {
         try
         {
-            bool loggedIn = await JinagaConfig.AuthenticationProvider.Initialize();
+            bool loggedIn = await authenticationProvider.Initialize();
             State = loggedIn ? "LoggedIn" : "LoggedOut";
         }
         catch (Exception ex)
@@ -40,7 +43,7 @@ internal partial class GatekeeperViewModel : ObservableObject
     {
         try
         {
-            bool loggedIn = await JinagaConfig.AuthenticationProvider.Login();
+            bool loggedIn = await authenticationProvider.Login();
             State = loggedIn ? "LoggedIn" : "LoggedOut";
         }
         catch (Exception ex)
@@ -53,7 +56,7 @@ internal partial class GatekeeperViewModel : ObservableObject
     {
         try
         {
-            await JinagaConfig.AuthenticationProvider.LogOut();
+            await authenticationProvider.LogOut();
             State = "LoggedOut";
         }
         catch (Exception ex)
