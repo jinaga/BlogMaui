@@ -7,7 +7,7 @@ public partial class Settings
 
     // For example:
     /*
-    internal partial class Settings
+    partial class Settings
     {
         public Settings()
         {
