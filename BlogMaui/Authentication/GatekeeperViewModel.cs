@@ -31,6 +31,10 @@ public partial class GatekeeperViewModel : ObservableObject
         {
             bool loggedIn = await authenticationProvider.Initialize();
             State = loggedIn ? "LoggedIn" : "LoggedOut";
+            if (loggedIn)
+            {
+                await Shell.Current.GoToAsync("main");
+            }
         }
         catch (Exception ex)
         {
@@ -45,6 +49,10 @@ public partial class GatekeeperViewModel : ObservableObject
         {
             bool loggedIn = await authenticationProvider.Login();
             State = loggedIn ? "LoggedIn" : "LoggedOut";
+            if (loggedIn)
+            {
+                await Shell.Current.GoToAsync("main");
+            }
         }
         catch (Exception ex)
         {
