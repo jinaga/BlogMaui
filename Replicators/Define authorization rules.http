@@ -5,6 +5,12 @@ Authorization: Bearer {{secret}}
 authorization {
   any Jinaga.User
 
+  (name: Blog.User.Name) {
+    user: Jinaga.User [
+      user = name->user: Jinaga.User
+    ]
+  } => user
+
   (site: Blog.Site) {
     creator: Jinaga.User [
       creator = site->creator: Jinaga.User

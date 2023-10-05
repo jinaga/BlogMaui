@@ -3,6 +3,17 @@ Content-Type: text/plain
 Authorization: Bearer {{secret}}
 
 distribution {
+  share (user: Jinaga.User) {
+    name: Blog.User.Name [
+        name -> user: Jinaga.User = user
+        !E {
+            next: Blog.User.Name [
+                next->prior: Blog.User.Name = name
+            ]
+        }
+    ]
+  }
+  with everyone
   share (site: Blog.Site) {
       post: Blog.Post [
           post->site: Blog.Site = site
