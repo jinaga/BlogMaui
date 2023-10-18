@@ -9,7 +9,8 @@ let site: Blog.Site = {
 
 let post: Blog.Post = {
     createdAt: "2022-08-16T15:23:13.231Z",
-    site
+    site,
+    author: me
 }
 
 let title: Blog.Post.Title = {
