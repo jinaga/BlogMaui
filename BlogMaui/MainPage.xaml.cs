@@ -21,7 +21,7 @@ public partial class MainPage : ContentPage
 
     protected override void OnAppearing()
     {
-        viewModel.Load("qedcode.com");
+        viewModel.Load("michaelperry.net");
         BindingContext = viewModel;
         base.OnAppearing();
     }
