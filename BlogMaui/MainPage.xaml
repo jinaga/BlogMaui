@@ -10,14 +10,12 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Text="{Binding Message}" FontSize="Large" />
+        <Label Grid.Row="0" Text="{Binding Message}" FontSize="Large" Margin="15,5" />
         <ScrollView Grid.Row="1">
             <ListView ItemsSource="{Binding Posts}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <ViewCell>
-                            <Label Text="{Binding Title}" FontSize="Medium" />
-                        </ViewCell>
+                        <TextCell Text="{Binding Title}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
