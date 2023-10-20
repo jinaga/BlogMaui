@@ -8,6 +8,7 @@ namespace BlogMaui.Authentication;
 public partial class GatekeeperViewModel : ObservableObject
 {
     private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
+    private readonly UserProvider userProvider;
 
     [ObservableProperty]
     private string state = "Loading";
@@ -18,11 +19,12 @@ public partial class GatekeeperViewModel : ObservableObject
     public ICommand LogIn { get; }
     public ICommand LogOut { get; }
 
-    public GatekeeperViewModel(OAuth2HttpAuthenticationProvider authenticationProvider)
+    public GatekeeperViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, UserProvider userProvider)
     {
         LogIn = new AsyncRelayCommand(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
         this.authenticationProvider = authenticationProvider;
+        this.userProvider = userProvider;
     }
 
     public async void Initialize()
@@ -65,6 +67,7 @@ public partial class GatekeeperViewModel : ObservableObject
         try
         {
             await authenticationProvider.LogOut();
+            await userProvider.ClearUser();
             State = "LoggedOut";
         }
         catch (Exception ex)

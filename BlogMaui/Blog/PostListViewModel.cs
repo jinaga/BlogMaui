@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BlogMaui.Authentication;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using System.Collections.ObjectModel;
@@ -8,6 +9,7 @@ namespace BlogMaui.Blog;
 public partial class PostListViewModel : ObservableObject
 {
     private readonly JinagaClient jinagaClient;
+    private readonly UserProvider userProvider;
 
     private IObserver? observer;
 
@@ -20,9 +22,10 @@ public partial class PostListViewModel : ObservableObject
 
     public ICommand Refresh { get; }
 
-    public PostListViewModel(JinagaClient jinagaClient)
+    public PostListViewModel(JinagaClient jinagaClient, UserProvider userProvider)
     {
         this.jinagaClient = jinagaClient;
+        this.userProvider = userProvider;
 
         Refresh = new AsyncRelayCommand(HandleRefresh);
     }
@@ -45,18 +48,13 @@ public partial class PostListViewModel : ObservableObject
             }
         );
 
-        var (user, profile) = await jinagaClient.Login();
-        var site = new Site(user, domain);
-        var userNames = await jinagaClient.Query(Given<User>.Match((user, facts) =>
-            from name in facts.OfType<UserName>()
-            where name.user == user &&
-                !facts.Any<UserName>(next => next.prior.Contains(name))
-            select name
-        ), user);
-        if (userNames.Count != 1 || userNames.Single().value != profile.DisplayName)
+        var user = await userProvider.GetUser();
+        if (user == null)
         {
-            await jinagaClient.Fact(new UserName(user, profile.DisplayName, userNames.ToArray()));
+            return;
         }
+
+        var site = new Site(user, domain);
         observer = jinagaClient.Watch(postsInBlog, site, projection =>
         {
             var postHeaderViewModel = new PostHeaderViewModel();

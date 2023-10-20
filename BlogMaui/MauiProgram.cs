@@ -25,6 +25,7 @@ public static class MauiProgram
         builder.Services.AddSingleton(JinagaConfig.CreateJinagaClient);
         builder.Services.AddSingleton<IHttpAuthenticationProvider>(
             services => services.GetRequiredService<OAuth2HttpAuthenticationProvider>());
+        builder.Services.AddSingleton<UserProvider>();
 
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddTransient<PostListViewModel>();
