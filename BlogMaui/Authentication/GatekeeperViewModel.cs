@@ -32,6 +32,7 @@ public partial class GatekeeperViewModel : ObservableObject
         try
         {
             bool loggedIn = await authenticationProvider.Initialize();
+            await userProvider.Initialize();
             State = loggedIn ? "LoggedIn" : "LoggedOut";
             if (loggedIn)
             {

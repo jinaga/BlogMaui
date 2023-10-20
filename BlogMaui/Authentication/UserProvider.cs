@@ -1,9 +1,12 @@
 ﻿using BlogMaui.Blog;
 using Jinaga;
+using System.Text.Json;
 
 namespace BlogMaui.Authentication;
 public class UserProvider
 {
+    private const string PublicKeyKey = "BlogMaui.PublicKey";
+
     private readonly JinagaClient jinagaClient;
     private readonly SemaphoreSlim semaphore = new(1);
     private User? user;
@@ -13,12 +16,18 @@ public class UserProvider
         this.jinagaClient = jinagaClient;
     }
 
+    public async Task Initialize()
+    {
+        await LoadUser();
+    }
+
     public async Task ClearUser()
     {
         await semaphore.WaitAsync();
         try
         {
             this.user = null;
+            await SaveUser();
         }
         finally
         {
@@ -39,6 +48,7 @@ public class UserProvider
                 if (user != null)
                 {
                     this.user = user;
+                    await SaveUser();
 
                     // Load the current user name.
                     var userNames = await jinagaClient.Query(Given<User>.Match((user, facts) =>
@@ -57,9 +67,35 @@ public class UserProvider
             }
             return user;
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error while getting user: {ex.Message}");
+            return null;
+        }
         finally
         {
             semaphore.Release();
+        }
+    }
+
+    private async Task LoadUser()
+    {
+        string? publicKey = await SecureStorage.GetAsync(PublicKeyKey);
+        if (publicKey != null)
+        {
+            this.user = new User(publicKey);
+        }
+    }
+
+    private async Task SaveUser()
+    {
+        if (user == null)
+        {
+            SecureStorage.Remove(PublicKeyKey);
+        }
+        else
+        {
+            await SecureStorage.SetAsync(PublicKeyKey, user.publicKey);
         }
     }
 }
