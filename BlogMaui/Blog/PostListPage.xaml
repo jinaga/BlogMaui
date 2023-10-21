@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:root="clr-namespace:BlogMaui"
              x:Class="BlogMaui.Blog.PostListPage">
 
     <Grid Margin="10">
@@ -23,7 +24,7 @@
         <ActivityIndicator Grid.Row="2" IsVisible="{Binding Loading}" IsRunning="{Binding Loading}" Margin="10" />
         <HorizontalStackLayout Grid.Row="3">
             <Button Text="Refresh" Command="{Binding Refresh}" Margin="10" />
-            <Button Text="Log Out" Command="{Binding LogOut}" Margin="10" />
+            <Button Text="Log Out" Command="{Binding LogOut, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" Margin="10" />
         </HorizontalStackLayout>
     </Grid>
 

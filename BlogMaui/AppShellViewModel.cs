@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BlogMaui.Authentication;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Input;
 
@@ -7,6 +8,7 @@ namespace BlogMaui;
 public partial class AppShellViewModel : ObservableObject
 {
     private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
+    private readonly UserProvider userProvider;
 
     [ObservableProperty]
     private string appState = "Initializing";
@@ -14,12 +16,15 @@ public partial class AppShellViewModel : ObservableObject
     private string error = string.Empty;
 
     public ICommand LogIn { get; }
+    public ICommand LogOut { get; }
 
-    public AppShellViewModel(OAuth2HttpAuthenticationProvider authenticationProvider)
+    public AppShellViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, UserProvider userProvider)
     {
-        this.authenticationProvider = authenticationProvider;
-
         LogIn = new AsyncRelayCommand(HandleLogIn);
+        LogOut = new AsyncRelayCommand(HandleLogOut);
+
+        this.authenticationProvider = authenticationProvider;
+        this.userProvider = userProvider;
     }
 
     private async Task HandleLogIn()
@@ -40,6 +45,24 @@ public partial class AppShellViewModel : ObservableObject
         catch (Exception ex)
         {
             Error = $"Error while logging in: {ex.GetMessage()}";
+        }
+    }
+
+    public async Task HandleLogOut()
+    {
+        try
+        {
+            Error = string.Empty;
+            await authenticationProvider.LogOut();
+            await userProvider.ClearUser();
+            AppState = "NotLoggedIn";
+
+            // Use two slashes to prevent back navigation.
+            await Shell.Current.GoToAsync("//notloggedin");
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error while logging out: {ex.GetMessage()}";
         }
     }
 }
