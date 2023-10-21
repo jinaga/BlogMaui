@@ -2,10 +2,8 @@ namespace BlogMaui.Visitor;
 
 public partial class VisitorPage : ContentPage
 {
-	public VisitorPage(VisitorViewModel viewModel)
+	public VisitorPage()
 	{
 		InitializeComponent();
-
-		BindingContext = viewModel;
 	}
 }

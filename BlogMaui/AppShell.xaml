@@ -29,6 +29,12 @@
                 Title="Visitor"
                 ContentTemplate="{DataTemplate visitor:VisitorPage}" />
         </Tab>
+        <Tab Title="Log In"
+             Route="login">
+            <ShellContent
+                Title="Log In"
+                ContentTemplate="{DataTemplate visitor:LoginPage}" />
+        </Tab>
     </TabBar>
 
     <TabBar IsVisible="{Binding State, Converter={StaticResource StringEqualsConverter}, ConverterParameter=LoggedIn}"

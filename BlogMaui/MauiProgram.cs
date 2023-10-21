@@ -30,7 +30,6 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddTransient<AppShell>();
-        builder.Services.AddTransient<VisitorViewModel>();
         builder.Services.AddTransient<VisitorPage>();
         builder.Services.AddTransient<PostListPage>();
         builder.Services.AddTransient<PostListViewModel>();

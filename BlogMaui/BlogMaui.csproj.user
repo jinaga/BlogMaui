@@ -39,6 +39,9 @@
     <MauiXaml Update="Resources\Styles\Styles.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
+    <MauiXaml Update="Visitor\LoginPage.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
     <MauiXaml Update="Visitor\VisitorPage.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>

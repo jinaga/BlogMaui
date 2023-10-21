@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:root="clr-namespace:BlogMaui"
              x:Class="BlogMaui.Visitor.VisitorPage"
              Title="Visitor">
     <VerticalStackLayout VerticalOptions="Center"
                          HorizontalOptions="Center">
-        <Button Text="Log In"
-                Command="{Binding LogIn, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}"
-                HorizontalOptions="Center" />
-
-        <Label Text="{Binding Error, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" />
+        <Label Text="This app was built using Jinaga.NET. It demonstrates how to use the Jinaga platform to build a mobile application."
+               Margin="10"/>
+        <Label Text="To get started, log in using your Apple ID."
+               Margin="10"/>
     </VerticalStackLayout>
 </ContentPage>
