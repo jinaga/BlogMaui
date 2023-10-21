@@ -9,6 +9,7 @@ public partial class GatekeeperViewModel : ObservableObject
 {
     private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
     private readonly UserProvider userProvider;
+    private readonly AppShellViewModel appShellViewModel;
 
     [ObservableProperty]
     private string state = "Loading";
@@ -19,12 +20,13 @@ public partial class GatekeeperViewModel : ObservableObject
     public ICommand LogIn { get; }
     public ICommand LogOut { get; }
 
-    public GatekeeperViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, UserProvider userProvider)
+    public GatekeeperViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, UserProvider userProvider, AppShellViewModel appShellViewModel)
     {
         LogIn = new AsyncRelayCommand(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
         this.authenticationProvider = authenticationProvider;
         this.userProvider = userProvider;
+        this.appShellViewModel = appShellViewModel;
     }
 
     public async void Initialize()
@@ -34,6 +36,7 @@ public partial class GatekeeperViewModel : ObservableObject
             bool loggedIn = await authenticationProvider.Initialize();
             await userProvider.Initialize();
             State = loggedIn ? "LoggedIn" : "LoggedOut";
+            appShellViewModel.AppState = loggedIn ? "LoggedIn" : "LoggedOut";
             if (loggedIn)
             {
                 // Use two slashes to prevent back navigation to the gatekeeper page.
@@ -53,6 +56,7 @@ public partial class GatekeeperViewModel : ObservableObject
         {
             bool loggedIn = await authenticationProvider.Login();
             State = loggedIn ? "LoggedIn" : "LoggedOut";
+            appShellViewModel.AppState = loggedIn ? "LoggedIn" : "LoggedOut";
             if (loggedIn)
             {
                 // Use two slashes to prevent back navigation to the gatekeeper page.
@@ -72,6 +76,7 @@ public partial class GatekeeperViewModel : ObservableObject
             await authenticationProvider.LogOut();
             await userProvider.ClearUser();
             State = "LoggedOut";
+            appShellViewModel.AppState = "LoggedOut";
         }
         catch (Exception ex)
         {

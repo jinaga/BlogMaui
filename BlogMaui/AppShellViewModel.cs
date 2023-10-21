@@ -5,6 +5,6 @@ namespace BlogMaui
     public partial class AppShellViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string state = "LoggedIn";
+        private string appState = "Initializing";
     }
 }

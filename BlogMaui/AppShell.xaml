@@ -20,7 +20,7 @@
         ContentTemplate="{DataTemplate authentication:GatekeeperPage}"
         Route="gatekeeper" />
 
-    <TabBar IsVisible="{Binding State, Converter={StaticResource StringEqualsConverter}, ConverterParameter=NotLoggedIn}"
+    <TabBar IsVisible="{Binding AppState, Converter={StaticResource StringEqualsConverter}, ConverterParameter=NotLoggedIn}"
             Route="notloggedin">
         <Tab Title="Visitor"
              Route="visitor">
