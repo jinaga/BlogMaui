@@ -1,6 +1,4 @@
-﻿using BlogMaui.Blog;
-
-namespace BlogMaui;
+﻿namespace BlogMaui.Blog;
 
 // The refresh view does not use the command to indicate
 // that the user has initiated a refresh. It executes the
@@ -9,11 +7,11 @@ namespace BlogMaui;
 // Until this is fixed, do not use the RefreshView.
 // https://github.com/dotnet/maui/issues/6456
 
-public partial class MainPage : ContentPage
+public partial class PostListPage : ContentPage
 {
     private readonly PostListViewModel viewModel;
 
-    public MainPage(PostListViewModel viewModel)
+    public PostListPage(PostListViewModel viewModel)
     {
         InitializeComponent();
         this.viewModel = viewModel;

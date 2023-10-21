@@ -7,6 +7,7 @@
     xmlns:binding="clr-namespace:BlogMaui.Binding"
     xmlns:authentication="clr-namespace:BlogMaui.Authentication"
     xmlns:visitor="clr-namespace:BlogMaui.Visitor"
+    xmlns:blog="clr-namespace:BlogMaui.Blog"
     Shell.FlyoutBehavior="Disabled">
 
     <Shell.Resources>
@@ -36,7 +37,7 @@
              Route="main">
             <ShellContent
                 Title="Home"
-                ContentTemplate="{DataTemplate local:MainPage}" />
+                ContentTemplate="{DataTemplate blog:PostHeaderViewModel}" />
         </Tab>
     </TabBar>
 </Shell>

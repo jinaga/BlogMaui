@@ -93,6 +93,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Blog\PostListPage.xaml.cs">
+	    <DependentUpon>PostListPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Authentication\GatekeeperPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

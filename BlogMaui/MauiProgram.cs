@@ -32,7 +32,7 @@ public static class MauiProgram
         builder.Services.AddTransient<AppShell>();
         builder.Services.AddTransient<VisitorViewModel>();
         builder.Services.AddTransient<VisitorPage>();
-        builder.Services.AddTransient<MainPage>();
+        builder.Services.AddTransient<PostListPage>();
         builder.Services.AddTransient<PostListViewModel>();
         builder.Services.AddTransient<GatekeeperPage>();
         builder.Services.AddTransient<GatekeeperViewModel>();
