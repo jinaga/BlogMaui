@@ -109,9 +109,9 @@ public partial class PostListViewModel : ObservableObject
             Message = "Logging out...";
             await authenticationProvider.LogOut();
             await userProvider.ClearUser();
-            appShellViewModel.AppState = "LoggedOut";
+            appShellViewModel.AppState = "NotLoggedIn";
             Message = "Logged out.";
-            await Shell.Current.GoToAsync("//notloggedin/visitor");
+            await Shell.Current.GoToAsync("//notloggedin");
         }
         catch (Exception ex)
         {

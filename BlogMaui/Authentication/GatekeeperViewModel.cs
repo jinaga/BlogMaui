@@ -36,12 +36,12 @@ public partial class GatekeeperViewModel : ObservableObject
             bool loggedIn = await authenticationProvider.Initialize();
             await userProvider.Initialize();
             State = loggedIn ? "LoggedIn" : "LoggedOut";
-            appShellViewModel.AppState = loggedIn ? "LoggedIn" : "LoggedOut";
-            if (loggedIn)
-            {
-                // Use two slashes to prevent back navigation to the gatekeeper page.
-                await Shell.Current.GoToAsync("//loggedin/main");
-            }
+            appShellViewModel.AppState = loggedIn ? "LoggedIn" : "NotLoggedIn";
+
+            // Use two slashes to prevent back navigation to the gatekeeper page.
+            await Shell.Current.GoToAsync(loggedIn
+                ? "//loggedin"
+                : "//notloggedin");
         }
         catch (Exception ex)
         {
@@ -56,12 +56,12 @@ public partial class GatekeeperViewModel : ObservableObject
         {
             bool loggedIn = await authenticationProvider.Login();
             State = loggedIn ? "LoggedIn" : "LoggedOut";
-            appShellViewModel.AppState = loggedIn ? "LoggedIn" : "LoggedOut";
-            if (loggedIn)
-            {
-                // Use two slashes to prevent back navigation to the gatekeeper page.
-                await Shell.Current.GoToAsync("//loggedin/main");
-            }
+            appShellViewModel.AppState = loggedIn ? "LoggedIn" : "NotLoggedIn";
+
+            // Use two slashes to prevent back navigation to the gatekeeper page.
+            await Shell.Current.GoToAsync(loggedIn
+                ? "//loggedin"
+                : "//notloggedin");
         }
         catch (Exception ex)
         {
@@ -76,7 +76,7 @@ public partial class GatekeeperViewModel : ObservableObject
             await authenticationProvider.LogOut();
             await userProvider.ClearUser();
             State = "LoggedOut";
-            appShellViewModel.AppState = "LoggedOut";
+            appShellViewModel.AppState = "NotLoggedIn";
         }
         catch (Exception ex)
         {
