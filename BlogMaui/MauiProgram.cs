@@ -27,9 +27,11 @@ public static class MauiProgram
             services => services.GetRequiredService<OAuth2HttpAuthenticationProvider>());
         builder.Services.AddSingleton<UserProvider>();
 
-        builder.Services.AddSingleton<MainPage>();
+        builder.Services.AddTransient<AppShellViewModel>();
+        builder.Services.AddTransient<AppShell>();
+        builder.Services.AddTransient<MainPage>();
         builder.Services.AddTransient<PostListViewModel>();
-        builder.Services.AddSingleton<GatekeeperPage>();
+        builder.Services.AddTransient<GatekeeperPage>();
         builder.Services.AddTransient<GatekeeperViewModel>();
 
 #if DEBUG

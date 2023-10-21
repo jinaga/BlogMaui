@@ -1,14 +1,11 @@
-﻿using BlogMaui.Authentication;
-
-namespace BlogMaui;
+﻿namespace BlogMaui;
 
 public partial class AppShell : Shell
 {
-    public AppShell()
+    public AppShell(AppShellViewModel viewModel)
     {
         InitializeComponent();
 
-        Routing.RegisterRoute("gatekeeper", typeof(GatekeeperPage));
-        Routing.RegisterRoute("main", typeof(MainPage));
+        BindingContext = viewModel;
     }
 }

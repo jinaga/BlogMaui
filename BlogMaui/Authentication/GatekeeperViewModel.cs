@@ -37,7 +37,7 @@ public partial class GatekeeperViewModel : ObservableObject
             if (loggedIn)
             {
                 // Use two slashes to prevent back navigation to the gatekeeper page.
-                await Shell.Current.GoToAsync("//main");
+                await Shell.Current.GoToAsync("//loggedin/main");
             }
         }
         catch (Exception ex)
@@ -56,7 +56,7 @@ public partial class GatekeeperViewModel : ObservableObject
             if (loggedIn)
             {
                 // Use two slashes to prevent back navigation to the gatekeeper page.
-                await Shell.Current.GoToAsync("//main");
+                await Shell.Current.GoToAsync("//loggedin/main");
             }
         }
         catch (Exception ex)
