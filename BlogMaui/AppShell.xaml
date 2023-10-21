@@ -4,16 +4,23 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:BlogMaui"
+    xmlns:binding="clr-namespace:BlogMaui.Binding"
     xmlns:authentication="clr-namespace:BlogMaui.Authentication"
     xmlns:visitor="clr-namespace:BlogMaui.Visitor"
     Shell.FlyoutBehavior="Disabled">
+
+    <Shell.Resources>
+        <ResourceDictionary>
+            <binding:StringEqualsConverter x:Key="StringEqualsConverter" />
+        </ResourceDictionary>
+    </Shell.Resources>
 
     <ShellContent
         Title="Gatekeeper"
         ContentTemplate="{DataTemplate authentication:GatekeeperPage}"
         Route="gatekeeper" />
 
-    <TabBar IsVisible="{Binding NotLoggedIn}"
+    <TabBar IsVisible="{Binding State, Converter={StaticResource StringEqualsConverter}, ConverterParameter=NotLoggedIn}"
             Route="notloggedin">
         <Tab Title="Visitor"
              Route="visitor">
@@ -23,7 +30,7 @@
         </Tab>
     </TabBar>
 
-    <TabBar IsVisible="{Binding LoggedIn}"
+    <TabBar IsVisible="{Binding State, Converter={StaticResource StringEqualsConverter}, ConverterParameter=LoggedIn}"
             Route="loggedin">
         <Tab Title="Home"
              Route="main">
