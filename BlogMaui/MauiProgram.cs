@@ -1,4 +1,5 @@
-﻿using BlogMaui.Authentication;
+﻿using BlogMaui.Account;
+using BlogMaui.Authentication;
 using BlogMaui.Blog;
 using BlogMaui.Visitor;
 using CommunityToolkit.Maui;
@@ -30,11 +31,15 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddTransient<AppShell>();
-        builder.Services.AddTransient<VisitorPage>();
-        builder.Services.AddTransient<PostListPage>();
-        builder.Services.AddTransient<PostListViewModel>();
         builder.Services.AddTransient<GatekeeperPage>();
         builder.Services.AddTransient<GatekeeperViewModel>();
+
+        builder.Services.AddTransient<VisitorPage>();
+        builder.Services.AddTransient<LoginPage>();
+
+        builder.Services.AddTransient<PostListPage>();
+        builder.Services.AddTransient<PostListViewModel>();
+        builder.Services.AddTransient<AccountPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

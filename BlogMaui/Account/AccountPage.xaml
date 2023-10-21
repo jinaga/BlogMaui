@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:root="clr-namespace:BlogMaui"
+             x:Class="BlogMaui.Account.AccountPage"
+             Title="Account">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label Text="This page should show information about the user's account."
+               FontSize="Medium"
+               Margin="10" />
+        <HorizontalStackLayout Grid.Row="1">
+            <Button Text="Log Out" Command="{Binding LogOut, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" Margin="10" />
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>

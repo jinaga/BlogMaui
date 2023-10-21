@@ -6,8 +6,10 @@
     <VerticalStackLayout VerticalOptions="Center"
                          HorizontalOptions="Center">
         <Label Text="This app was built using Jinaga.NET. It demonstrates how to use the Jinaga platform to build a mobile application."
-               Margin="10"/>
+               FontSize="Medium"
+               Margin="10" />
         <Label Text="To get started, log in using your Apple ID."
-               Margin="10"/>
+               FontSize="Medium"
+               Margin="10" />
     </VerticalStackLayout>
 </ContentPage>

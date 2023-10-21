@@ -4,10 +4,11 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:BlogMaui"
-    xmlns:binding="clr-namespace:BlogMaui.Binding"
+    xmlns:account="clr-namespace:BlogMaui.Account"
     xmlns:authentication="clr-namespace:BlogMaui.Authentication"
-    xmlns:visitor="clr-namespace:BlogMaui.Visitor"
+    xmlns:binding="clr-namespace:BlogMaui.Binding"
     xmlns:blog="clr-namespace:BlogMaui.Blog"
+    xmlns:visitor="clr-namespace:BlogMaui.Visitor"
     Shell.FlyoutBehavior="Disabled">
 
     <Shell.Resources>
@@ -44,6 +45,12 @@
             <ShellContent
                 Title="Home"
                 ContentTemplate="{DataTemplate blog:PostListPage}" />
+        </Tab>
+        <Tab Title="Account"
+             Route="account">
+            <ShellContent
+                Title="Account"
+                ContentTemplate="{DataTemplate account:AccountPage}" />
         </Tab>
     </TabBar>
 </Shell>
