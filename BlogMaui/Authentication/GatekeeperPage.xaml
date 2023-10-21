@@ -1,44 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
              x:Class="BlogMaui.Authentication.GatekeeperPage"
              Title="GatekeeperPage"
              Shell.NavBarIsVisible="False">
-    <ContentPage.Behaviors>
-        <mct:StatusBarBehavior StatusBarColor="{StaticResource Tertiary}"/>
-    </ContentPage.Behaviors>
 
     <VerticalStackLayout
-        toolkit:StateContainer.CurrentState="{Binding State}"
         HorizontalOptions="Center"
         VerticalOptions="Center">
 
-        <toolkit:StateContainer.StateViews>
-            <!-- When Loading, show the activity indicator -->
-            <VerticalStackLayout toolkit:StateView.StateKey="Loading" VerticalOptions="Center" HorizontalOptions="Center">
-                <ActivityIndicator Color="{StaticResource Primary}"
-                               IsRunning="True" HeightRequest="50" WidthRequest="50"
-                               IsVisible="True" />
-                <Label Text="Loading..." IsVisible="True" HorizontalOptions="Center" />
-            </VerticalStackLayout>
-
-            <!-- When LoggedOut, show the login button -->
-            <VerticalStackLayout toolkit:StateView.StateKey="LoggedOut" VerticalOptions="Center" HorizontalOptions="Center">
-                <Button Text="Log In" Command="{Binding LogIn}" HorizontalOptions="Center" />
-
-                <Label Text="{Binding Error}" />
-            </VerticalStackLayout>
-
-            <!-- When LoggedIn, show the content -->
-            <VerticalStackLayout toolkit:StateView.StateKey="LoggedIn" HorizontalOptions="Center" VerticalOptions="Center">
-                <Label Text="You are logged in" HorizontalOptions="Center" />
-
-                <Button Text="Log Out" Command="{Binding LogOut}" HorizontalOptions="Center" />
-
-                <Label Text="{Binding Error}" />
-            </VerticalStackLayout>
-        </toolkit:StateContainer.StateViews>
+        <Label Text="{Binding Error}" />
     </VerticalStackLayout>
 </ContentPage>

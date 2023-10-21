@@ -26,13 +26,16 @@ public partial class VisitorViewModel : ObservableObject
     {
         try
         {
+            Error = string.Empty;
             bool loggedIn = await authenticationProvider.Login();
-            appShellViewModel.AppState = loggedIn ? "LoggedIn" : "NotLoggedIn";
 
-            // Use two slashes to prevent back navigation to the gatekeeper page.
-            await Shell.Current.GoToAsync(loggedIn
-                ? "//loggedin"
-                : "//notloggedin");
+            if (loggedIn)
+            {
+                appShellViewModel.AppState = "LoggedIn";
+
+                // Use two slashes to prevent back navigation.
+                await Shell.Current.GoToAsync("//loggedin");
+            }
         }
         catch (Exception ex)
         {
