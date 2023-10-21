@@ -37,7 +37,7 @@
              Route="main">
             <ShellContent
                 Title="Home"
-                ContentTemplate="{DataTemplate blog:PostHeaderViewModel}" />
+                ContentTemplate="{DataTemplate blog:PostListPage}" />
         </Tab>
     </TabBar>
 </Shell>
