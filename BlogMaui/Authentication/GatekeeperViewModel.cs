@@ -36,7 +36,8 @@ public partial class GatekeeperViewModel : ObservableObject
             State = loggedIn ? "LoggedIn" : "LoggedOut";
             if (loggedIn)
             {
-                await Shell.Current.GoToAsync("main");
+                // Use two slashes to prevent back navigation to the gatekeeper page.
+                await Shell.Current.GoToAsync("//main");
             }
         }
         catch (Exception ex)
@@ -54,7 +55,8 @@ public partial class GatekeeperViewModel : ObservableObject
             State = loggedIn ? "LoggedIn" : "LoggedOut";
             if (loggedIn)
             {
-                await Shell.Current.GoToAsync("main");
+                // Use two slashes to prevent back navigation to the gatekeeper page.
+                await Shell.Current.GoToAsync("//main");
             }
         }
         catch (Exception ex)
