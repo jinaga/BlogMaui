@@ -1,5 +1,4 @@
 ﻿using BlogMaui.Authentication;
-using BlogMaui.Exceptions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;

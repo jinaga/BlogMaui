@@ -1,5 +1,6 @@
 ﻿using BlogMaui.Authentication;
 using BlogMaui.Blog;
+using BlogMaui.Visitor;
 using CommunityToolkit.Maui;
 using Jinaga.Http;
 using Microsoft.Extensions.Logging;
@@ -29,6 +30,8 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddTransient<AppShell>();
+        builder.Services.AddTransient<VisitorViewModel>();
+        builder.Services.AddTransient<VisitorPage>();
         builder.Services.AddTransient<MainPage>();
         builder.Services.AddTransient<PostListViewModel>();
         builder.Services.AddTransient<GatekeeperPage>();

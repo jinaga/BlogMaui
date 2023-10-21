@@ -3,10 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BlogMaui.Visitor.VisitorPage"
              Title="VisitorPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Visitor Page"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+    <VerticalStackLayout VerticalOptions="Center"
+                         HorizontalOptions="Center">
+        <Button Text="Log In"
+                Command="{Binding LogIn}"
+                HorizontalOptions="Center" />
+
+        <Label Text="{Binding Error}" />
     </VerticalStackLayout>
 </ContentPage>
