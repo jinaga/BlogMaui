@@ -23,6 +23,7 @@
         <ActivityIndicator Grid.Row="2" IsVisible="{Binding Loading}" IsRunning="{Binding Loading}" Margin="10" />
         <HorizontalStackLayout Grid.Row="3">
             <Button Text="Refresh" Command="{Binding Refresh}" Margin="10" />
+            <Button Text="Log Out" Command="{Binding LogOut}" Margin="10" />
         </HorizontalStackLayout>
     </Grid>
 

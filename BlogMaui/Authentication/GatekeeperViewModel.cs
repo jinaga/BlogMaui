@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BlogMaui.Exceptions;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Text;
 using System.Windows.Input;
 
 namespace BlogMaui.Authentication;
@@ -45,7 +45,7 @@ public partial class GatekeeperViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            Error = $"Error while initializing: {GetMessage(ex)}";
+            Error = $"Error while initializing: {ex.GetMessage()}";
             State = "LoggedOut";
         }
     }
@@ -65,7 +65,7 @@ public partial class GatekeeperViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            Error = $"Error while logging in: {GetMessage(ex)}";
+            Error = $"Error while logging in: {ex.GetMessage()}";
         }
     }
 
@@ -80,18 +80,7 @@ public partial class GatekeeperViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            Error = $"Error while logging out: {GetMessage(ex)}";
+            Error = $"Error while logging out: {ex.GetMessage()}";
         }
-    }
-
-    private static string GetMessage(Exception? ex)
-    {
-        var builder = new StringBuilder();
-        while (ex != null)
-        {
-            builder.AppendLine(ex.Message);
-            ex = ex.InnerException;
-        }
-        return builder.ToString();
     }
 }

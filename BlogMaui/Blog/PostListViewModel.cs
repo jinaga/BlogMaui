@@ -1,4 +1,5 @@
 ﻿using BlogMaui.Authentication;
+using BlogMaui.Exceptions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
@@ -9,7 +10,9 @@ namespace BlogMaui.Blog;
 public partial class PostListViewModel : ObservableObject
 {
     private readonly JinagaClient jinagaClient;
+    private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
     private readonly UserProvider userProvider;
+    private readonly AppShellViewModel appShellViewModel;
 
     private IObserver? observer;
 
@@ -21,13 +24,17 @@ public partial class PostListViewModel : ObservableObject
     public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
 
     public ICommand Refresh { get; }
+    public ICommand LogOut { get; }
 
-    public PostListViewModel(JinagaClient jinagaClient, UserProvider userProvider)
+    public PostListViewModel(JinagaClient jinagaClient, UserProvider userProvider, OAuth2HttpAuthenticationProvider authenticationProvider, AppShellViewModel appShellViewModel)
     {
         this.jinagaClient = jinagaClient;
         this.userProvider = userProvider;
+        this.authenticationProvider = authenticationProvider;
+        this.appShellViewModel = appShellViewModel;
 
         Refresh = new AsyncRelayCommand(HandleRefresh);
+        LogOut = new AsyncRelayCommand(HandleLogOut);
     }
 
     public async void Load(string domain)
@@ -92,6 +99,23 @@ public partial class PostListViewModel : ObservableObject
         {
             Message = $"Error while loading: {ex.Message}";
             Loading = false;
+        }
+    }
+
+    public async Task HandleLogOut()
+    {
+        try
+        {
+            Message = "Logging out...";
+            await authenticationProvider.LogOut();
+            await userProvider.ClearUser();
+            appShellViewModel.AppState = "LoggedOut";
+            Message = "Logged out.";
+            await Shell.Current.GoToAsync("//notloggedin/visitor");
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error while logging out: {ex.GetMessage()}";
         }
     }
 
