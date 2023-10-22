@@ -111,6 +111,7 @@ public partial class PostListViewModel : ObservableObject
         }
         catch (Exception ex)
         {
+            Loading = false;
             Message = $"Error while loading: {ex.Message}";
         }
     }
