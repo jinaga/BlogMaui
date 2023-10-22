@@ -8,6 +8,7 @@
     xmlns:authentication="clr-namespace:BlogMaui.Authentication"
     xmlns:binding="clr-namespace:BlogMaui.Binding"
     xmlns:blog="clr-namespace:BlogMaui.Blog"
+    xmlns:fonts="clr-namespace:BlogMaui.Fonts"
     xmlns:visitor="clr-namespace:BlogMaui.Visitor"
     Shell.FlyoutBehavior="Disabled">
 
@@ -25,15 +26,15 @@
     <TabBar IsVisible="{Binding AppState, Converter={StaticResource StringEqualsConverter}, ConverterParameter=NotLoggedIn}"
             Route="notloggedin">
         <Tab Title="Visitor"
+             Icon="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_incognito_24_regular}}"
              Route="visitor">
             <ShellContent
-                Title="Visitor"
                 ContentTemplate="{DataTemplate visitor:VisitorPage}" />
         </Tab>
         <Tab Title="Log In"
+             Icon="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_person_key_20_regular}}"
              Route="login">
             <ShellContent
-                Title="Log In"
                 ContentTemplate="{DataTemplate visitor:LoginPage}" />
         </Tab>
     </TabBar>
@@ -41,15 +42,15 @@
     <TabBar IsVisible="{Binding State, Converter={StaticResource StringEqualsConverter}, ConverterParameter=LoggedIn}"
             Route="loggedin">
         <Tab Title="Home"
+             Icon="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_home_32_regular}}"
              Route="main">
             <ShellContent
-                Title="Home"
                 ContentTemplate="{DataTemplate blog:PostListPage}" />
         </Tab>
         <Tab Title="Account"
+             Icon="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_person_32_regular}}"
              Route="account">
             <ShellContent
-                Title="Account"
                 ContentTemplate="{DataTemplate account:AccountPage}" />
         </Tab>
     </TabBar>
