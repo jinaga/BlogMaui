@@ -15,8 +15,6 @@ public partial class PostListViewModel : ObservableObject
 
     [ObservableProperty]
     private bool loading = true;
-    [ObservableProperty]
-    private string message = "Loading...";
 
     [ObservableProperty]
     private string status = "Green";
@@ -87,15 +85,12 @@ public partial class PostListViewModel : ObservableObject
 
         try
         {
-            Message = "Checking for updates...";
             Loading = true;
             await observer.Refresh();
-            Message = "Posts loaded.";
             Loading = false;
         }
-        catch (Exception ex)
+        catch
         {
-            Message = $"Error while loading: {ex.Message}";
             Loading = false;
         }
     }
@@ -108,16 +103,13 @@ public partial class PostListViewModel : ObservableObject
             if (wasInCache)
             {
                 Loading = false;
-                Message = "Checking for updates...";
             }
             await observer.Loaded;
             Loading = false;
-            Message = "Posts loaded.";
         }
-        catch (Exception ex)
+        catch
         {
             Loading = false;
-            Message = $"Error while loading: {ex.Message}";
         }
     }
 
