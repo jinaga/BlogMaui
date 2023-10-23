@@ -18,6 +18,9 @@ public partial class PostListViewModel : ObservableObject
     [ObservableProperty]
     private string message = "Loading...";
 
+    [ObservableProperty]
+    private string status = "Green";
+
     public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
 
     public ICommand Refresh { get; }
@@ -32,6 +35,8 @@ public partial class PostListViewModel : ObservableObject
 
     public async void Load(string domain)
     {
+        jinagaClient.OnStatusChanged += JinagaClient_OnStatusChanged;
+
         var postsInBlog = Given<Site>.Match((site, facts) =>
             from post in facts.OfType<Post>()
             where post.site == site &&
@@ -118,7 +123,30 @@ public partial class PostListViewModel : ObservableObject
 
     public void Unload()
     {
+        jinagaClient.OnStatusChanged -= JinagaClient_OnStatusChanged;
+
         observer?.Stop();
         Posts.Clear();
+    }
+
+    private void JinagaClient_OnStatusChanged(JinagaStatus status)
+    {
+        if ((!status.IsSaving || status.LastSaveError != null) && status.QueueLength > 0)
+        {
+            // There are facts in the queue, and
+            // the client is not saving, or has
+            // experienced an error.
+            Status = "Red";
+        }
+        else if (status.LastLoadError != null)
+        {
+            // There was an error last time the client
+            // tried loading.
+            Status = "Yellow";
+        }
+        else
+        {
+            Status = "Green";
+        }
     }
 }

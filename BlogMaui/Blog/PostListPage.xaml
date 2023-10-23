@@ -11,7 +11,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Text="{Binding Message}" FontSize="Large" Margin="15,5" />
+        <Label Grid.Row="0" Text="{Binding Status}" FontSize="Large" Margin="15,5" />
         <ScrollView Grid.Row="1">
             <ListView ItemsSource="{Binding Posts}">
                 <ListView.ItemTemplate>
