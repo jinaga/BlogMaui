@@ -2,6 +2,7 @@
 using BlogMaui.Blog;
 using Jinaga;
 using Jinaga.Http;
+using Jinaga.Store.SQLite;
 
 namespace BlogMaui;
 public static class JinagaConfig
@@ -34,10 +35,13 @@ public static class JinagaConfig
         var authenticationProvider = services.GetRequiredService<IHttpAuthenticationProvider>();
         var settings = services.GetRequiredService<Settings>();
 
-        var jinagaClient = JinagaClient.Create(opt =>
+        var jinagaClient = JinagaSQLiteClient.Create(opt =>
         {
             opt.HttpEndpoint = new Uri(settings.ReplicatorUrl);
             opt.HttpAuthenticationProvider = authenticationProvider;
+            opt.SQLitePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "blog.db");
         });
         return jinagaClient;
     }
