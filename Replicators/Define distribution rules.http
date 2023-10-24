@@ -3,39 +3,44 @@ Content-Type: text/plain
 Authorization: Bearer {{secret}}
 
 distribution {
-  share (user: Jinaga.User) {
-    name: Blog.User.Name [
-        name -> user: Jinaga.User = user
-        !E {
-            next: Blog.User.Name [
-                next->prior: Blog.User.Name = name
+    share (user: Jinaga.User) {
+        name: Blog.User.Name [
+            name -> user: Jinaga.User = user
+            !E {
+                next: Blog.User.Name [
+                    next->prior: Blog.User.Name = name
+                ]
+            }
+        ]
+    }
+    with everyone
+    share (site: Blog.Site) {
+        post: Blog.Post [
+            post->site: Blog.Site = site
+            !E {
+                deleted: Blog.Post.Deleted [
+                    deleted->post: Blog.Post = post
+                ]
+            }
+        ]
+    } => {
+        id = #post
+        createdAt = post.createdAt
+        titles = {
+            title: Blog.Post.Title [
+                title->post: Blog.Post = post
+                !E {
+                    next: Blog.Post.Title [
+                        next->prior: Blog.Post.Title = title
+                    ]
+                }
             ]
-        }
-    ]
-  }
-  with everyone
-  share (site: Blog.Site) {
-      post: Blog.Post [
-          post->site: Blog.Site = site
-          !E {
-              deleted: Blog.Post.Deleted [
-                  deleted->post: Blog.Post = post
-              ]
-          }
-      ]
-  } => {
-      id = #post
-      createdAt = post.createdAt
-      titles = {
-          title: Blog.Post.Title [
-              title->post: Blog.Post = post
-              !E {
-                  next: Blog.Post.Title [
-                      next->prior: Blog.Post.Title = title
-                  ]
-              }
-          ]
-      } => title.value
-  }
-  with everyone
+        } => title.value
+            authors = {
+                author: Jinaga.User [
+                    author = post->author: Jinaga.User
+                ]
+            }
+    }
+    with everyone
 }
