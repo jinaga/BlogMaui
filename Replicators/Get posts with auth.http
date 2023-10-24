@@ -29,4 +29,9 @@ let site: Blog.Site = {
             }
         ]
     } => title.value
+    authors = {
+        author: Jinaga.User [
+            author = post->author: Jinaga.User
+        ]
+    }
 }
