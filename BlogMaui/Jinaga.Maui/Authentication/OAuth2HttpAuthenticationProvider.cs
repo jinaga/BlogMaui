@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
-namespace BlogMaui.Jinaga.Maui.Authentication;
+namespace Jinaga.Maui.Authentication;
 
 public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 {

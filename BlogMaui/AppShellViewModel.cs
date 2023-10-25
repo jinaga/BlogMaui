@@ -1,7 +1,7 @@
 ﻿using BlogMaui.Authentication;
-using BlogMaui.Jinaga.Maui.Authentication;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Jinaga.Maui.Authentication;
 using System.Windows.Input;
 
 namespace BlogMaui;

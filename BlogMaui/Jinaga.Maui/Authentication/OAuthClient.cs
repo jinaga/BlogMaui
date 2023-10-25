@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace BlogMaui.Jinaga.Maui.Authentication;
+namespace Jinaga.Maui.Authentication;
 
 public class OAuthClient
 {

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BlogMaui.Jinaga.Maui.Authentication;
+namespace Jinaga.Maui.Authentication;
 
 internal class AuthenticationToken
 {

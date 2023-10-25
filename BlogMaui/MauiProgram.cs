@@ -1,10 +1,9 @@
 ﻿using BlogMaui.Account;
 using BlogMaui.Authentication;
 using BlogMaui.Blog;
-using BlogMaui.Jinaga.Maui.Authentication;
 using BlogMaui.Visitor;
 using CommunityToolkit.Maui;
-using Jinaga.Http;
+using Jinaga.Maui;
 using Microsoft.Extensions.Logging;
 
 namespace BlogMaui;
@@ -27,8 +26,7 @@ public static class MauiProgram
         builder.Services.AddSingleton(JinagaConfig.CreateSettings);
         builder.Services.AddSingleton(JinagaConfig.CreateAuthenticationProvider);
         builder.Services.AddSingleton(JinagaConfig.CreateJinagaClient);
-        builder.Services.AddSingleton<IHttpAuthenticationProvider>(
-            services => services.GetRequiredService<OAuth2HttpAuthenticationProvider>());
+        builder.Services.AddJinagaAuthentication();
         builder.Services.AddSingleton<UserProvider>();
 
         builder.Services.AddSingleton<AppShellViewModel>();
