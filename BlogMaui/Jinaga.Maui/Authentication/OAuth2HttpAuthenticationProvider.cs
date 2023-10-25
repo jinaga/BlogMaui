@@ -1,10 +1,9 @@
-﻿using BlogMaui.Authentication;
-using Jinaga.Http;
+﻿using Jinaga.Http;
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
-namespace BlogMaui;
+namespace BlogMaui.Jinaga.Maui.Authentication;
 
 public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 {

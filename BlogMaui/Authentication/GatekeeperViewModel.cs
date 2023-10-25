@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BlogMaui.Jinaga.Maui.Authentication;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BlogMaui.Authentication;
 

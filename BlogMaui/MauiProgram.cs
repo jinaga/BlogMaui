@@ -1,6 +1,7 @@
 ﻿using BlogMaui.Account;
 using BlogMaui.Authentication;
 using BlogMaui.Blog;
+using BlogMaui.Jinaga.Maui.Authentication;
 using BlogMaui.Visitor;
 using CommunityToolkit.Maui;
 using Jinaga.Http;

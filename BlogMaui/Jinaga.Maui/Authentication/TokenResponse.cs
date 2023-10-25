@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BlogMaui.Authentication;
+namespace BlogMaui.Jinaga.Maui.Authentication;
 
 public class TokenResponse
 {

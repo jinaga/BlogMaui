@@ -1,10 +1,9 @@
 ﻿using System.Net;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace BlogMaui.Authentication;
+namespace BlogMaui.Jinaga.Maui.Authentication;
 
 public class OAuthClient
 {
