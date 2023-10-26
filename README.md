@@ -110,19 +110,106 @@ The test data will appear within the app.
 
 ## Architecture
 
+The architecture of a Jinaga application is similar to other MAUI apps.
+However, there are a few areas where Jinaga and the replicator take on what would ordinarily be application responsibilities.
+These responsibilities include:
+
+- Calling backend APIs
+- Client and server storage
+- Authentication and authorization
+
+This section describes how a MAUI application uses Jinaga to accomplish these things.
+
+### Jinaga Configuration
+
+Configuring the Jinaga client takes place in the `JinagaConfig` class.
+It contains several methods that initialize individual components.
+The first method loads the configuration settings that you overrode during developer setup.
+
+The `Settings` class is partial.
+One part is checked into the source code repository, and the other part is developer-specific.
+This allows each developer to provide their own replicator configuraiton.
+It also allows the CI/CD pipeline to supply replicator settings prior to the test or production build.
+
+The Jinaga configuration class uses `JinagaSQLiteClient.Create` to create a Jinaga client that uses a SQLite database for local persistence.
+This database runs queries against cached data first so that both connected and offline users get a fast response.
+It then tries to fetch updates from the replicator.
+The local store also saves any facts that the user creates and puts them into a queue.
+The user can immediately work with their own local data, and the app will send queued facts to the replicator when connected.
+
+### Model
+
+Jinaga facts are described using C# records.
+Those records appear in the `Model.cs` file.
+An application might have multiple model files, one for each functional area.
+
+The parameters of a fact record might include other facts.
+These are predecessors.
+The predecessor relationship sets up a connection between two facts that can be used in a specification.
+
+The application creates facts and calls `JinagaClient.Fact` to save them.
+This not only stores them locally, but also queues them to be sent to the server and starts the upload process.
+
+### Authorization and Distribution
+
+Authorization rules control who is allowed to create facts.
+The rules are defined in `JinagaConfig`.
+The `Authorize` function can compose rules by calling authorization functions defined in different model files.
+
+Distribution rules control who is allowed to run specifications.
+These rules are also defined in `JinagaConfig`.
+
+The replicator enforces authorization and distribution rules.
+To upload the rules to the repliator, run the script described in developer setup.
+Run this script again whenever you change authorization or distribution rules.
+
 ### Authentication Guard
 
-The AppState property is used in this file to control navigation based on authentication.
-Specifically, it is used to determine whether the user is logged in or not, and to show or hide certain navigation elements accordingly.
+App navigation relies upon the Shell framework component in MAUI.
+It defines a hierarchy that subdivides the experience into two navigation trees: one if the user is not logged in and another if they are.
 
-In the TabBar element, the IsVisible property is bound to the AppState property using a StringEqualsConverter converter.
-This means that the TabBar will only be visible if the AppState property is equal to the string value "NotLoggedIn".
+The `AppShellViewModel` contains the switch between these two states and the methods to move between them.
+The `AppState` property determines whether the user is logged in or not.
+The view binds to this property to show or hide certain navigation elements accordingly.
 
-Inside the TabBar, there are two Tab elements: one for the "Visitor" page and one for the "Log In" page.
-The Route property of each Tab element is set to a unique string value that represents the navigation hierarchy of the application.
+The view defines two `TabBar` elements.
+They each bind to the `AppState` property.
+One is visible when the state is `NotLoggedIn`, and the other when the state is `LoggedIn`.
 
-The ContentTemplate property of the ShellContent element inside the "Visitor" Tab is set to a DataTemplate that specifies the VisitorPage as its content.
-Similarly, the ContentTemplate property of the ShellContent element inside the "Log In" Tab is set to a DataTemplate that specifies the LoginPage as its content.
+The view also defines a gatekeeper shell component as the starting point.
+The `GatekeeperViewModel` is responsible for initializing the authentication state of the application.
+When the gatekeeper view loads, it calls `Initialize`.
+This method in turn initializes the authentication provider and user provider, which load the access token and user fact from secure storage.
+It then sets the `AppState` property and navigates to the corresponding tab bar.
 
-When the user is not logged in (i.e., when the AppState property is equal to "NotLoggedIn"), the "Visitor" Tab will be visible and the "Log In" Tab will be hidden.
-Conversely, when the user is logged in (i.e., when the AppState property is not equal to "NotLoggedIn"), the "Visitor" Tab will be hidden and the "Log In" Tab will be visible. This allows the application to control which pages are visible to the user based on their authentication status.
+### View Models and Specifications
+
+As in other MAUI apps, view models in a Jinaga app implement `INotifyPropertyChanged` to support data binding.
+This example uses Comunity Toolkit MVVM to do so.
+View models inherit `ObservableObject`.
+They are also partial classes so that the source generator can inject code for each `ObservableProperty`.
+
+Jinaga view models differ in how they load data into observable properties.
+Each top level view model has a `Load` method, which may take parameters.
+This method defines a specification, which describes how to load facts from the local store and replicator.
+
+The `Load` method creates the starting facts, possibly using the parameters, and then calls `JinagaClient.Watch`.
+This sets up an observer that is called for each result of the specification.
+Inside of the callback function, add each result to an `ObservableCollection`.
+
+A specification may project child specifications.
+Use the method `facts.Observable` to set up that child collection.
+Then call `OnAdded` to handle each child projection.
+It is common to set an observable property on the child object.
+
+Each callback function can return a parameterless lambda.
+This lambda is called whenever the projection is removed.
+If you have added an object to an observable collection, return a lambda that removes it.
+
+### Jinaga.Maui
+
+The `Jinaga.Maui` folder contains code that is not specific to the application.
+This code will likely be moved to a NuGet repository in the near future.
+Currently, this includes authentication support.
+It may later include common patterns like support with editing mutable properties.
+As other features are farmed from working applications, they will be added here.
