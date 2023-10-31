@@ -39,6 +39,8 @@ public static class MauiProgram
 
         builder.Services.AddTransient<PostListPage>();
         builder.Services.AddTransient<PostListViewModel>();
+        builder.Services.AddTransient<PostPage>();
+        builder.Services.AddTransient<PostViewModel>();
         builder.Services.AddTransient<AccountPage>();
 
 #if DEBUG

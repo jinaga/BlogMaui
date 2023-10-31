@@ -1,4 +1,6 @@
-﻿namespace BlogMaui;
+﻿using BlogMaui.Blog;
+
+namespace BlogMaui;
 
 public partial class AppShell : Shell
 {
@@ -7,5 +9,7 @@ public partial class AppShell : Shell
         InitializeComponent();
 
         BindingContext = viewModel;
+
+        Routing.RegisterRoute("loggedin/posts/detail", typeof(PostPage));
     }
 }

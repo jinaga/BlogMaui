@@ -1,0 +1,19 @@
+namespace BlogMaui.Blog;
+
+public partial class PostPage : ContentPage
+{
+    private readonly PostViewModel viewModel;
+
+    public PostPage(PostViewModel viewModel)
+	{
+        this.viewModel = viewModel;
+        BindingContext = viewModel;
+        InitializeComponent();
+    }
+
+    protected override void OnDisappearing()
+    {
+        viewModel.Unload();
+        base.OnDisappearing();
+    }
+}

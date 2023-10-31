@@ -43,7 +43,7 @@
             Route="loggedin">
         <Tab Title="Home"
              Icon="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_home_32_regular}}"
-             Route="main">
+             Route="posts">
             <ShellContent
                 ContentTemplate="{DataTemplate blog:PostListPage}" />
         </Tab>

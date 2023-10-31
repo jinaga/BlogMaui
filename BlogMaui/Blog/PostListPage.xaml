@@ -16,7 +16,7 @@
             <ListView ItemsSource="{Binding Posts}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding Title}" />
+                        <TextCell Text="{Binding Title}" Command="{Binding Select}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
