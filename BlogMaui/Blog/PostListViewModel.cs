@@ -87,6 +87,7 @@ public partial class PostListViewModel : ObservableObject
         {
             Loading = true;
             await observer.Refresh();
+            await jinagaClient.Push();
             Loading = false;
         }
         catch
@@ -105,6 +106,7 @@ public partial class PostListViewModel : ObservableObject
                 Loading = false;
             }
             await observer.Loaded;
+            await jinagaClient.Push();
             Loading = false;
         }
         catch
