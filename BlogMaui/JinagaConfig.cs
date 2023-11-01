@@ -67,7 +67,11 @@ public static class JinagaConfig
                 !facts.Any<UserName>(next =>
                     next.prior.Contains(name))
             select name
-        )).With(user => user)
+        )).With(Given<User>.Match((user, facts) =>
+            from self in facts.OfType<User>()
+            where self == user
+            select self
+        ))
         .Share(Given<Site>.Match((site, facts) =>
             from post in facts.OfType<Post>()
             where post.site == site
