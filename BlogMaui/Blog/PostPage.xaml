@@ -8,6 +8,12 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Label Text="{Binding Title}" FontSize="Large" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Entry Text="{Binding Title, Mode=TwoWay}"
+               FontSize="Medium"
+               Focused="Title_Focused"
+               Unfocused="Title_Unfocused"/>
     </Grid>
 </ContentPage>
