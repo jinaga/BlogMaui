@@ -48,12 +48,38 @@ public static class JinagaConfig
 
     public static string Authorization() =>
         AuthorizationRules.Describe(Authorize);
+    public static string Distribution() =>
+        DistributionRules.Describe(Distribute);
 
     private static AuthorizationRules Authorize(AuthorizationRules r) => r
         .Any<User>()
+        .Type<UserName>(name => name.user)
         .Type<Site>(site => site.creator)
         .Type<Post>(post => post.site.creator)
         .Type<PostTitle>(title => title.post.site.creator)
         .Type<PostDeleted>(deleted => deleted.post.site.creator)
         .Type<Publish>(publish => publish.post.site.creator);
+
+    private static DistributionRules Distribute(DistributionRules r) => r
+        .Share(Given<User>.Match((user, facts) =>
+            from name in facts.OfType<UserName>()
+            where name.user == user &&
+                !facts.Any<UserName>(next =>
+                    next.prior.Contains(name))
+            select name
+        )).With(user => user)
+        .Share(Given<Site>.Match((site, facts) =>
+            from post in facts.OfType<Post>()
+            where post.site == site
+            select new
+            {
+                post,
+                names =
+                    from title in facts.OfType<PostTitle>()
+                    where title.post == post &&
+                        !facts.Any<PostTitle>(next =>
+                            next.prior.Contains(title))
+                    select title
+            }
+        )).With(site => site.creator);
 }
