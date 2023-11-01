@@ -17,7 +17,7 @@ public partial class PostListViewModel : ObservableObject
     private bool loading = true;
 
     [ObservableProperty]
-    private string status = "Green";
+    private string status = string.Empty;
 
     public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
 
