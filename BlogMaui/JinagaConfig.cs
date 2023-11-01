@@ -72,9 +72,20 @@ public static class JinagaConfig
             where self == user
             select self
         ))
+        .Share(Given<User>.Match((user, facts) =>
+            from site in facts.OfType<Site>()
+            where site.creator == user
+            select site
+        )).With(Given<User>.Match((user, facts) =>
+            from self in facts.OfType<User>()
+            where self == user
+            select self
+        ))
         .Share(Given<Site>.Match((site, facts) =>
             from post in facts.OfType<Post>()
-            where post.site == site
+            where post.site == site &&
+                !facts.Any<PostDeleted>(deleted =>
+                    deleted.post == post)
             select new
             {
                 post,
