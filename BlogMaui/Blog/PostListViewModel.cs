@@ -86,11 +86,11 @@ public partial class PostListViewModel : ObservableObject
         try
         {
             Loading = true;
-            await observer.Refresh();
-            await jinagaClient.Push();
-            Loading = false;
+            await Task.WhenAll(
+                observer.Refresh(),
+                jinagaClient.Push());
         }
-        catch
+        finally
         {
             Loading = false;
         }
@@ -101,15 +101,14 @@ public partial class PostListViewModel : ObservableObject
         try
         {
             bool wasInCache = await observer.Cached;
-            if (wasInCache)
+            if (!wasInCache)
             {
-                Loading = false;
+                await Task.WhenAll(
+                    observer.Loaded,
+                    jinagaClient.Push());
             }
-            await observer.Loaded;
-            await jinagaClient.Push();
-            Loading = false;
         }
-        catch
+        finally
         {
             Loading = false;
         }
