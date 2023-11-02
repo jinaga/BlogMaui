@@ -35,6 +35,8 @@ public partial class GatekeeperViewModel : ObservableObject
         catch (Exception ex)
         {
             Error = $"Error while initializing: {ex.GetMessage()}";
+            await authenticationProvider.LogOut();
+            await userProvider.ClearUser();
         }
     }
 }
