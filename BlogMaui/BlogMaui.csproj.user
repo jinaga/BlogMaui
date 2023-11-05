@@ -30,6 +30,9 @@
     <MauiXaml Update="Authentication\GatekeeperPage.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
+    <MauiXaml Update="Blog\PostEditPage.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
     <MauiXaml Update="Blog\PostListPage.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>

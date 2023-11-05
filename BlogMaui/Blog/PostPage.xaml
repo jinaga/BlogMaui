@@ -11,9 +11,19 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Entry Text="{Binding Title, Mode=TwoWay}"
-               FontSize="Medium"
-               Focused="Title_Focused"
-               Unfocused="Title_Unfocused"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Text="{Binding Title}"
+                   FontSize="Header" />
+            <Button Grid.Column="1"
+                    Text="Edit"
+                    Command="{Binding EditCommand}" />
+        </Grid>
     </Grid>
 </ContentPage>

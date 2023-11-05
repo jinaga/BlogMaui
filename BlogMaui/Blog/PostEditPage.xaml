@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BlogMaui.Blog.PostEditPage"
+             Title="Edit Post">
+    <VerticalStackLayout>
+        <Label Text="Title"
+               FontSize="Medium"
+               Margin="10,10,10,0"/>
+        <Entry Text="{Binding Title, Mode=TwoWay}"
+               Placeholder="Enter post title"
+               FontSize="Medium"
+               Margin="5,0,5,5"/>
+        <HorizontalStackLayout>
+            <Button Text="Save"
+                    Command="{Binding SaveCommand}"
+                    FontSize="Medium"
+                    Margin="10,10,5,10"/>
+            <Button Text="Cancel"
+                    Command="{Binding CancelCommand}"
+                    FontSize="Medium"
+                    Margin="5,10,10,10"/>
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

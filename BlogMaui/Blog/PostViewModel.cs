@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using System.Collections.Immutable;
+using System.Windows.Input;
 
 namespace BlogMaui.Blog;
 
@@ -11,16 +13,17 @@ public partial class PostViewModel : ObservableObject, IQueryAttributable
     [ObservableProperty]
     private string title = "";
 
+    public ICommand EditCommand { get; }
+
     private Post? post;
     private IObserver? titlesObserver = null;
     private ImmutableList<PostTitle> titles = ImmutableList<PostTitle>.Empty;
 
-    private ImmutableList<PostTitle>? frozenTitles;
-    private bool editingTitle = false;
-
     public PostViewModel(JinagaClient jinagaClient)
     {
         this.jinagaClient = jinagaClient;
+
+        EditCommand = new AsyncRelayCommand(HandleEdit);
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -38,10 +41,7 @@ public partial class PostViewModel : ObservableObject, IQueryAttributable
         titlesObserver = jinagaClient.Watch(titlesOfPost, post, postTitle =>
         {
             titles = titles.Add(postTitle);
-            if (!editingTitle)
-            {
-                Title = postTitle.value;
-            }
+            Title = postTitle.value;
 
             return () =>
             {
@@ -55,23 +55,12 @@ public partial class PostViewModel : ObservableObject, IQueryAttributable
         titlesObserver?.Stop();
     }
 
-    public void BeginEditTitle()
+    private async Task HandleEdit()
     {
-        frozenTitles = titles;
-        editingTitle = true;
-    }
-
-    public void EndEditTitle()
-    {
-        // Record a new post title if it has changed.
-        if (post != null && frozenTitles != null &&
-            (frozenTitles.Count != 1 ||
-             frozenTitles[0].value != Title))
+        if (post != null)
         {
-            jinagaClient.Fact(new PostTitle(post, Title, frozenTitles.ToArray()));
+            var viewModel = new PostEditViewModel(jinagaClient, post, titles);
+            await Shell.Current.Navigation.PushModalAsync(new PostEditPage(viewModel));
         }
-
-        frozenTitles = null;
-        editingTitle = false;
     }
 }

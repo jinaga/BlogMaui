@@ -16,14 +16,4 @@ public partial class PostPage : ContentPage
         viewModel.Unload();
         base.OnDisappearing();
     }
-
-    private void Title_Focused(object sender, FocusEventArgs e)
-    {
-        viewModel.BeginEditTitle();
-    }
-
-    private void Title_Unfocused(object sender, FocusEventArgs e)
-    {
-        viewModel.EndEditTitle();
-    }
 }

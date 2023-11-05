@@ -106,6 +106,9 @@
 	  <MauiXaml Update="Authentication\GatekeeperPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Blog\PostEditPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Blog\PostPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
