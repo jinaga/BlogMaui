@@ -7,10 +7,15 @@
         <Label Text="Title"
                FontSize="Medium"
                Margin="10,10,10,0"/>
-        <Entry Text="{Binding Title, Mode=TwoWay}"
+        <Entry Text="{Binding Title}"
                Placeholder="Enter post title"
                FontSize="Medium"
                Margin="5,0,5,5"/>
+        <Picker Title="Candidates"
+                ItemsSource="{Binding Candidates}"
+                SelectedItem="{Binding Title}"
+                FontSize="Medium"
+                Margin="5"/>
         <HorizontalStackLayout>
             <Button Text="Save"
                     Command="{Binding SaveCommand}"

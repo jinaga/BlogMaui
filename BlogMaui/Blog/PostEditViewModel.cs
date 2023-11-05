@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace BlogMaui.Blog;
@@ -9,6 +10,10 @@ public partial class PostEditViewModel : ObservableObject
 {
     [ObservableProperty]
     private string title = string.Empty;
+
+    public ObservableCollection<string> Candidates { get; }
+    [ObservableProperty]
+    private string selectedCandidate = string.Empty;
 
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
@@ -27,6 +32,7 @@ public partial class PostEditViewModel : ObservableObject
             .Select(t => t.value)
             .Order()
             .FirstOrDefault() ?? string.Empty;
+        Candidates = new ObservableCollection<string>(titles.Select(t => t.value));
 
         SaveCommand = new AsyncRelayCommand(HandleSave);
         CancelCommand = new AsyncRelayCommand(HandleCancel);
