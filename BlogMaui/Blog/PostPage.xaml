@@ -4,22 +4,8 @@
              x:Class="BlogMaui.Blog.PostPage"
              xmlns:fonts="clr-namespace:BlogMaui.Fonts"
              Title="Post">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+    <Grid RowDefinitions="Auto,*" ColumnDefinitions="*">
+        <Grid RowDefinitions="Auto" ColumnDefinitions="*,Auto">
             <Label Text="{Binding Title}"
                    FontSize="Large"
                    Margin="10,20,10,20"/>

@@ -4,11 +4,7 @@
              xmlns:root="clr-namespace:BlogMaui"
              x:Class="BlogMaui.Account.AccountPage"
              Title="Account">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <Grid RowDefinitions="*,Auto">
         <Label Text="This page should show information about the user's account."
                FontSize="Medium"
                Margin="10" />
