@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BlogMaui.Blog.PostPage"
+             xmlns:fonts="clr-namespace:BlogMaui.Fonts"
              Title="Post">
     <Grid>
         <Grid.RowDefinitions>
@@ -20,10 +21,13 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Label Text="{Binding Title}"
-                   FontSize="Header" />
-            <Button Grid.Column="1"
-                    Text="Edit"
-                    Command="{Binding EditCommand}" />
+                   FontSize="Large"
+                   Margin="10,20,10,20"/>
+            <ImageButton Grid.Column="1"
+                         Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_edit_12_regular}, Color=Black}"
+                         HeightRequest="70"
+                         Padding="5"
+                         Command="{Binding EditCommand}" />
         </Grid>
     </Grid>
 </ContentPage>
