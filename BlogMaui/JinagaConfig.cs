@@ -96,5 +96,12 @@ public static class JinagaConfig
                             next.prior.Contains(title))
                     select title
             }
-        )).With(site => site.creator);
+        )).With(site => site.creator)
+        .Share(Given<Post>.Match((post, facts) =>
+            from title in facts.OfType<PostTitle>()
+            where title.post == post &&
+                !facts.Any<PostTitle>(next =>
+                    next.prior.Contains(title))
+            select title
+        )).With(post => post.site.creator);
 }
