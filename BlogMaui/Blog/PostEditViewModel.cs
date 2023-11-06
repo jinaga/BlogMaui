@@ -38,6 +38,11 @@ public partial class PostEditViewModel : ObservableObject
         CancelCommand = new AsyncRelayCommand(HandleCancel);
     }
 
+    partial void OnSelectedCandidateChanged(string value)
+    {
+        Title = value;
+    }
+
     private async Task HandleSave()
     {
         // Record a new post title if it has changed.

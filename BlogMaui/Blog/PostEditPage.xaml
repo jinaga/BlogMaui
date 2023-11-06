@@ -13,7 +13,7 @@
                Margin="5,0,5,5"/>
         <Picker Title="Candidates"
                 ItemsSource="{Binding Candidates}"
-                SelectedItem="{Binding Title}"
+                SelectedItem="{Binding SelectedCandidate}"
                 FontSize="Medium"
                 Margin="5"/>
         <HorizontalStackLayout>
