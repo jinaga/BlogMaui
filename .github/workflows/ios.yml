@@ -23,4 +23,4 @@ jobs:
     - name: Install workloads
       run: dotnet workload restore
     - name: Restore build and publish
-      run: dotnet publish -f:net7.0-ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false
+      run: dotnet publish -f:net7.0-ios -r:ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false
