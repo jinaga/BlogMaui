@@ -21,6 +21,6 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Install workloads
-      run: dotnet workload install maui-ios maccatalyst
+      run: dotnet workload restore
     - name: Restore build and publish
       run: dotnet publish -f:net7.0-ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false
