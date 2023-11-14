@@ -16,6 +16,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Import code-signing certificate
+      uses: Apple-Actions/import-codesign-certs@v1
+      with:
+        p12-filepath: 'distribution.p12'
+        p12-password: ${{ secrets.DISRIBUTION_P12_PASSWORD }}
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
@@ -23,4 +28,4 @@ jobs:
     - name: Install workloads
       run: dotnet workload restore
     - name: Restore build and publish
-      run: dotnet publish -f:net7.0-ios -r:ios-arm64 -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false
+      run: dotnet publish -f:net7.0-ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false
