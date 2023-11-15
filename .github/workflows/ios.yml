@@ -16,6 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        file-depth: 0
     - name: Import code-signing certificate
       uses: Apple-Actions/import-codesign-certs@v1
       with:
@@ -36,6 +38,8 @@ jobs:
       run: dotnet workload restore
     - name: Copy production settings
       run: cp ./Settings/Settings.Production.cs ./BlogMaui/
+    - name: Set bundle version
+      run: sed -i "s/{{CFBundleVersion}}/$(git rev-list 1.0..HEAD --count)/g" ./BlogMaui/Platforms/iOS/Info.plist
     - name: Restore build and publish
       run: dotnet publish -f:net7.0-ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false
     - name: Upload the .ipa artifact
