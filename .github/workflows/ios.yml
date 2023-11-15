@@ -34,6 +34,8 @@ jobs:
         dotnet-version: 7.0.x
     - name: Install workloads
       run: dotnet workload restore
+    - name: Copy production settings
+      run: cp ./Settings/Settings.Production.cs ./BlogMaui/
     - name: Restore build and publish
       run: dotnet publish -f:net7.0-ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false
     - name: Upload the .ipa artifact
