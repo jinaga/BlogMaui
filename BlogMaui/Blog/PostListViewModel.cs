@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
+using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -10,6 +11,7 @@ public partial class PostListViewModel : ObservableObject
 {
     private readonly JinagaClient jinagaClient;
     private readonly UserProvider userProvider;
+    private readonly ILogger<PostListViewModel> logger;
 
     private IObserver? observer;
 
@@ -23,10 +25,11 @@ public partial class PostListViewModel : ObservableObject
 
     public ICommand Refresh { get; }
 
-    public PostListViewModel(JinagaClient jinagaClient, UserProvider userProvider)
+    public PostListViewModel(JinagaClient jinagaClient, UserProvider userProvider, ILogger<PostListViewModel> logger)
     {
         this.jinagaClient = jinagaClient;
         this.userProvider = userProvider;
+        this.logger = logger;
 
         Refresh = new AsyncRelayCommand(HandleRefresh);
     }
@@ -63,6 +66,7 @@ public partial class PostListViewModel : ObservableObject
             var postHeaderViewModel = new PostHeaderViewModel(projection.post);
             projection.titles.OnAdded(title =>
             {
+                logger.LogInformation($"Updating title: {title}");
                 postHeaderViewModel.Title = title;
             });
             Posts.Add(postHeaderViewModel);
@@ -85,10 +89,16 @@ public partial class PostListViewModel : ObservableObject
 
         try
         {
+            logger.LogInformation("Refreshing post list");
             Loading = true;
             await Task.WhenAll(
                 observer.Refresh(),
                 jinagaClient.Push());
+            logger.LogInformation("Successfully refreshed post list");
+        }
+        catch (Exception x)
+        {
+            logger.LogError(x, "Error while refreshing");
         }
         finally
         {
@@ -100,6 +110,7 @@ public partial class PostListViewModel : ObservableObject
     {
         try
         {
+            logger.LogInformation("Loading post list");
             bool wasInCache = await observer.Cached;
             if (!wasInCache)
             {
@@ -107,6 +118,11 @@ public partial class PostListViewModel : ObservableObject
                     observer.Loaded,
                     jinagaClient.Push());
             }
+            logger.LogInformation("Successfully loaded post list");
+        }
+        catch (Exception x)
+        {
+            logger.LogError(x, "Error while loading");
         }
         finally
         {

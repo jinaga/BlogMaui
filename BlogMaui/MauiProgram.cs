@@ -4,6 +4,8 @@ using BlogMaui.Blog;
 using BlogMaui.Visitor;
 using CommunityToolkit.Maui;
 using Jinaga.Maui;
+using MetroLog.MicrosoftExtensions;
+using MetroLog.Operators;
 using Microsoft.Extensions.Logging;
 
 namespace BlogMaui;
@@ -22,12 +24,37 @@ public static class MauiProgram
                 fonts.AddFont("FluentSystemIcons-Regular.ttf", "FluentSystemIcons");
             });
 
+        builder.Logging
+            .AddInMemoryLogger(
+                options =>
+                {
+                    options.MaxLines = 1000;
+                    options.MinLevel = LogLevel.Debug;
+                    options.MaxLevel = LogLevel.Critical;
+                })
+            .AddStreamingFileLogger(
+                options =>
+                {
+                    options.RetainDays = 2;
+                    options.FolderPath = Path.Combine(
+                        FileSystem.CacheDirectory,
+                        "MetroLogs");
+                })
+            .AddConsoleLogger(
+                options =>
+                {
+                    options.MinLevel = LogLevel.Information;
+                    options.MaxLevel = LogLevel.Critical;
+                }); // Will write to the Console Output (logcat for android)
+
         builder.Services.AddHttpClient();
         builder.Services.AddSingleton(JinagaConfig.CreateSettings);
         builder.Services.AddSingleton(JinagaConfig.CreateAuthenticationProvider);
         builder.Services.AddSingleton(JinagaConfig.CreateJinagaClient);
         builder.Services.AddJinagaAuthentication();
         builder.Services.AddSingleton<UserProvider>();
+
+        builder.Services.AddSingleton(LogOperatorRetriever.Instance);
 
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddTransient<AppShell>();

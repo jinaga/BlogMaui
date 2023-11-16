@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga.Maui.Authentication;
+using MetroLog.Maui;
 using System.Windows.Input;
 
 namespace BlogMaui;
@@ -10,6 +11,7 @@ public partial class AppShellViewModel : ObservableObject
 {
     private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
     private readonly UserProvider userProvider;
+    private readonly LogController logController = new LogController();
 
     [ObservableProperty]
     private string appState = "Initializing";
@@ -18,14 +20,18 @@ public partial class AppShellViewModel : ObservableObject
 
     public ICommand LogIn { get; }
     public ICommand LogOut { get; }
+    public ICommand ViewLogs { get; }
 
     public AppShellViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, UserProvider userProvider)
     {
         LogIn = new AsyncRelayCommand(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
+        ViewLogs = logController.GoToLogsPageCommand;
 
         this.authenticationProvider = authenticationProvider;
         this.userProvider = userProvider;
+
+        logController.IsShakeEnabled = true;
     }
 
     private async Task HandleLogIn()
