@@ -16,7 +16,7 @@ public partial class PostListViewModel : ObservableObject
     private IObserver? observer;
 
     [ObservableProperty]
-    private bool loading = true;
+    private bool loading = false;
 
     [ObservableProperty]
     private string status = string.Empty;
@@ -38,6 +38,7 @@ public partial class PostListViewModel : ObservableObject
     {
         try
         {
+            Loading = true;
             observer?.Stop();
             observer = null;
             Posts.Clear();

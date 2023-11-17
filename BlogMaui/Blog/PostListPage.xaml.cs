@@ -22,13 +22,12 @@ public partial class PostListPage : ContentPage
         BindingContext = viewModel;
 
         InitializeComponent();
-
-        viewModel.Load("michaelperry.net");
     }
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         logger.LogInformation("OnNavigatedTo PostListPage");
+        viewModel.Load("michaelperry.net");
         base.OnNavigatedTo(args);
     }
 
