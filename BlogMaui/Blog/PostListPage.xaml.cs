@@ -13,24 +13,25 @@ public partial class PostListPage : ContentPage
 
     public PostListPage(PostListViewModel viewModel)
     {
-        InitializeComponent();
         this.viewModel = viewModel;
+        BindingContext = viewModel;
+
+        InitializeComponent();
     }
 
-    protected override void OnAppearing()
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         viewModel.Load("michaelperry.net");
-        BindingContext = viewModel;
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
     }
 
-    protected override void OnDisappearing()
+    protected override void OnNavigatingFrom(NavigatingFromEventArgs args)
     {
         if (viewModel != null)
         {
             viewModel.Unload();
         }
-        base.OnDisappearing();
+        base.OnNavigatingFrom(args);
     }
 }
 
