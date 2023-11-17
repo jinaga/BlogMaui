@@ -12,9 +12,9 @@ namespace BlogMaui.Blog;
 public partial class PostListPage : ContentPage
 {
     private readonly PostListViewModel viewModel;
-    private readonly Logger<PostListPage> logger;
+    private readonly ILogger<PostListPage> logger;
 
-    public PostListPage(PostListViewModel viewModel, Logger<PostListPage> logger)
+    public PostListPage(PostListViewModel viewModel, ILogger<PostListPage> logger)
     {
         this.viewModel = viewModel;
         this.logger = logger;

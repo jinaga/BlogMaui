@@ -4,9 +4,9 @@ namespace BlogMaui.Account;
 
 public partial class AccountPage : ContentPage
 {
-	private readonly Logger<AccountPage> logger;
+	private readonly ILogger<AccountPage> logger;
 
-    public AccountPage(Logger<AccountPage> logger)
+    public AccountPage(ILogger<AccountPage> logger)
     {
         this.logger = logger;
 
