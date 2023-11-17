@@ -25,13 +25,13 @@ public partial class PostListPage : ContentPage
         base.OnNavigatedTo(args);
     }
 
-    protected override void OnNavigatingFrom(NavigatingFromEventArgs args)
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
         if (viewModel != null)
         {
             viewModel.Unload();
         }
-        base.OnNavigatingFrom(args);
+        base.OnNavigatedFrom(args);
     }
 }
 

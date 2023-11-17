@@ -67,6 +67,7 @@ public partial class PostListViewModel : ObservableObject
         var site = new Site(user, domain);
         observer = jinagaClient.Watch(postsInBlog, site, projection =>
         {
+            logger.LogInformation("Added post");
             var postHeaderViewModel = new PostHeaderViewModel(projection.post);
             projection.titles.OnAdded(title =>
             {

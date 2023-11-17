@@ -30,7 +30,7 @@ jobs:
         attempt_limit: 3
         attempt_delay: 1000
         action: Apple-Actions/download-provisioning-profiles@v1
-        with:
+        with: |
           bundle-id: 'com.qedcode.blogmaui'
           issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
           api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
