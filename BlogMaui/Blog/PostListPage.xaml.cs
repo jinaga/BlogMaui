@@ -22,8 +22,6 @@ public partial class PostListPage : ContentPage
         BindingContext = viewModel;
 
         InitializeComponent();
-
-        viewModel.Load("michaelperry.net");
     }
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
@@ -35,10 +33,6 @@ public partial class PostListPage : ContentPage
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
         logger.LogInformation("OnNavigatedFrom PostListPage");
-        if (viewModel != null)
-        {
-            viewModel.Unload();
-        }
         base.OnNavigatedFrom(args);
     }
 
@@ -51,12 +45,14 @@ public partial class PostListPage : ContentPage
     protected override void OnAppearing()
     {
         logger.LogInformation("OnAppearing PostListPage");
+        viewModel.Load();
         base.OnAppearing();
     }
 
     protected override void OnDisappearing()
     {
         logger.LogInformation("OnDisappearing PostListPage");
+        viewModel.Unload();
         base.OnDisappearing();
     }
 }

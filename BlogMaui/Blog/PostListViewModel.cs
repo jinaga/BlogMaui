@@ -7,16 +7,16 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace BlogMaui.Blog;
-public partial class PostListViewModel : ObservableObject
+public partial class PostListViewModel : ObservableObject, IQueryAttributable
 {
     private readonly JinagaClient jinagaClient;
-    private readonly UserProvider userProvider;
     private readonly ILogger<PostListViewModel> logger;
 
+    private User? user;
     private IObserver? observer;
 
     [ObservableProperty]
-    private bool loading = true;
+    private bool loading = false;
 
     [ObservableProperty]
     private string status = string.Empty;
@@ -25,20 +25,32 @@ public partial class PostListViewModel : ObservableObject
 
     public ICommand Refresh { get; }
 
-    public PostListViewModel(JinagaClient jinagaClient, UserProvider userProvider, ILogger<PostListViewModel> logger)
+    public PostListViewModel(JinagaClient jinagaClient, ILogger<PostListViewModel> logger)
     {
         this.jinagaClient = jinagaClient;
-        this.userProvider = userProvider;
         this.logger = logger;
 
         Refresh = new AsyncRelayCommand(HandleRefresh);
     }
 
-    public async void Load(string domain)
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        observer?.Stop();
-        observer = null;
-        Posts.Clear();
+        logger.LogInformation("ApplyQueryAttributes PostListViewModel");
+
+        user = query.GetParameter<User>("user");
+        Load();
+    }
+
+    public void Load()
+    {
+        if (user == null || observer != null)
+        {
+            return;
+        }
+
+        string domain = "michaelperry.net";
+
+        Loading = true;
 
         jinagaClient.OnStatusChanged += JinagaClient_OnStatusChanged;
 
@@ -57,12 +69,6 @@ public partial class PostListViewModel : ObservableObject
                 )
             }
         );
-
-        var user = await userProvider.GetUser();
-        if (user == null)
-        {
-            return;
-        }
 
         var site = new Site(user, domain);
         observer = jinagaClient.Watch(postsInBlog, site, projection =>
@@ -83,6 +89,15 @@ public partial class PostListViewModel : ObservableObject
         });
 
         Monitor(observer);
+    }
+
+    public void Unload()
+    {
+        jinagaClient.OnStatusChanged -= JinagaClient_OnStatusChanged;
+
+        observer?.Stop();
+        observer = null;
+        Posts.Clear();
     }
 
     private async Task HandleRefresh()
@@ -133,15 +148,6 @@ public partial class PostListViewModel : ObservableObject
         {
             Loading = false;
         }
-    }
-
-    public void Unload()
-    {
-        jinagaClient.OnStatusChanged -= JinagaClient_OnStatusChanged;
-
-        observer?.Stop();
-        observer = null;
-        Posts.Clear();
     }
 
     private void JinagaClient_OnStatusChanged(JinagaStatus status)
