@@ -67,6 +67,7 @@
 		<RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
 		<CodesignKey>Apple Distribution: Michael Perry (K84SA4SSQ9)</CodesignKey>
 		<CodesignProvision>Blog MAUI Provisioning</CodesignProvision>
+		<CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
 	</PropertyGroup>
 
 	<ItemGroup>
