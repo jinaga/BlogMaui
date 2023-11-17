@@ -36,53 +36,60 @@ public partial class PostListViewModel : ObservableObject
 
     public async void Load(string domain)
     {
-        observer?.Stop();
-        observer = null;
-        Posts.Clear();
+        try
+        {
+            observer?.Stop();
+            observer = null;
+            Posts.Clear();
 
-        jinagaClient.OnStatusChanged += JinagaClient_OnStatusChanged;
+            jinagaClient.OnStatusChanged += JinagaClient_OnStatusChanged;
 
-        var postsInBlog = Given<Site>.Match((site, facts) =>
-            from post in facts.OfType<Post>()
-            where post.site == site &&
-                !facts.Any<PostDeleted>(deleted => deleted.post == post)
-            select new
+            var postsInBlog = Given<Site>.Match((site, facts) =>
+                from post in facts.OfType<Post>()
+                where post.site == site &&
+                    !facts.Any<PostDeleted>(deleted => deleted.post == post)
+                select new
+                {
+                    post,
+                    titles = facts.Observable(
+                        from title in facts.OfType<PostTitle>()
+                        where title.post == post &&
+                            !facts.Any<PostTitle>(next => next.prior.Contains(title))
+                        select title.value
+                    )
+                }
+            );
+
+            var user = await userProvider.GetUser();
+            if (user == null)
             {
-                post,
-                titles = facts.Observable(
-                    from title in facts.OfType<PostTitle>()
-                    where title.post == post &&
-                        !facts.Any<PostTitle>(next => next.prior.Contains(title))
-                    select title.value
-                )
+                return;
             }
-        );
 
-        var user = await userProvider.GetUser();
-        if (user == null)
-        {
-            return;
-        }
-
-        var site = new Site(user, domain);
-        observer = jinagaClient.Watch(postsInBlog, site, projection =>
-        {
-            logger.LogInformation("Added post");
-            var postHeaderViewModel = new PostHeaderViewModel(projection.post);
-            projection.titles.OnAdded(title =>
+            var site = new Site(user, domain);
+            observer = jinagaClient.Watch(postsInBlog, site, projection =>
             {
-                logger.LogInformation($"Updating title: {title}");
-                postHeaderViewModel.Title = title;
+                logger.LogInformation("Added post");
+                var postHeaderViewModel = new PostHeaderViewModel(projection.post);
+                projection.titles.OnAdded(title =>
+                {
+                    logger.LogInformation($"Updating title: {title}");
+                    postHeaderViewModel.Title = title;
+                });
+                Posts.Add(postHeaderViewModel);
+
+                return () =>
+                {
+                    Posts.Remove(postHeaderViewModel);
+                };
             });
-            Posts.Add(postHeaderViewModel);
 
-            return () =>
-            {
-                Posts.Remove(postHeaderViewModel);
-            };
-        });
-
-        Monitor(observer);
+            Monitor(observer);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error while loading PostListViewModel");
+        }
     }
 
     private async Task HandleRefresh()
