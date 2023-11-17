@@ -36,6 +36,10 @@ public partial class PostListViewModel : ObservableObject
 
     public async void Load(string domain)
     {
+        observer?.Stop();
+        observer = null;
+        Posts.Clear();
+
         jinagaClient.OnStatusChanged += JinagaClient_OnStatusChanged;
 
         var postsInBlog = Given<Site>.Match((site, facts) =>
@@ -135,6 +139,7 @@ public partial class PostListViewModel : ObservableObject
         jinagaClient.OnStatusChanged -= JinagaClient_OnStatusChanged;
 
         observer?.Stop();
+        observer = null;
         Posts.Clear();
     }
 
