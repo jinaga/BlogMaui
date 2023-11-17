@@ -7,12 +7,12 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace BlogMaui.Blog;
-public partial class PostListViewModel : ObservableObject
+public partial class PostListViewModel : ObservableObject, IQueryAttributable
 {
     private readonly JinagaClient jinagaClient;
-    private readonly UserProvider userProvider;
     private readonly ILogger<PostListViewModel> logger;
 
+    private User? user;
     private IObserver? observer;
 
     [ObservableProperty]
@@ -25,72 +25,79 @@ public partial class PostListViewModel : ObservableObject
 
     public ICommand Refresh { get; }
 
-    public PostListViewModel(JinagaClient jinagaClient, UserProvider userProvider, ILogger<PostListViewModel> logger)
+    public PostListViewModel(JinagaClient jinagaClient, ILogger<PostListViewModel> logger)
     {
         this.jinagaClient = jinagaClient;
-        this.userProvider = userProvider;
         this.logger = logger;
 
         Refresh = new AsyncRelayCommand(HandleRefresh);
     }
 
-    public async void Load(string domain)
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        try
+        logger.LogInformation("ApplyQueryAttributes PostListViewModel");
+
+        user = query.GetParameter<User>("user");
+        Load();
+    }
+
+    public void Load()
+    {
+        if (user == null || observer != null)
         {
-            Loading = true;
-            observer?.Stop();
-            observer = null;
-            Posts.Clear();
+            return;
+        }
 
-            jinagaClient.OnStatusChanged += JinagaClient_OnStatusChanged;
+        string domain = "michaelperry.net";
 
-            var postsInBlog = Given<Site>.Match((site, facts) =>
-                from post in facts.OfType<Post>()
-                where post.site == site &&
-                    !facts.Any<PostDeleted>(deleted => deleted.post == post)
-                select new
-                {
-                    post,
-                    titles = facts.Observable(
-                        from title in facts.OfType<PostTitle>()
-                        where title.post == post &&
-                            !facts.Any<PostTitle>(next => next.prior.Contains(title))
-                        select title.value
-                    )
-                }
-            );
+        Loading = true;
 
-            var user = await userProvider.GetUser();
-            if (user == null)
+        jinagaClient.OnStatusChanged += JinagaClient_OnStatusChanged;
+
+        var postsInBlog = Given<Site>.Match((site, facts) =>
+            from post in facts.OfType<Post>()
+            where post.site == site &&
+                !facts.Any<PostDeleted>(deleted => deleted.post == post)
+            select new
             {
-                return;
+                post,
+                titles = facts.Observable(
+                    from title in facts.OfType<PostTitle>()
+                    where title.post == post &&
+                        !facts.Any<PostTitle>(next => next.prior.Contains(title))
+                    select title.value
+                )
             }
+        );
 
-            var site = new Site(user, domain);
-            observer = jinagaClient.Watch(postsInBlog, site, projection =>
-            {
-                logger.LogInformation("Added post");
-                var postHeaderViewModel = new PostHeaderViewModel(projection.post);
-                projection.titles.OnAdded(title =>
-                {
-                    logger.LogInformation($"Updating title: {title}");
-                    postHeaderViewModel.Title = title;
-                });
-                Posts.Add(postHeaderViewModel);
-
-                return () =>
-                {
-                    Posts.Remove(postHeaderViewModel);
-                };
-            });
-
-            Monitor(observer);
-        }
-        catch (Exception ex)
+        var site = new Site(user, domain);
+        observer = jinagaClient.Watch(postsInBlog, site, projection =>
         {
-            logger.LogError(ex, "Error while loading PostListViewModel");
-        }
+            logger.LogInformation("Added post");
+            var postHeaderViewModel = new PostHeaderViewModel(projection.post);
+            projection.titles.OnAdded(title =>
+            {
+                logger.LogInformation($"Updating title: {title}");
+                postHeaderViewModel.Title = title;
+            });
+            Posts.Add(postHeaderViewModel);
+
+            return () =>
+            {
+                Posts.Remove(postHeaderViewModel);
+            };
+        });
+
+        Monitor(observer);
+    }
+
+    public void Unload()
+    {
+        jinagaClient.OnStatusChanged -= JinagaClient_OnStatusChanged;
+
+        observer?.Stop();
+        observer = null;
+        Posts.Clear();
     }
 
     private async Task HandleRefresh()
@@ -141,15 +148,6 @@ public partial class PostListViewModel : ObservableObject
         {
             Loading = false;
         }
-    }
-
-    public void Unload()
-    {
-        jinagaClient.OnStatusChanged -= JinagaClient_OnStatusChanged;
-
-        observer?.Stop();
-        observer = null;
-        Posts.Clear();
     }
 
     private void JinagaClient_OnStatusChanged(JinagaStatus status)

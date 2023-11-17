@@ -25,12 +25,22 @@ public partial class GatekeeperViewModel : ObservableObject
         {
             bool loggedIn = await authenticationProvider.Initialize();
             await userProvider.Initialize();
+            var user = await userProvider.GetUser();
             appShellViewModel.AppState = loggedIn ? "LoggedIn" : "NotLoggedIn";
 
             // Use two slashes to prevent back navigation to the gatekeeper page.
-            await Shell.Current.GoToAsync(loggedIn
-                ? "//loggedin"
-                : "//notloggedin");
+            if (loggedIn && user != null)
+            {
+                Dictionary<string, object> parameters = new()
+                {
+                    { "user", user }
+                };
+                await Shell.Current.GoToAsync("//loggedin", parameters);
+            }
+            else
+            {
+                await Shell.Current.GoToAsync("//notloggedin");
+            }
         }
         catch (Exception ex)
         {
