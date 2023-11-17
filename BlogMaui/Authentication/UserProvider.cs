@@ -66,11 +66,6 @@ public class UserProvider
             }
             return user;
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error while getting user: {ex.Message}");
-            return null;
-        }
         finally
         {
             semaphore.Release();
