@@ -28,9 +28,9 @@ public partial class GatekeeperViewModel : ObservableObject
         {
             bool loggedIn = await authenticationProvider.Initialize();
             await userProvider.Initialize();
-            var user = await userProvider.GetUser();
+            var user = loggedIn ? await userProvider.GetUser() : null;
 
-            if (loggedIn && user != null)
+            if (user != null)
             {
                 appShellViewModel.AppState = "LoggedIn";
                 Dictionary<string, object> parameters = new()
