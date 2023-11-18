@@ -119,6 +119,54 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         });
     }
 
+    public async Task<User?> GetUser(JinagaClient jinagaClient, bool loggedIn)
+    {
+        return loggedIn ? await GetUser(jinagaClient) : null;
+    }
+
+    public Task ClearUser()
+    {
+        return Lock(async () =>
+        {
+            this.user = null;
+            await SaveUser();
+            return 0;
+        });
+    }
+
+    public Task<User?> GetUser(JinagaClient jinagaClient)
+    {
+        return Lock(async () =>
+        {
+            if (this.user == null)
+            {
+                // Get the logged in user.
+                var (user, profile) = await jinagaClient.Login();
+
+                if (user != null)
+                {
+                    this.user = user;
+                    await SaveUser();
+
+                    // Load the current user name.
+                    var userNames = await jinagaClient.Query(Given<User>.Match((user, facts) =>
+                        from name in facts.OfType<UserName>()
+                        where name.user == user &&
+                            !facts.Any<UserName>(next => next.prior.Contains(name))
+                        select name
+                    ), user);
+
+                    // If the name is different, then update it.
+                    if (userNames.Count != 1 || userNames.Single().value != profile.DisplayName)
+                    {
+                        await jinagaClient.Fact(new UserName(user, profile.DisplayName, userNames.ToArray()));
+                    }
+                }
+            }
+            return user;
+        });
+    }
+
     private async Task LoadToken()
     {
         string? tokenJson = await SecureStorage.GetAsync(AuthenticationTokenKey).ConfigureAwait(false);
@@ -161,19 +209,6 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         authenticationToken = ResponseToToken(tokenResponse);
     }
 
-    private async Task<T> Lock<T>(Func<Task<T>> action)
-    {
-        await semaphore.WaitAsync().ConfigureAwait(false);
-        try
-        {
-            return await action().ConfigureAwait(false);
-        }
-        finally
-        {
-            semaphore.Release();
-        }
-    }
-
     private static AuthenticationToken ResponseToToken(TokenResponse tokenResponse)
     {
         return new AuthenticationToken
@@ -183,63 +218,6 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             ExpryDate = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
                 .ToString("O", CultureInfo.InvariantCulture)
         };
-    }
-
-    public async Task<User?> GetUser(JinagaClient jinagaClient, bool loggedIn)
-    {
-        return loggedIn ? await GetUser(jinagaClient) : null;
-    }
-
-    public async Task ClearUser()
-    {
-        await semaphore.WaitAsync();
-        try
-        {
-            this.user = null;
-            await SaveUser();
-        }
-        finally
-        {
-            semaphore.Release();
-        }
-    }
-
-    public async Task<User?> GetUser(JinagaClient jinagaClient)
-    {
-        await semaphore.WaitAsync();
-        try
-        {
-            if (this.user == null)
-            {
-                // Get the logged in user.
-                var (user, profile) = await jinagaClient.Login();
-
-                if (user != null)
-                {
-                    this.user = user;
-                    await SaveUser();
-
-                    // Load the current user name.
-                    var userNames = await jinagaClient.Query(Given<User>.Match((user, facts) =>
-                        from name in facts.OfType<UserName>()
-                        where name.user == user &&
-                            !facts.Any<UserName>(next => next.prior.Contains(name))
-                        select name
-                    ), user);
-
-                    // If the name is different, then update it.
-                    if (userNames.Count != 1 || userNames.Single().value != profile.DisplayName)
-                    {
-                        await jinagaClient.Fact(new UserName(user, profile.DisplayName, userNames.ToArray()));
-                    }
-                }
-            }
-            return user;
-        }
-        finally
-        {
-            semaphore.Release();
-        }
     }
 
     private async Task LoadUser()
@@ -260,6 +238,19 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         else
         {
             await SecureStorage.SetAsync(PublicKeyKey, user.publicKey);
+        }
+    }
+
+    private async Task<T> Lock<T>(Func<Task<T>> action)
+    {
+        await semaphore.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            return await action().ConfigureAwait(false);
+        }
+        finally
+        {
+            semaphore.Release();
         }
     }
 }
