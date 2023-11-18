@@ -27,8 +27,7 @@ public partial class GatekeeperViewModel : ObservableObject
     {
         try
         {
-            await authenticationProvider.Initialize();
-            var user = await authenticationProvider.GetUser(jinagaClient);
+            var user = await authenticationProvider.Initialize(jinagaClient);
 
             if (user != null)
             {

@@ -25,7 +25,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         this.logger = logger;
     }
 
-    public async Task<bool> Initialize()
+    public async Task<User?> Initialize(JinagaClient jinagaClient)
     {
         bool loggedIn = await Lock(async () =>
         {
@@ -51,10 +51,10 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             return authenticationToken != null;
         });
         await LoadUser();
-        return loggedIn;
+        return await GetUser(jinagaClient);
     }
 
-    public Task<bool> Login()
+    public Task<User?> Login(JinagaClient jinagaClient)
     {
         return Lock(async () =>
         {
@@ -65,7 +65,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
                 new Uri(client.CallbackUrl));
             if (authResult == null)
             {
-                return false;
+                return null;
             }
 
             string state = authResult.Properties["state"];
@@ -75,7 +75,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             var tokenResponse = await client.GetTokenResponse(code);
             authenticationToken = ResponseToToken(tokenResponse);
             await SaveToken();
-            return true;
+            return await GetUser(jinagaClient);
         });
     }
 

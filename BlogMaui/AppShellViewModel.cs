@@ -39,8 +39,7 @@ public partial class AppShellViewModel : ObservableObject
         try
         {
             Error = string.Empty;
-            await authenticationProvider.Login();
-            var user = authenticationProvider.GetUser(jinagaClient);
+            var user = await authenticationProvider.Login(jinagaClient);
 
             if (user != null)
             {
