@@ -4,7 +4,6 @@ using Jinaga;
 using Jinaga.Http;
 using Jinaga.Maui.Authentication;
 using Jinaga.Store.SQLite;
-using MetroLog;
 using Microsoft.Extensions.Logging;
 
 namespace BlogMaui;
@@ -30,7 +29,6 @@ public static class JinagaConfig
             settings.Scope,
             httpClientFactory);
         var authenticationProvider = new OAuth2HttpAuthenticationProvider(
-            services.GetRequiredService<UserProvider>(),
             oauth2Client,
             services.GetRequiredService<ILogger<OAuth2HttpAuthenticationProvider>>());
         return authenticationProvider;

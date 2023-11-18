@@ -1,4 +1,4 @@
-﻿using BlogMaui.Authentication;
+﻿using BlogMaui.Blog;
 using Jinaga.Http;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
@@ -10,17 +10,17 @@ namespace Jinaga.Maui.Authentication;
 public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 {
     private const string AuthenticationTokenKey = "BlogMaui.AuthenticationToken";
+    private const string PublicKeyKey = "BlogMaui.PublicKey";
 
-    private readonly UserProvider userProvider;
     private readonly OAuthClient oauthClient;
     private readonly ILogger<OAuth2HttpAuthenticationProvider> logger;
 
     private readonly SemaphoreSlim semaphore = new(1);
     volatile private AuthenticationToken? authenticationToken;
+    private User? user;
 
-    public OAuth2HttpAuthenticationProvider(UserProvider userProvider, OAuthClient oauthClient, ILogger<OAuth2HttpAuthenticationProvider> logger)
+    public OAuth2HttpAuthenticationProvider(OAuthClient oauthClient, ILogger<OAuth2HttpAuthenticationProvider> logger)
     {
-        this.userProvider = userProvider;
         this.oauthClient = oauthClient;
         this.logger = logger;
     }
@@ -50,7 +50,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
                 : "Not logged in");
             return authenticationToken != null;
         });
-        await userProvider.Initialize();
+        await LoadUser();
         return loggedIn;
     }
 
@@ -87,7 +87,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             await SaveToken();
             return true;
         });
-        await userProvider.ClearUser();
+        await ClearUser();
     }
 
     public void SetRequestHeaders(HttpRequestHeaders headers)
@@ -187,6 +187,79 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 
     public async Task<User?> GetUser(JinagaClient jinagaClient, bool loggedIn)
     {
-        return loggedIn ? await userProvider.GetUser(jinagaClient) : null;
+        return loggedIn ? await GetUser(jinagaClient) : null;
+    }
+
+    public async Task ClearUser()
+    {
+        await semaphore.WaitAsync();
+        try
+        {
+            this.user = null;
+            await SaveUser();
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+    }
+
+    public async Task<User?> GetUser(JinagaClient jinagaClient)
+    {
+        await semaphore.WaitAsync();
+        try
+        {
+            if (this.user == null)
+            {
+                // Get the logged in user.
+                var (user, profile) = await jinagaClient.Login();
+
+                if (user != null)
+                {
+                    this.user = user;
+                    await SaveUser();
+
+                    // Load the current user name.
+                    var userNames = await jinagaClient.Query(Given<User>.Match((user, facts) =>
+                        from name in facts.OfType<UserName>()
+                        where name.user == user &&
+                            !facts.Any<UserName>(next => next.prior.Contains(name))
+                        select name
+                    ), user);
+
+                    // If the name is different, then update it.
+                    if (userNames.Count != 1 || userNames.Single().value != profile.DisplayName)
+                    {
+                        await jinagaClient.Fact(new UserName(user, profile.DisplayName, userNames.ToArray()));
+                    }
+                }
+            }
+            return user;
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+    }
+
+    private async Task LoadUser()
+    {
+        string? publicKey = await SecureStorage.GetAsync(PublicKeyKey);
+        if (publicKey != null)
+        {
+            this.user = new User(publicKey);
+        }
+    }
+
+    private async Task SaveUser()
+    {
+        if (user == null)
+        {
+            SecureStorage.Remove(PublicKeyKey);
+        }
+        else
+        {
+            await SecureStorage.SetAsync(PublicKeyKey, user.publicKey);
+        }
     }
 }

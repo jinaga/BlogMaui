@@ -52,7 +52,6 @@ public static class MauiProgram
         builder.Services.AddSingleton(JinagaConfig.CreateAuthenticationProvider);
         builder.Services.AddSingleton(JinagaConfig.CreateJinagaClient);
         builder.Services.AddJinagaAuthentication();
-        builder.Services.AddSingleton<UserProvider>();
 
         builder.Services.AddSingleton(LogOperatorRetriever.Instance);
 
