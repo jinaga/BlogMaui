@@ -30,8 +30,26 @@ public static class JinagaConfig
             httpClientFactory);
         var authenticationProvider = new OAuth2HttpAuthenticationProvider(
             oauth2Client,
-            services.GetRequiredService<ILogger<OAuth2HttpAuthenticationProvider>>());
+            UpdateUserName,
+            logger: services.GetRequiredService<ILogger<OAuth2HttpAuthenticationProvider>>());
         return authenticationProvider;
+    }
+
+    private static async Task UpdateUserName(JinagaClient jinagaClient, User user, UserProfile profile)
+    {
+        // Load the current user name.
+        var userNames = await jinagaClient.Query(Given<User>.Match((user, facts) =>
+            from name in facts.OfType<UserName>()
+            where name.user == user &&
+                !facts.Any<UserName>(next => next.prior.Contains(name))
+            select name
+        ), user);
+
+        // If the name is different, then update it.
+        if (userNames.Count != 1 || userNames.Single().value != profile.DisplayName)
+        {
+            await jinagaClient.Fact(new UserName(user, profile.DisplayName, userNames.ToArray()));
+        }
     }
 
     public static JinagaClient CreateJinagaClient(IServiceProvider services)

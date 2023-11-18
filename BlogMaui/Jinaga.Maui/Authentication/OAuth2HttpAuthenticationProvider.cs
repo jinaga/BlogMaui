@@ -1,5 +1,4 @@
-﻿using BlogMaui.Blog;
-using Jinaga.Http;
+﻿using Jinaga.Http;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Net.Http.Headers;
@@ -13,15 +12,17 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
     private const string PublicKeyKey = "BlogMaui.PublicKey";
 
     private readonly OAuthClient oauthClient;
+    private readonly Func<JinagaClient, User, UserProfile, Task> updateUserName;
     private readonly ILogger<OAuth2HttpAuthenticationProvider> logger;
 
     private readonly SemaphoreSlim semaphore = new(1);
     volatile private AuthenticationToken? authenticationToken;
     private User? user;
 
-    public OAuth2HttpAuthenticationProvider(OAuthClient oauthClient, ILogger<OAuth2HttpAuthenticationProvider> logger)
+    public OAuth2HttpAuthenticationProvider(OAuthClient oauthClient, Func<JinagaClient, User, UserProfile, Task> updateUserName, ILogger<OAuth2HttpAuthenticationProvider> logger)
     {
         this.oauthClient = oauthClient;
+        this.updateUserName = updateUserName;
         this.logger = logger;
     }
 
@@ -138,19 +139,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
                     this.user = user;
                     await SaveUser();
 
-                    // Load the current user name.
-                    var userNames = await jinagaClient.Query(Given<User>.Match((user, facts) =>
-                        from name in facts.OfType<UserName>()
-                        where name.user == user &&
-                            !facts.Any<UserName>(next => next.prior.Contains(name))
-                        select name
-                    ), user);
-
-                    // If the name is different, then update it.
-                    if (userNames.Count != 1 || userNames.Single().value != profile.DisplayName)
-                    {
-                        await jinagaClient.Fact(new UserName(user, profile.DisplayName, userNames.ToArray()));
-                    }
+                    await updateUserName(jinagaClient, user, profile);
                 }
             }
             return user;
