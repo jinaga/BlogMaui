@@ -119,25 +119,15 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         });
     }
 
-    public async Task<User?> GetUser(JinagaClient jinagaClient, bool loggedIn)
-    {
-        return loggedIn ? await GetUser(jinagaClient) : null;
-    }
-
-    public Task ClearUser()
-    {
-        return Lock(async () =>
-        {
-            this.user = null;
-            await SaveUser();
-            return 0;
-        });
-    }
-
     public Task<User?> GetUser(JinagaClient jinagaClient)
     {
         return Lock(async () =>
         {
+            if (authenticationToken == null)
+            {
+                return null;
+            }
+
             if (this.user == null)
             {
                 // Get the logged in user.
@@ -164,6 +154,16 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
                 }
             }
             return user;
+        });
+    }
+
+    public Task ClearUser()
+    {
+        return Lock(async () =>
+        {
+            this.user = null;
+            await SaveUser();
+            return 0;
         });
     }
 
