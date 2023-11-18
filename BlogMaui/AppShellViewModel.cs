@@ -1,6 +1,7 @@
 ﻿using BlogMaui.Authentication;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Jinaga;
 using Jinaga.Maui.Authentication;
 using MetroLog.Maui;
 using System.Windows.Input;
@@ -40,13 +41,18 @@ public partial class AppShellViewModel : ObservableObject
         {
             Error = string.Empty;
             bool loggedIn = await authenticationProvider.Login();
+            var user = loggedIn ? await userProvider.GetUser() : null;
 
-            if (loggedIn)
+            if (user != null)
             {
                 AppState = "LoggedIn";
 
-                // Use two slashes to prevent back navigation.
-                await Shell.Current.GoToAsync("//loggedin");
+                Dictionary<string, object> parameters = new()
+                {
+                    { "user", user }
+                };
+                // Use two slashes to prevent back navigation to the gatekeeper page.
+                await Shell.Current.GoToAsync("//loggedin", parameters);
             }
         }
         catch (Exception ex)
