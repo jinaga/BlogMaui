@@ -28,7 +28,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 
     public async Task<User?> Initialize(JinagaClient jinagaClient)
     {
-        bool loggedIn = await Lock(async () =>
+        await Lock(async () =>
         {
             logger.LogInformation("Initializing OAuth2 provider");
             await LoadToken().ConfigureAwait(false);
@@ -49,10 +49,10 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             logger.LogInformation(authenticationToken != null
                 ? "Logged in"
                 : "Not logged in");
-            return authenticationToken != null;
-        });
-        await LoadUser();
-        return await GetUser(jinagaClient);
+            await LoadUser().ConfigureAwait(false);
+            return true;
+        }).ConfigureAwait(false);
+        return await GetUser(jinagaClient).ConfigureAwait(false);
     }
 
     public Task<User?> Login(JinagaClient jinagaClient)
@@ -63,7 +63,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             string requestUrl = client.BuildRequestUrl();
             var authResult = await WebAuthenticator.Default.AuthenticateAsync(
                 new Uri(requestUrl),
-                new Uri(client.CallbackUrl));
+                new Uri(client.CallbackUrl)).ConfigureAwait(false);
             if (authResult == null)
             {
                 return null;
@@ -73,10 +73,10 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             string code = authResult.Properties["code"];
 
             client.ValidateState(state);
-            var tokenResponse = await client.GetTokenResponse(code);
+            var tokenResponse = await client.GetTokenResponse(code).ConfigureAwait(false);
             authenticationToken = ResponseToToken(tokenResponse);
-            await SaveToken();
-            return await GetUser(jinagaClient);
+            await SaveToken().ConfigureAwait(false);
+            return await GetUser(jinagaClient).ConfigureAwait(false);
         });
     }
 
@@ -85,10 +85,10 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         await Lock(async () =>
         {
             authenticationToken = null;
-            await SaveToken();
+            await SaveToken().ConfigureAwait(false);
+            await ClearUser().ConfigureAwait(false);
             return true;
-        });
-        await ClearUser();
+        }).ConfigureAwait(false);
     }
 
     public void SetRequestHeaders(HttpRequestHeaders headers)
@@ -132,14 +132,14 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             if (this.user == null)
             {
                 // Get the logged in user.
-                var (user, profile) = await jinagaClient.Login();
+                var (user, profile) = await jinagaClient.Login().ConfigureAwait(false);
 
                 if (user != null)
                 {
                     this.user = user;
-                    await SaveUser();
+                    await SaveUser().ConfigureAwait(false);
 
-                    await updateUserName(jinagaClient, user, profile);
+                    await updateUserName(jinagaClient, user, profile).ConfigureAwait(false);
                 }
             }
             return user;
@@ -151,8 +151,8 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         return Lock(async () =>
         {
             this.user = null;
-            await SaveUser();
-            return 0;
+            await SaveUser().ConfigureAwait(false);
+            return true;
         });
     }
 
@@ -211,7 +211,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 
     private async Task LoadUser()
     {
-        string? publicKey = await SecureStorage.GetAsync(PublicKeyKey);
+        string? publicKey = await SecureStorage.GetAsync(PublicKeyKey).ConfigureAwait(false);
         if (publicKey != null)
         {
             this.user = new User(publicKey);
@@ -226,7 +226,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         }
         else
         {
-            await SecureStorage.SetAsync(PublicKeyKey, user.publicKey);
+            await SecureStorage.SetAsync(PublicKeyKey, user.publicKey).ConfigureAwait(false);
         }
     }
 
