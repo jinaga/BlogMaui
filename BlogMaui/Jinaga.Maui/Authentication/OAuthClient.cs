@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using BlogMaui.Jinaga.Maui.Authentication;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -20,13 +21,13 @@ public class OAuthClient
 
     public string CallbackUrl => callbackUrl;
 
-    public OAuthClient(string authUrl, string accessTokenUrl, string callbackUrl, string clientId, string scope, IHttpClientFactory httpClientFactory)
+    public OAuthClient(AuthenticationSettings authenticationSettings, IHttpClientFactory httpClientFactory)
     {
-        this.authUrl = authUrl;
-        this.accessTokenUrl = accessTokenUrl;
-        this.callbackUrl = callbackUrl;
-        this.clientId = clientId;
-        this.scope = scope;
+        this.authUrl = authenticationSettings.AuthUrl;
+        this.accessTokenUrl = authenticationSettings.AccessTokenUrl;
+        this.callbackUrl = authenticationSettings.CallbackUrl;
+        this.clientId = authenticationSettings.ClientId;
+        this.scope = authenticationSettings.Scope;
         this.httpClientFactory = httpClientFactory;
     }
 

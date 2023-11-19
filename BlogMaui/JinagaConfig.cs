@@ -1,7 +1,7 @@
 ﻿using BlogMaui.Blog;
+using BlogMaui.Jinaga.Maui.Authentication;
 using Jinaga;
 using Jinaga.Http;
-using Jinaga.Maui.Authentication;
 using Jinaga.Store.SQLite;
 
 namespace BlogMaui;
@@ -14,28 +14,18 @@ public static class JinagaConfig
         return settings;
     }
 
-    public static OAuthClient CreateOAuthClient(IServiceProvider services)
+    public static AuthenticationSettings CreateAuthenticationSettings(IServiceProvider services)
     {
         var settings = services.GetRequiredService<Settings>();
 
-        var httpClientFactory = services.GetRequiredService<IHttpClientFactory>();
-        var oauth2Client = new OAuthClient(
+        var authenticationSettings = new AuthenticationSettings(
             settings.AuthUrl,
             settings.AccessTokenUrl,
             settings.CallbackUrl,
             settings.ClientId,
             settings.Scope,
-            httpClientFactory);
-        return oauth2Client;
-    }
-
-    public static AuthenticationService CreateAuthenticationService(IServiceProvider services)
-    {
-        var authenticationService = new AuthenticationService(
-            services.GetRequiredService<OAuth2HttpAuthenticationProvider>(),
-            services.GetRequiredService<JinagaClient>(),
             UpdateUserName);
-        return authenticationService;
+        return authenticationSettings;
     }
 
     private static async Task UpdateUserName(JinagaClient jinagaClient, User user, UserProfile profile)

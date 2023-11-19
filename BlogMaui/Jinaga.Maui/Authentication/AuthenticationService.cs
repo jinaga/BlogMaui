@@ -1,4 +1,6 @@
-﻿namespace Jinaga.Maui.Authentication;
+﻿using BlogMaui.Jinaga.Maui.Authentication;
+
+namespace Jinaga.Maui.Authentication;
 public class AuthenticationService
 {
     private const string PublicKeyKey = "BlogMaui.PublicKey";
@@ -11,11 +13,11 @@ public class AuthenticationService
 
     private readonly SemaphoreSlim semaphore = new(1);
 
-    public AuthenticationService(OAuth2HttpAuthenticationProvider authenticationProvider, JinagaClient jinagaClient, Func<JinagaClient, User, UserProfile, Task> updateUserName)
+    public AuthenticationService(OAuth2HttpAuthenticationProvider authenticationProvider, JinagaClient jinagaClient, AuthenticationSettings authenticationSettings)
     {
         this.authenticationProvider = authenticationProvider;
         this.jinagaClient = jinagaClient;
-        this.updateUserName = updateUserName;
+        this.updateUserName = authenticationSettings.UpdateUserName;
     }
 
     public async Task<User?> Initialize()

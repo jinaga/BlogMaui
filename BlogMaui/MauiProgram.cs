@@ -4,7 +4,6 @@ using BlogMaui.Blog;
 using BlogMaui.Visitor;
 using CommunityToolkit.Maui;
 using Jinaga.Maui;
-using Jinaga.Maui.Authentication;
 using MetroLog.MicrosoftExtensions;
 using MetroLog.Operators;
 using Microsoft.Extensions.Logging;
@@ -50,9 +49,7 @@ public static class MauiProgram
 
         builder.Services.AddHttpClient();
         builder.Services.AddSingleton(JinagaConfig.CreateSettings);
-        builder.Services.AddSingleton(JinagaConfig.CreateOAuthClient);
-        builder.Services.AddSingleton<OAuth2HttpAuthenticationProvider>();
-        builder.Services.AddSingleton(JinagaConfig.CreateAuthenticationService);
+        builder.Services.AddSingleton(JinagaConfig.CreateAuthenticationSettings);
         builder.Services.AddSingleton(JinagaConfig.CreateJinagaClient);
         builder.Services.AddJinagaAuthentication();
 
