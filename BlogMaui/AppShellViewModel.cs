@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Jinaga;
 using Jinaga.Maui.Authentication;
 using MetroLog.Maui;
 using System.Windows.Input;
@@ -9,8 +8,7 @@ namespace BlogMaui;
 
 public partial class AppShellViewModel : ObservableObject
 {
-    private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
-    private readonly JinagaClient jinagaClient;
+    private readonly AuthenticationService authenticationService;
     private readonly LogController logController = new LogController();
 
     [ObservableProperty]
@@ -22,14 +20,13 @@ public partial class AppShellViewModel : ObservableObject
     public ICommand LogOut { get; }
     public ICommand ViewLogs { get; }
 
-    public AppShellViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, JinagaClient jinagaClient)
+    public AppShellViewModel(AuthenticationService authenticationService)
     {
         LogIn = new AsyncRelayCommand(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
         ViewLogs = logController.GoToLogsPageCommand;
 
-        this.authenticationProvider = authenticationProvider;
-        this.jinagaClient = jinagaClient;
+        this.authenticationService = authenticationService;
 
         logController.IsShakeEnabled = true;
     }
@@ -39,7 +36,7 @@ public partial class AppShellViewModel : ObservableObject
         try
         {
             Error = string.Empty;
-            var user = await authenticationProvider.Login(jinagaClient);
+            var user = await authenticationService.Login();
 
             if (user != null)
             {
@@ -64,7 +61,7 @@ public partial class AppShellViewModel : ObservableObject
         try
         {
             Error = string.Empty;
-            await authenticationProvider.LogOut();
+            await authenticationService.LogOut();
             AppState = "NotLoggedIn";
 
             // Use two slashes to prevent back navigation.
