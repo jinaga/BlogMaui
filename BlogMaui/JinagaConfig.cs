@@ -1,7 +1,7 @@
 ﻿using BlogMaui.Blog;
-using BlogMaui.Jinaga.Maui.Authentication;
 using Jinaga;
 using Jinaga.Http;
+using Jinaga.Maui.Authentication;
 using Jinaga.Store.SQLite;
 
 namespace BlogMaui;

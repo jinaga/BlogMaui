@@ -1,6 +1,6 @@
 ﻿using Jinaga;
 
-namespace BlogMaui.Jinaga.Maui.Authentication;
+namespace Jinaga.Maui.Authentication;
 public class AuthenticationSettings
 {
     public AuthenticationSettings(string authUrl, string accessTokenUrl, string callbackUrl, string clientId, string scope, Func<JinagaClient, User, UserProfile, Task> updateUserName)

@@ -1,6 +1,4 @@
-﻿using BlogMaui.Jinaga.Maui.Authentication;
-
-namespace Jinaga.Maui.Authentication;
+﻿namespace Jinaga.Maui.Authentication;
 public class AuthenticationService
 {
     private const string PublicKeyKey = "BlogMaui.PublicKey";
