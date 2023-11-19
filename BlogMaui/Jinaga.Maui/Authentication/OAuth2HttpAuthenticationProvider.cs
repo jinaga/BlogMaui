@@ -1,5 +1,4 @@
 ﻿using Jinaga.Http;
-using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -8,48 +7,42 @@ namespace Jinaga.Maui.Authentication;
 
 public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 {
-    private const string AuthenticationTokenKey = "BlogMaui.AuthenticationToken";
+    private const string AuthenticationTokenKey = "Jinaga.AuthenticationToken";
 
     private readonly OAuthClient oauthClient;
-    private readonly ILogger<OAuth2HttpAuthenticationProvider> logger;
 
     private readonly SemaphoreSlim semaphore = new(1);
     volatile private AuthenticationToken? authenticationToken;
 
-    public OAuth2HttpAuthenticationProvider(OAuthClient oauthClient, ILogger<OAuth2HttpAuthenticationProvider> logger)
+    internal bool IsLoggedIn => authenticationToken != null;
+
+    public OAuth2HttpAuthenticationProvider(OAuthClient oauthClient)
     {
         this.oauthClient = oauthClient;
-        this.logger = logger;
     }
 
-    public Task<bool> Initialize()
+    internal Task Initialize()
     {
         return Lock(async () =>
         {
-            logger.LogInformation("Initializing OAuth2 provider");
             await LoadToken().ConfigureAwait(false);
             if (authenticationToken != null)
             {
-                logger.LogInformation("Loaded a token");
                 // Check for token expiration
                 if (DateTime.TryParse(authenticationToken.ExpryDate, null, DateTimeStyles.RoundtripKind, out var expiryDate))
                 {
                     if (DateTime.UtcNow > expiryDate.AddMinutes(-5))
                     {
-                        logger.LogInformation("It was expired");
                         await RefreshToken().ConfigureAwait(false);
                         await SaveToken().ConfigureAwait(false);
                     }
                 }
             }
-            logger.LogInformation(authenticationToken != null
-                ? "Logged in"
-                : "Not logged in");
-            return authenticationToken != null;
+            return true;
         });
     }
 
-    public Task<bool> Login()
+    internal Task<bool> Login()
     {
         return Lock(async () =>
         {
@@ -57,7 +50,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             string requestUrl = client.BuildRequestUrl();
             var authResult = await WebAuthenticator.Default.AuthenticateAsync(
                 new Uri(requestUrl),
-                new Uri(client.CallbackUrl));
+                new Uri(client.CallbackUrl)).ConfigureAwait(false);
             if (authResult == null)
             {
                 return false;
@@ -67,19 +60,19 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             string code = authResult.Properties["code"];
 
             client.ValidateState(state);
-            var tokenResponse = await client.GetTokenResponse(code);
+            var tokenResponse = await client.GetTokenResponse(code).ConfigureAwait(false);
             authenticationToken = ResponseToToken(tokenResponse);
-            await SaveToken();
+            await SaveToken().ConfigureAwait(false);
             return true;
         });
     }
 
-    public Task LogOut()
+    internal Task LogOut()
     {
         return Lock(async () =>
         {
             authenticationToken = null;
-            await SaveToken();
+            await SaveToken().ConfigureAwait(false);
             return true;
         });
     }
@@ -89,12 +82,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         var cachedAuthenticationToken = authenticationToken;
         if (cachedAuthenticationToken != null)
         {
-            logger.LogInformation("Setting authorization header");
             headers.Authorization = new AuthenticationHeaderValue("Bearer", cachedAuthenticationToken.AccessToken);
-        }
-        else
-        {
-            logger.LogInformation("No authentication token");
         }
     }
 
@@ -104,7 +92,6 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         {
             if (authenticationToken != null)
             {
-                logger.LogInformation("I have an old authentication token");
                 await RefreshToken().ConfigureAwait(false);
                 await SaveToken().ConfigureAwait(false);
                 return true;
@@ -118,13 +105,8 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         string? tokenJson = await SecureStorage.GetAsync(AuthenticationTokenKey).ConfigureAwait(false);
         if (tokenJson != null)
         {
-            logger.LogInformation("Loaded a token");
             AuthenticationToken? authenticationToken = JsonSerializer.Deserialize<AuthenticationToken>(tokenJson);
             this.authenticationToken = authenticationToken;
-        }
-        else
-        {
-            logger.LogInformation("There was no token in storage");
         }
     }
 
@@ -132,12 +114,10 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
     {
         if (authenticationToken == null)
         {
-            logger.LogInformation("Clearing the token");
             SecureStorage.Remove(AuthenticationTokenKey);
         }
         else
         {
-            logger.LogInformation("Saving a token");
             string tokenJson = JsonSerializer.Serialize(authenticationToken);
             await SecureStorage.SetAsync(AuthenticationTokenKey, tokenJson).ConfigureAwait(false);
         }
@@ -150,7 +130,6 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             throw new InvalidOperationException("Attempting to refresh with no token");
         }
 
-        logger.LogInformation("Refreshing token");
         var tokenResponse = await oauthClient.RequestNewToken(authenticationToken.RefreshToken).ConfigureAwait(false);
         authenticationToken = ResponseToToken(tokenResponse);
     }

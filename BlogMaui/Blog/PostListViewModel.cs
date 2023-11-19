@@ -1,5 +1,4 @@
-﻿using BlogMaui.Authentication;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using Microsoft.Extensions.Logging;

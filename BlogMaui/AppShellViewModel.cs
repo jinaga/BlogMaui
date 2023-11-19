@@ -1,5 +1,4 @@
-﻿using BlogMaui.Authentication;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga.Maui.Authentication;
 using MetroLog.Maui;
@@ -9,8 +8,7 @@ namespace BlogMaui;
 
 public partial class AppShellViewModel : ObservableObject
 {
-    private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
-    private readonly UserProvider userProvider;
+    private readonly AuthenticationService authenticationService;
     private readonly LogController logController = new LogController();
 
     [ObservableProperty]
@@ -22,14 +20,13 @@ public partial class AppShellViewModel : ObservableObject
     public ICommand LogOut { get; }
     public ICommand ViewLogs { get; }
 
-    public AppShellViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, UserProvider userProvider)
+    public AppShellViewModel(AuthenticationService authenticationService)
     {
         LogIn = new AsyncRelayCommand(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
         ViewLogs = logController.GoToLogsPageCommand;
 
-        this.authenticationProvider = authenticationProvider;
-        this.userProvider = userProvider;
+        this.authenticationService = authenticationService;
 
         logController.IsShakeEnabled = true;
     }
@@ -39,14 +36,18 @@ public partial class AppShellViewModel : ObservableObject
         try
         {
             Error = string.Empty;
-            bool loggedIn = await authenticationProvider.Login();
+            var user = await authenticationService.Login();
 
-            if (loggedIn)
+            if (user != null)
             {
                 AppState = "LoggedIn";
 
-                // Use two slashes to prevent back navigation.
-                await Shell.Current.GoToAsync("//loggedin");
+                Dictionary<string, object> parameters = new()
+                {
+                    { "user", user }
+                };
+                // Use two slashes to prevent back navigation to the gatekeeper page.
+                await Shell.Current.GoToAsync("//loggedin", parameters);
             }
         }
         catch (Exception ex)
@@ -60,8 +61,7 @@ public partial class AppShellViewModel : ObservableObject
         try
         {
             Error = string.Empty;
-            await authenticationProvider.LogOut();
-            await userProvider.ClearUser();
+            await authenticationService.LogOut();
             AppState = "NotLoggedIn";
 
             // Use two slashes to prevent back navigation.

@@ -6,18 +6,16 @@ namespace BlogMaui.Authentication;
 
 public partial class GatekeeperViewModel : ObservableObject
 {
-    private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
-    private readonly UserProvider userProvider;
+    private readonly AuthenticationService authenticationService;
     private readonly AppShellViewModel appShellViewModel;
     private readonly ILogger<GatekeeperViewModel> logger;
 
     [ObservableProperty]
     private string error = string.Empty;
 
-    public GatekeeperViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, UserProvider userProvider, AppShellViewModel appShellViewModel, ILogger<GatekeeperViewModel> logger)
+    public GatekeeperViewModel(AuthenticationService authenticationService, AppShellViewModel appShellViewModel, ILogger<GatekeeperViewModel> logger)
     {
-        this.authenticationProvider = authenticationProvider;
-        this.userProvider = userProvider;
+        this.authenticationService = authenticationService;
         this.appShellViewModel = appShellViewModel;
         this.logger = logger;
     }
@@ -26,9 +24,7 @@ public partial class GatekeeperViewModel : ObservableObject
     {
         try
         {
-            bool loggedIn = await authenticationProvider.Initialize();
-            await userProvider.Initialize();
-            var user = loggedIn ? await userProvider.GetUser() : null;
+            var user = await authenticationService.Initialize();
 
             if (user != null)
             {
@@ -51,8 +47,7 @@ public partial class GatekeeperViewModel : ObservableObject
         {
             logger.LogError(ex, "Error initializing GatekeeperViewModel");
             Error = $"Error while initializing: {ex.GetMessage()}";
-            await authenticationProvider.LogOut();
-            await userProvider.ClearUser();
+            await authenticationService.LogOut();
         }
     }
 }

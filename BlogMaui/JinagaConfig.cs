@@ -3,8 +3,6 @@ using Jinaga;
 using Jinaga.Http;
 using Jinaga.Maui.Authentication;
 using Jinaga.Store.SQLite;
-using MetroLog;
-using Microsoft.Extensions.Logging;
 
 namespace BlogMaui;
 public static class JinagaConfig
@@ -16,21 +14,35 @@ public static class JinagaConfig
         return settings;
     }
 
-    public static OAuth2HttpAuthenticationProvider CreateAuthenticationProvider(IServiceProvider services)
+    public static AuthenticationSettings CreateAuthenticationSettings(IServiceProvider services)
     {
         var settings = services.GetRequiredService<Settings>();
 
-        var httpClientFactory = services.GetRequiredService<IHttpClientFactory>();
-        var oauth2Client = new OAuthClient(
+        var authenticationSettings = new AuthenticationSettings(
             settings.AuthUrl,
             settings.AccessTokenUrl,
             settings.CallbackUrl,
             settings.ClientId,
             settings.Scope,
-            httpClientFactory);
-        var authenticationProvider = new OAuth2HttpAuthenticationProvider(oauth2Client,
-            services.GetRequiredService<ILogger<OAuth2HttpAuthenticationProvider>>());
-        return authenticationProvider;
+            UpdateUserName);
+        return authenticationSettings;
+    }
+
+    private static async Task UpdateUserName(JinagaClient jinagaClient, User user, UserProfile profile)
+    {
+        // Load the current user name.
+        var userNames = await jinagaClient.Query(Given<User>.Match((user, facts) =>
+            from name in facts.OfType<UserName>()
+            where name.user == user &&
+                !facts.Any<UserName>(next => next.prior.Contains(name))
+            select name
+        ), user);
+
+        // If the name is different, then update it.
+        if (userNames.Count != 1 || userNames.Single().value != profile.DisplayName)
+        {
+            await jinagaClient.Fact(new UserName(user, profile.DisplayName, userNames.ToArray()));
+        }
     }
 
     public static JinagaClient CreateJinagaClient(IServiceProvider services)
