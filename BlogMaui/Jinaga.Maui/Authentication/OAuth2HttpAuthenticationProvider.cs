@@ -77,11 +77,6 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         });
     }
 
-    internal void SetAuthenticationToken(AuthenticationToken authenticationToken)
-    {
-        this.authenticationToken = authenticationToken;
-    }
-
     public void SetRequestHeaders(HttpRequestHeaders headers)
     {
         var cachedAuthenticationToken = authenticationToken;
@@ -139,17 +134,6 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         authenticationToken = ResponseToToken(tokenResponse);
     }
 
-    private static AuthenticationToken ResponseToToken(TokenResponse tokenResponse)
-    {
-        return new AuthenticationToken
-        {
-            AccessToken = tokenResponse.AccessToken,
-            RefreshToken = tokenResponse.RefreshToken,
-            ExpryDate = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
-                .ToString("O", CultureInfo.InvariantCulture)
-        };
-    }
-
     private async Task<T> Lock<T>(Func<Task<T>> action)
     {
         await semaphore.WaitAsync().ConfigureAwait(false);
@@ -161,5 +145,16 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         {
             semaphore.Release();
         }
+    }
+
+    private static AuthenticationToken ResponseToToken(TokenResponse tokenResponse)
+    {
+        return new AuthenticationToken
+        {
+            AccessToken = tokenResponse.AccessToken,
+            RefreshToken = tokenResponse.RefreshToken,
+            ExpryDate = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
+                .ToString("O", CultureInfo.InvariantCulture)
+        };
     }
 }
