@@ -7,7 +7,7 @@ namespace Jinaga.Maui.Authentication;
 
 public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 {
-    private const string AuthenticationTokenKey = "BlogMaui.AuthenticationToken";
+    private const string AuthenticationTokenKey = "Jinaga.AuthenticationToken";
 
     private readonly OAuthClient oauthClient;
 

@@ -1,7 +1,7 @@
 ﻿namespace Jinaga.Maui.Authentication;
 public class AuthenticationService
 {
-    private const string PublicKeyKey = "BlogMaui.PublicKey";
+    private const string PublicKeyKey = "Jinaga.PublicKey";
 
     private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
     private readonly JinagaClient jinagaClient;
