@@ -14,7 +14,7 @@ public static class JinagaConfig
         return settings;
     }
 
-    public static OAuth2HttpAuthenticationProvider CreateAuthenticationProvider(IServiceProvider services)
+    public static OAuthClient CreateOAuthClient(IServiceProvider services)
     {
         var settings = services.GetRequiredService<Settings>();
 
@@ -26,10 +26,16 @@ public static class JinagaConfig
             settings.ClientId,
             settings.Scope,
             httpClientFactory);
-        var authenticationProvider = new OAuth2HttpAuthenticationProvider(
-            oauth2Client,
+        return oauth2Client;
+    }
+
+    public static AuthenticationService CreateAuthenticationService(IServiceProvider services)
+    {
+        var authenticationService = new AuthenticationService(
+            services.GetRequiredService<OAuth2HttpAuthenticationProvider>(),
+            services.GetRequiredService<JinagaClient>(),
             UpdateUserName);
-        return authenticationProvider;
+        return authenticationService;
     }
 
     private static async Task UpdateUserName(JinagaClient jinagaClient, User user, UserProfile profile)

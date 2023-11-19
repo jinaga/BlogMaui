@@ -8,24 +8,22 @@ namespace Jinaga.Maui.Authentication;
 public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 {
     private const string AuthenticationTokenKey = "BlogMaui.AuthenticationToken";
-    private const string PublicKeyKey = "BlogMaui.PublicKey";
 
     private readonly OAuthClient oauthClient;
-    private readonly Func<JinagaClient, User, UserProfile, Task> updateUserName;
 
     private readonly SemaphoreSlim semaphore = new(1);
     volatile private AuthenticationToken? authenticationToken;
-    private User? user;
 
-    public OAuth2HttpAuthenticationProvider(OAuthClient oauthClient, Func<JinagaClient, User, UserProfile, Task> updateUserName)
+    internal bool IsLoggedIn => authenticationToken != null;
+
+    public OAuth2HttpAuthenticationProvider(OAuthClient oauthClient)
     {
         this.oauthClient = oauthClient;
-        this.updateUserName = updateUserName;
     }
 
-    public async Task<User?> Initialize(JinagaClient jinagaClient)
+    internal Task Initialize()
     {
-        await Lock(async () =>
+        return Lock(async () =>
         {
             await LoadToken().ConfigureAwait(false);
             if (authenticationToken != null)
@@ -40,13 +38,11 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
                     }
                 }
             }
-            await LoadUser().ConfigureAwait(false);
             return true;
-        }).ConfigureAwait(false);
-        return await GetUser(jinagaClient).ConfigureAwait(false);
+        });
     }
 
-    public Task<User?> Login(JinagaClient jinagaClient)
+    internal Task<bool> Login()
     {
         return Lock(async () =>
         {
@@ -57,7 +53,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
                 new Uri(client.CallbackUrl)).ConfigureAwait(false);
             if (authResult == null)
             {
-                return null;
+                return false;
             }
 
             string state = authResult.Properties["state"];
@@ -67,19 +63,23 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             var tokenResponse = await client.GetTokenResponse(code).ConfigureAwait(false);
             authenticationToken = ResponseToToken(tokenResponse);
             await SaveToken().ConfigureAwait(false);
-            return await GetUser(jinagaClient).ConfigureAwait(false);
+            return true;
         });
     }
 
-    public async Task LogOut()
+    internal Task LogOut()
     {
-        await Lock(async () =>
+        return Lock(async () =>
         {
             authenticationToken = null;
             await SaveToken().ConfigureAwait(false);
-            await ClearUser().ConfigureAwait(false);
             return true;
-        }).ConfigureAwait(false);
+        });
+    }
+
+    internal void SetAuthenticationToken(AuthenticationToken authenticationToken)
+    {
+        this.authenticationToken = authenticationToken;
     }
 
     public void SetRequestHeaders(HttpRequestHeaders headers)
@@ -102,42 +102,6 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
                 return true;
             }
             return false;
-        });
-    }
-
-    public Task<User?> GetUser(JinagaClient jinagaClient)
-    {
-        return Lock(async () =>
-        {
-            if (authenticationToken == null)
-            {
-                return null;
-            }
-
-            if (this.user == null)
-            {
-                // Get the logged in user.
-                var (user, profile) = await jinagaClient.Login().ConfigureAwait(false);
-
-                if (user != null)
-                {
-                    this.user = user;
-                    await SaveUser().ConfigureAwait(false);
-
-                    await updateUserName(jinagaClient, user, profile).ConfigureAwait(false);
-                }
-            }
-            return user;
-        });
-    }
-
-    public Task ClearUser()
-    {
-        return Lock(async () =>
-        {
-            this.user = null;
-            await SaveUser().ConfigureAwait(false);
-            return true;
         });
     }
 
@@ -184,27 +148,6 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             ExpryDate = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
                 .ToString("O", CultureInfo.InvariantCulture)
         };
-    }
-
-    private async Task LoadUser()
-    {
-        string? publicKey = await SecureStorage.GetAsync(PublicKeyKey).ConfigureAwait(false);
-        if (publicKey != null)
-        {
-            this.user = new User(publicKey);
-        }
-    }
-
-    private async Task SaveUser()
-    {
-        if (user == null)
-        {
-            SecureStorage.Remove(PublicKeyKey);
-        }
-        else
-        {
-            await SecureStorage.SetAsync(PublicKeyKey, user.publicKey).ConfigureAwait(false);
-        }
     }
 
     private async Task<T> Lock<T>(Func<Task<T>> action)

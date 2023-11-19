@@ -8,7 +8,6 @@ public static class ConfigurationExtensions
     {
         services.AddSingleton<IHttpAuthenticationProvider>(
             s => s.GetRequiredService<OAuth2HttpAuthenticationProvider>());
-        services.AddSingleton<AuthenticationService>();
         return services;
     }
 }
