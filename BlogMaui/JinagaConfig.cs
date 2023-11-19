@@ -1,4 +1,5 @@
-﻿using BlogMaui.Blog;
+﻿using BlogMaui.Authentication;
+using BlogMaui.Blog;
 using Jinaga;
 using Jinaga.Http;
 using Jinaga.Maui.Authentication;
@@ -28,7 +29,9 @@ public static class JinagaConfig
             settings.ClientId,
             settings.Scope,
             httpClientFactory);
-        var authenticationProvider = new OAuth2HttpAuthenticationProvider(oauth2Client,
+        var authenticationProvider = new OAuth2HttpAuthenticationProvider(
+            services.GetRequiredService<UserProvider>(),
+            oauth2Client,
             services.GetRequiredService<ILogger<OAuth2HttpAuthenticationProvider>>());
         return authenticationProvider;
     }

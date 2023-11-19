@@ -6,14 +6,8 @@ public class UserProvider
 {
     private const string PublicKeyKey = "BlogMaui.PublicKey";
 
-    private readonly JinagaClient jinagaClient;
     private readonly SemaphoreSlim semaphore = new(1);
     private User? user;
-
-    public UserProvider(JinagaClient jinagaClient)
-    {
-        this.jinagaClient = jinagaClient;
-    }
 
     public async Task Initialize()
     {
@@ -34,7 +28,7 @@ public class UserProvider
         }
     }
 
-    public async Task<User?> GetUser()
+    public async Task<User?> GetUser(JinagaClient jinagaClient)
     {
         await semaphore.WaitAsync();
         try

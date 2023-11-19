@@ -1,4 +1,5 @@
-﻿using Jinaga.Http;
+﻿using BlogMaui.Authentication;
+using Jinaga.Http;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Net.Http.Headers;
@@ -10,21 +11,23 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 {
     private const string AuthenticationTokenKey = "BlogMaui.AuthenticationToken";
 
+    private readonly UserProvider userProvider;
     private readonly OAuthClient oauthClient;
     private readonly ILogger<OAuth2HttpAuthenticationProvider> logger;
 
     private readonly SemaphoreSlim semaphore = new(1);
     volatile private AuthenticationToken? authenticationToken;
 
-    public OAuth2HttpAuthenticationProvider(OAuthClient oauthClient, ILogger<OAuth2HttpAuthenticationProvider> logger)
+    public OAuth2HttpAuthenticationProvider(UserProvider userProvider, OAuthClient oauthClient, ILogger<OAuth2HttpAuthenticationProvider> logger)
     {
+        this.userProvider = userProvider;
         this.oauthClient = oauthClient;
         this.logger = logger;
     }
 
-    public Task<bool> Initialize()
+    public async Task<bool> Initialize()
     {
-        return Lock(async () =>
+        bool loggedIn = await Lock(async () =>
         {
             logger.LogInformation("Initializing OAuth2 provider");
             await LoadToken().ConfigureAwait(false);
@@ -47,6 +50,8 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
                 : "Not logged in");
             return authenticationToken != null;
         });
+        await userProvider.Initialize();
+        return loggedIn;
     }
 
     public Task<bool> Login()
@@ -74,14 +79,15 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         });
     }
 
-    public Task LogOut()
+    public async Task LogOut()
     {
-        return Lock(async () =>
+        await Lock(async () =>
         {
             authenticationToken = null;
             await SaveToken();
             return true;
         });
+        await userProvider.ClearUser();
     }
 
     public void SetRequestHeaders(HttpRequestHeaders headers)
@@ -177,5 +183,10 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             ExpryDate = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
                 .ToString("O", CultureInfo.InvariantCulture)
         };
+    }
+
+    public async Task<User?> GetUser(JinagaClient jinagaClient, bool loggedIn)
+    {
+        return loggedIn ? await userProvider.GetUser(jinagaClient) : null;
     }
 }

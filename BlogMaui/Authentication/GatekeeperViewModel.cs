@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Jinaga;
 using Jinaga.Maui.Authentication;
 using Microsoft.Extensions.Logging;
 
@@ -7,18 +8,18 @@ namespace BlogMaui.Authentication;
 public partial class GatekeeperViewModel : ObservableObject
 {
     private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
-    private readonly UserProvider userProvider;
     private readonly AppShellViewModel appShellViewModel;
+    private readonly JinagaClient jinagaClient;
     private readonly ILogger<GatekeeperViewModel> logger;
 
     [ObservableProperty]
     private string error = string.Empty;
 
-    public GatekeeperViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, UserProvider userProvider, AppShellViewModel appShellViewModel, ILogger<GatekeeperViewModel> logger)
+    public GatekeeperViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, AppShellViewModel appShellViewModel, JinagaClient jinagaClient, ILogger<GatekeeperViewModel> logger)
     {
         this.authenticationProvider = authenticationProvider;
-        this.userProvider = userProvider;
         this.appShellViewModel = appShellViewModel;
+        this.jinagaClient = jinagaClient;
         this.logger = logger;
     }
 
@@ -27,8 +28,7 @@ public partial class GatekeeperViewModel : ObservableObject
         try
         {
             bool loggedIn = await authenticationProvider.Initialize();
-            await userProvider.Initialize();
-            var user = loggedIn ? await userProvider.GetUser() : null;
+            var user = await authenticationProvider.GetUser(jinagaClient, loggedIn);
 
             if (user != null)
             {
@@ -52,7 +52,6 @@ public partial class GatekeeperViewModel : ObservableObject
             logger.LogError(ex, "Error initializing GatekeeperViewModel");
             Error = $"Error while initializing: {ex.GetMessage()}";
             await authenticationProvider.LogOut();
-            await userProvider.ClearUser();
         }
     }
 }

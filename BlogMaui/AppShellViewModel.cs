@@ -1,5 +1,4 @@
-﻿using BlogMaui.Authentication;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using Jinaga.Maui.Authentication;
@@ -11,7 +10,7 @@ namespace BlogMaui;
 public partial class AppShellViewModel : ObservableObject
 {
     private readonly OAuth2HttpAuthenticationProvider authenticationProvider;
-    private readonly UserProvider userProvider;
+    private readonly JinagaClient jinagaClient;
     private readonly LogController logController = new LogController();
 
     [ObservableProperty]
@@ -23,14 +22,14 @@ public partial class AppShellViewModel : ObservableObject
     public ICommand LogOut { get; }
     public ICommand ViewLogs { get; }
 
-    public AppShellViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, UserProvider userProvider)
+    public AppShellViewModel(OAuth2HttpAuthenticationProvider authenticationProvider, JinagaClient jinagaClient)
     {
         LogIn = new AsyncRelayCommand(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
         ViewLogs = logController.GoToLogsPageCommand;
 
         this.authenticationProvider = authenticationProvider;
-        this.userProvider = userProvider;
+        this.jinagaClient = jinagaClient;
 
         logController.IsShakeEnabled = true;
     }
@@ -41,7 +40,7 @@ public partial class AppShellViewModel : ObservableObject
         {
             Error = string.Empty;
             bool loggedIn = await authenticationProvider.Login();
-            var user = loggedIn ? await userProvider.GetUser() : null;
+            var user = authenticationProvider.GetUser(jinagaClient, loggedIn);
 
             if (user != null)
             {
@@ -67,7 +66,6 @@ public partial class AppShellViewModel : ObservableObject
         {
             Error = string.Empty;
             await authenticationProvider.LogOut();
-            await userProvider.ClearUser();
             AppState = "NotLoggedIn";
 
             // Use two slashes to prevent back navigation.
