@@ -1,7 +1,7 @@
-﻿using BlogMaui.Account;
+﻿using BlogMaui.Areas.Account;
+using BlogMaui.Areas.Blog;
+using BlogMaui.Areas.Visitor;
 using BlogMaui.Authentication;
-using BlogMaui.Blog;
-using BlogMaui.Visitor;
 using CommunityToolkit.Maui;
 using Jinaga.Maui;
 using MetroLog.MicrosoftExtensions;
@@ -55,6 +55,7 @@ public static class MauiProgram
 
         builder.Services.AddSingleton(LogOperatorRetriever.Instance);
 
+        builder.Services.AddSingleton<UserProvider>();
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddTransient<AppShell>();
         builder.Services.AddTransient<GatekeeperPage>();
@@ -68,6 +69,7 @@ public static class MauiProgram
         builder.Services.AddTransient<PostPage>();
         builder.Services.AddTransient<PostViewModel>();
         builder.Services.AddTransient<AccountPage>();
+        builder.Services.AddTransient<AccountViewModel>();
 
 #if DEBUG
         builder.Logging.AddDebug();

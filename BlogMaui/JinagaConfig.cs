@@ -1,4 +1,4 @@
-﻿using BlogMaui.Blog;
+﻿using BlogMaui.Areas.Blog;
 using Jinaga;
 using Jinaga.Http;
 using Jinaga.Maui.Authentication;

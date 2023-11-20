@@ -1,17 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BlogMaui.Authentication;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace BlogMaui.Blog;
-public partial class PostListViewModel : ObservableObject, IQueryAttributable
+namespace BlogMaui.Areas.Blog;
+public partial class PostListViewModel : ObservableObject
 {
     private readonly JinagaClient jinagaClient;
+    private readonly UserProvider userProvider;
     private readonly ILogger<PostListViewModel> logger;
 
-    private User? user;
     private IObserver? observer;
 
     [ObservableProperty]
@@ -24,25 +25,18 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
 
     public ICommand Refresh { get; }
 
-    public PostListViewModel(JinagaClient jinagaClient, ILogger<PostListViewModel> logger)
+    public PostListViewModel(JinagaClient jinagaClient, UserProvider userProvider, ILogger<PostListViewModel> logger)
     {
         this.jinagaClient = jinagaClient;
+        this.userProvider = userProvider;
         this.logger = logger;
 
         Refresh = new AsyncRelayCommand(HandleRefresh);
     }
 
-    public void ApplyQueryAttributes(IDictionary<string, object> query)
-    {
-        logger.LogInformation("ApplyQueryAttributes PostListViewModel");
-
-        user = query.GetParameter<User>("user");
-        Load();
-    }
-
     public void Load()
     {
-        if (user == null || observer != null)
+        if (userProvider.User == null || observer != null)
         {
             return;
         }
@@ -69,7 +63,7 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
             }
         );
 
-        var site = new Site(user, domain);
+        var site = new Site(userProvider.User, domain);
         observer = jinagaClient.Watch(postsInBlog, site, projection =>
         {
             logger.LogInformation("Added post");

@@ -1,8 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BlogMaui.Areas.Blog;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Input;
 
-namespace BlogMaui.Blog;
+namespace BlogMaui.Areas.Blog;
 public partial class PostHeaderViewModel : ObservableObject
 {
     private readonly Post post;

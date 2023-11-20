@@ -1,6 +1,6 @@
 ﻿using Jinaga;
 
-namespace BlogMaui.Blog;
+namespace BlogMaui.Areas.Blog;
 
 [FactType("Blog.User.Name")]
 public record UserName(User user, string value, UserName[] prior) { }

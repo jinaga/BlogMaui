@@ -4,7 +4,7 @@ using Jinaga;
 using System.Collections.Immutable;
 using System.Windows.Input;
 
-namespace BlogMaui.Blog;
+namespace BlogMaui.Areas.Blog;
 
 public partial class PostViewModel : ObservableObject, IQueryAttributable
 {
@@ -53,6 +53,7 @@ public partial class PostViewModel : ObservableObject, IQueryAttributable
     public void Unload()
     {
         titlesObserver?.Stop();
+        titlesObserver = null;
     }
 
     private async Task HandleEdit()

@@ -101,28 +101,28 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Blog\PostListPage.xaml.cs">
+	  <Compile Update="Areas\Blog\PostListPage.xaml.cs">
 	    <DependentUpon>PostListPage.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Account\AccountPage.xaml">
+	  <MauiXaml Update="Areas\Account\AccountPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Authentication\GatekeeperPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Blog\PostEditPage.xaml">
+	  <MauiXaml Update="Areas\Blog\PostEditPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Blog\PostPage.xaml">
+	  <MauiXaml Update="Areas\Blog\PostPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Visitor\LoginPage.xaml">
+	  <MauiXaml Update="Areas\Visitor\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Visitor\VisitorPage.xaml">
+	  <MauiXaml Update="Areas\Visitor\VisitorPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
