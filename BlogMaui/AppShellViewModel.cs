@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BlogMaui.Authentication;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga.Maui.Authentication;
 using MetroLog.Maui;
@@ -9,6 +10,7 @@ namespace BlogMaui;
 public partial class AppShellViewModel : ObservableObject
 {
     private readonly AuthenticationService authenticationService;
+    private readonly UserProvider userProvider;
     private readonly LogController logController = new LogController();
 
     [ObservableProperty]
@@ -20,13 +22,14 @@ public partial class AppShellViewModel : ObservableObject
     public ICommand LogOut { get; }
     public ICommand ViewLogs { get; }
 
-    public AppShellViewModel(AuthenticationService authenticationService)
+    public AppShellViewModel(AuthenticationService authenticationService, UserProvider userProvider)
     {
         LogIn = new AsyncRelayCommand(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
         ViewLogs = logController.GoToLogsPageCommand;
 
         this.authenticationService = authenticationService;
+        this.userProvider = userProvider;
 
         logController.IsShakeEnabled = true;
     }
@@ -40,14 +43,11 @@ public partial class AppShellViewModel : ObservableObject
 
             if (user != null)
             {
+                userProvider.User = user;
                 AppState = "LoggedIn";
 
-                Dictionary<string, object> parameters = new()
-                {
-                    { "user", user }
-                };
                 // Use two slashes to prevent back navigation to the gatekeeper page.
-                await Shell.Current.GoToAsync("//loggedin", parameters);
+                await Shell.Current.GoToAsync("//loggedin");
             }
         }
         catch (Exception ex)
@@ -62,6 +62,8 @@ public partial class AppShellViewModel : ObservableObject
         {
             Error = string.Empty;
             await authenticationService.LogOut();
+
+            userProvider.User = null;
             AppState = "NotLoggedIn";
 
             // Use two slashes to prevent back navigation.

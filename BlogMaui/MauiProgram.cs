@@ -55,6 +55,7 @@ public static class MauiProgram
 
         builder.Services.AddSingleton(LogOperatorRetriever.Instance);
 
+        builder.Services.AddSingleton<UserProvider>();
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddTransient<AppShell>();
         builder.Services.AddTransient<GatekeeperPage>();

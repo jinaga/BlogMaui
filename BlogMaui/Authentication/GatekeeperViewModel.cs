@@ -8,15 +8,17 @@ public partial class GatekeeperViewModel : ObservableObject
 {
     private readonly AuthenticationService authenticationService;
     private readonly AppShellViewModel appShellViewModel;
+    private readonly UserProvider userProvider;
     private readonly ILogger<GatekeeperViewModel> logger;
 
     [ObservableProperty]
     private string error = string.Empty;
 
-    public GatekeeperViewModel(AuthenticationService authenticationService, AppShellViewModel appShellViewModel, ILogger<GatekeeperViewModel> logger)
+    public GatekeeperViewModel(AuthenticationService authenticationService, AppShellViewModel appShellViewModel, UserProvider userProvider, ILogger<GatekeeperViewModel> logger)
     {
         this.authenticationService = authenticationService;
         this.appShellViewModel = appShellViewModel;
+        this.userProvider = userProvider;
         this.logger = logger;
     }
 
@@ -28,13 +30,11 @@ public partial class GatekeeperViewModel : ObservableObject
 
             if (user != null)
             {
+                userProvider.User = user;
                 appShellViewModel.AppState = "LoggedIn";
-                Dictionary<string, object> parameters = new()
-                {
-                    { "user", user }
-                };
+
                 // Use two slashes to prevent back navigation to the gatekeeper page.
-                await Shell.Current.GoToAsync("//loggedin", parameters);
+                await Shell.Current.GoToAsync("//loggedin");
             }
             else
             {

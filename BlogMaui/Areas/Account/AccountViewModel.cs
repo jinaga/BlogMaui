@@ -1,32 +1,28 @@
-using BlogMaui.Areas.Blog;
+﻿using BlogMaui.Areas.Blog;
+using BlogMaui.Authentication;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga;
 
 namespace BlogMaui.Areas.Account;
-public partial class AccountViewModel : ObservableObject, IQueryAttributable
+public partial class AccountViewModel : ObservableObject
 {
     [ObservableProperty]
     public string userName = string.Empty;
 
     private readonly JinagaClient jinagaClient;
+    private readonly UserProvider userProvider;
 
-    private User? user;
     private IObserver? observer;
 
-    public AccountViewModel(JinagaClient jinagaClient)
+    public AccountViewModel(JinagaClient jinagaClient, UserProvider userProvider)
     {
         this.jinagaClient = jinagaClient;
-    }
-
-    public void ApplyQueryAttributes(IDictionary<string, object> query)
-    {
-        user = query.GetParameter<User>("user");
-        Load();
+        this.userProvider = userProvider;
     }
 
     public void Load()
     {
-        if (user == null || observer != null)
+        if (userProvider.User == null || observer != null)
         {
             return;
         }
@@ -38,7 +34,7 @@ public partial class AccountViewModel : ObservableObject, IQueryAttributable
             select name.value
         );
 
-        observer = jinagaClient.Watch(namesOfUser, user, projection =>
+        observer = jinagaClient.Watch(namesOfUser, userProvider.User, projection =>
         {
             UserName = projection;
         });
