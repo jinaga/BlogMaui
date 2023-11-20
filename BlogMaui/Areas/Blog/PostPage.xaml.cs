@@ -1,4 +1,4 @@
-namespace BlogMaui.Blog;
+namespace BlogMaui.Areas.Blog;
 
 public partial class PostPage : ContentPage
 {

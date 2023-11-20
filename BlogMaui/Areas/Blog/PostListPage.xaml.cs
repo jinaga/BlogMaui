@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace BlogMaui.Blog;
+namespace BlogMaui.Areas.Blog;
 
 // The refresh view does not use the command to indicate
 // that the user has initiated a refresh. It executes the

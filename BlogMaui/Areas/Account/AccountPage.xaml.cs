@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace BlogMaui.Account;
+namespace BlogMaui.Areas.Account;
 
 public partial class AccountPage : ContentPage
 {

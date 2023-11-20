@@ -1,4 +1,4 @@
-namespace BlogMaui.Visitor;
+namespace BlogMaui.Areas.Visitor;
 
 public partial class VisitorPage : ContentPage
 {

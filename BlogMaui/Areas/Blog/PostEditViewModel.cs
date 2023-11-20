@@ -1,11 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BlogMaui.Areas.Blog;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace BlogMaui.Blog;
+namespace BlogMaui.Areas.Blog;
 public partial class PostEditViewModel : ObservableObject
 {
     [ObservableProperty]
