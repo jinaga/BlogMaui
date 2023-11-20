@@ -68,6 +68,7 @@ public static class MauiProgram
         builder.Services.AddTransient<PostPage>();
         builder.Services.AddTransient<PostViewModel>();
         builder.Services.AddTransient<AccountPage>();
+        builder.Services.AddTransient<AccountViewModel>();
 
 #if DEBUG
         builder.Logging.AddDebug();

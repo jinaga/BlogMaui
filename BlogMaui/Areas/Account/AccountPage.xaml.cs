@@ -1,45 +1,26 @@
-using Microsoft.Extensions.Logging;
-
 namespace BlogMaui.Areas.Account;
 
 public partial class AccountPage : ContentPage
 {
-	private readonly ILogger<AccountPage> logger;
+    private readonly AccountViewModel viewModel;
 
-    public AccountPage(ILogger<AccountPage> logger)
+    public AccountPage(AccountViewModel viewModel)
     {
-        this.logger = logger;
+        this.viewModel = viewModel;
+        BindingContext = viewModel;
 
         InitializeComponent();
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
-    {
-        logger.LogInformation("OnNavigatedTo AccountPage");
-        base.OnNavigatedTo(args);
-    }
-
-    protected override void OnNavigatingFrom(NavigatingFromEventArgs args)
-    {
-        logger.LogInformation("OnNavigatingFrom AccountPage");
-        base.OnNavigatingFrom(args);
-    }
-
-    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
-    {
-        logger.LogInformation("OnNavigatedFrom AccountPage");
-        base.OnNavigatedFrom(args);
-    }
-
     protected override void OnAppearing()
     {
-        logger.LogInformation("OnAppearing AccountPage");
+        viewModel.Load();
         base.OnAppearing();
     }
 
     protected override void OnDisappearing()
     {
-        logger.LogInformation("OnDisappearing AccountPage");
+        viewModel.Unload();
         base.OnDisappearing();
     }
 }
