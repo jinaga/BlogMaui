@@ -1,5 +1,4 @@
-﻿using BlogMaui.Areas.Blog;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using System.Collections.Immutable;
@@ -54,6 +53,7 @@ public partial class PostViewModel : ObservableObject, IQueryAttributable
     public void Unload()
     {
         titlesObserver?.Stop();
+        titlesObserver = null;
     }
 
     private async Task HandleEdit()
