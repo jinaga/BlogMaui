@@ -10,7 +10,7 @@
                    FontSize="Large"
                    Margin="10,20,10,20"/>
             <ImageButton Grid.Column="1"
-                         Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_edit_12_regular}, Color=Black}"
+                         Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_edit_12_regular}, Color={AppThemeBinding Light=Black, Dark=White}}"
                          HeightRequest="70"
                          Padding="5"
                          Command="{Binding EditCommand}" />
