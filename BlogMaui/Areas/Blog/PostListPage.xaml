@@ -11,7 +11,7 @@
             <ListView ItemsSource="{Binding Posts}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding Title}" Command="{Binding Select}" />
+                        <TextCell Text="{Binding Title}" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}" Command="{Binding Select}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
