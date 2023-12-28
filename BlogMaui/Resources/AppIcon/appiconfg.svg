@@ -8,7 +8,7 @@
    height="280"
    viewBox="0 0 280 280.00001"
    sodipodi:docname="appiconfg.svg"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   inkscape:version="1.3.1 (91b66b0783, 2023-11-16)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -91,7 +91,7 @@
        xlink:href="#linearGradient19"
        id="linearGradient31"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.74067517,0,0,1.2522521,397.98134,-424.71916)"
+       gradientTransform="matrix(0.74067517,0,0,1.2522521,397.56397,-399.25954)"
        x1="409.88956"
        y1="575.63782"
        x2="409.89944"
@@ -101,7 +101,7 @@
        xlink:href="#linearGradient19"
        id="linearGradient32"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.75604708,0,0,1.2522521,132.3535,-422.92267)"
+       gradientTransform="matrix(0.75604708,0,0,1.2522521,131.93613,-397.46305)"
        x1="409.88956"
        y1="575.63782"
        x2="409.89944"
@@ -144,7 +144,7 @@
      inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer3" />
+     inkscape:current-layer="layer4" />
   <g
      inkscape:groupmode="layer"
      id="layer4"
@@ -169,15 +169,15 @@
        id="rect31"
        width="20.402773"
        height="20.809366"
-       x="680.73737"
-       y="295.17206" />
+       x="680.32001"
+       y="320.63168" />
     <rect
        style="display:inline;fill:url(#linearGradient32);stroke:none;stroke-width:7.10302;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
        id="rect32"
        width="20.82621"
        height="20.809366"
-       x="420.97781"
-       y="296.96854" />
+       x="420.56046"
+       y="322.42816" />
     <rect
        style="display:inline;fill:url(#linearGradient5);stroke:none;stroke-width:7.10302;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
        id="rect2"
