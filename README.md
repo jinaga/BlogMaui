@@ -35,6 +35,13 @@ For the next step, you will need an [Apple Developer](https://developer.apple.co
 This costs $99 per year.
 Click "Authentication" in the action button (+) on your replicator page for a guided walkthrough.
 
+When you get to the Callback page, enter the following URLs:
+- `blogmaui://callback`
+- `http://localhost:3000/callback`
+
+The first URL enables the application to receive the authentication token.
+The second one enables httpYac to receive the authentication token.
+
 Once you have configured authentication, add your new settings to both `Settings.Local.cs` and `.env.local`.
 
 ```c#
