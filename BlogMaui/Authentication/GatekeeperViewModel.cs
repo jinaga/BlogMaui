@@ -27,6 +27,7 @@ public partial class GatekeeperViewModel : ObservableObject
         try
         {
             var user = await authenticationService.Initialize();
+            await Task.Delay(1);    // Workaround for shell navigation in OnAppearing: https://github.com/dotnet/maui/issues/6653
 
             if (user != null)
             {
