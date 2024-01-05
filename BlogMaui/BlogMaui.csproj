@@ -100,7 +100,12 @@
 		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.6-pre20230809203314" />
 	</ItemGroup>
 
-	<ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="WinUIEx" Version="2.3.3" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230822000" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <Compile Update="Areas\Blog\PostListPage.xaml.cs">
 	    <DependentUpon>PostListPage.xaml</DependentUpon>
 	  </Compile>
