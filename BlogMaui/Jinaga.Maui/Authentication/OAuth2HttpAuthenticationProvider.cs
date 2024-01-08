@@ -48,9 +48,15 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         {
             var client = oauthClient;
             string requestUrl = client.BuildRequestUrl();
+#if WINDOWS
+            var authResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(
+                new Uri(requestUrl),
+                new Uri(client.CallbackUrl)).ConfigureAwait(false);
+#else
             var authResult = await WebAuthenticator.Default.AuthenticateAsync(
                 new Uri(requestUrl),
                 new Uri(client.CallbackUrl)).ConfigureAwait(false);
+#endif
             if (authResult == null)
             {
                 return false;

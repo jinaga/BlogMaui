@@ -40,6 +40,7 @@ public partial class AppShellViewModel : ObservableObject
         {
             Error = string.Empty;
             var user = await authenticationService.Login();
+            await Task.Delay(1);
 
             if (user != null)
             {
