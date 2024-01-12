@@ -3,3 +3,4 @@ bin/
 obj/
 Settings.Local.cs
 .env.local
+/BlogMaui/BlogMaui.csproj.user
