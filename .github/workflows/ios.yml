@@ -12,6 +12,11 @@ jobs:
 
     runs-on: macos-latest
 
+    parameters:
+      - name: XcodeVersion
+        type: string
+        default: '15.0.1'
+
     steps:
     - uses: actions/checkout@v3
       with:
@@ -35,6 +40,10 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.x
+    - script: |
+        sudo xcode-select -s /Applications/Xcode_${{ parameters.XcodeVersion }}.app
+        xcodebuild -version
+      displayName: Use Xcode ${{ parameters.XcodeVersion }} 
     - name: Install workloads
       run: dotnet workload restore
     - name: Copy production settings
