@@ -10,7 +10,6 @@ public static class JinagaConfig
     public static Settings CreateSettings(IServiceProvider _)
     {
         var settings = new Settings();
-        settings.Verify();
         return settings;
     }
 
@@ -52,7 +51,10 @@ public static class JinagaConfig
 
         var jinagaClient = JinagaSQLiteClient.Create(opt =>
         {
-            opt.HttpEndpoint = new Uri(settings.ReplicatorUrl);
+            if (settings.ReplicatorUrl != null)
+            {
+                opt.HttpEndpoint = new Uri(settings.ReplicatorUrl);
+            }
             opt.HttpAuthenticationProvider = authenticationProvider;
             opt.SQLitePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
