@@ -34,13 +34,13 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
     - name: Install workloads
       run: dotnet workload restore
     - name: Copy production settings
       run: cp ./Settings/Settings.Production.cs ./BlogMaui/
     - name: Restore build and publish
-      run: dotnet publish -f:net7.0-ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false
+      run: dotnet publish -f:net8.0-ios -c:Release /p:ArchiveOnBuild=true /p:EnableAssemblyILStripping=false
     - name: Upload the .ipa artifact
       uses: actions/upload-artifact@v3.0.0
       with:
@@ -48,7 +48,7 @@ jobs:
     - name: Upload app to TestFlight
       uses: apple-actions/upload-testflight-build@v1
       with:
-        app-path: ${{ github.workspace }}/BlogMaui/bin/Release/net7.0-ios/ios-arm64/publish/BlogMaui.ipa
+        app-path: ${{ github.workspace }}/BlogMaui/bin/Release/net8.0-ios/ios-arm64/publish/BlogMaui.ipa
         issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
         api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
         api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
