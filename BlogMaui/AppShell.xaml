@@ -7,7 +7,7 @@
     xmlns:account="clr-namespace:BlogMaui.Areas.Account"
     xmlns:authentication="clr-namespace:BlogMaui.Authentication"
     xmlns:binding="clr-namespace:BlogMaui.Binding"
-    xmlns:blog="clr-namespace:BlogMaui.Areas.Blog"
+    xmlns:posts="clr-namespace:BlogMaui.Areas.Blog.Posts"
     xmlns:fonts="clr-namespace:BlogMaui.Fonts"
     xmlns:visitor="clr-namespace:BlogMaui.Areas.Visitor"
     Shell.FlyoutBehavior="Disabled">
@@ -45,7 +45,7 @@
              Icon="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_home_32_regular}}"
              Route="posts">
             <ShellContent
-                ContentTemplate="{DataTemplate blog:PostListPage}" />
+                ContentTemplate="{DataTemplate posts:PostListPage}" />
         </Tab>
         <Tab Title="Account"
              Icon="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_person_32_regular}}"

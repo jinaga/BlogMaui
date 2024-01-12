@@ -1,5 +1,5 @@
 ﻿using BlogMaui.Areas.Account;
-using BlogMaui.Areas.Blog;
+using BlogMaui.Areas.Blog.Posts;
 using BlogMaui.Areas.Visitor;
 using BlogMaui.Authentication;
 using CommunityToolkit.Maui;

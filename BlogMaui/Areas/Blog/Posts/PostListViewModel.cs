@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace BlogMaui.Areas.Blog;
+namespace BlogMaui.Areas.Blog.Posts;
 public partial class PostListViewModel : ObservableObject
 {
     private readonly JinagaClient jinagaClient;

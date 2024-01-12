@@ -1,4 +1,4 @@
-﻿using BlogMaui.Areas.Blog;
+﻿using BlogMaui.Areas.Blog.Posts;
 
 namespace BlogMaui;
 
