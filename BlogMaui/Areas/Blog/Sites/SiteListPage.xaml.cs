@@ -1,8 +1,8 @@
 namespace BlogMaui.Areas.Blog.Sites;
 
-public partial class SitePage : ContentPage
+public partial class SiteListPage : ContentPage
 {
-    public SitePage()
+    public SiteListPage()
     {
         InitializeComponent();
     }

@@ -1,4 +1,5 @@
-﻿using MetroLog.Maui;
+﻿using BlogMaui.Areas.Blog.Posts;
+using MetroLog.Maui;
 
 namespace BlogMaui;
 
@@ -13,5 +14,7 @@ public partial class App : Application
         LogController.InitializeNavigation(
             page => MainPage!.Navigation.PushModalAsync(page),
             () => MainPage!.Navigation.PopModalAsync());
+
+        Routing.RegisterRoute("blog/posts", typeof(PostListPage));
     }
 }

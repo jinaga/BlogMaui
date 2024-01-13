@@ -94,8 +94,8 @@
     <Compile Update="Areas\Blog\Posts\PostPage.xaml.cs">
       <DependentUpon>PostPage.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Areas\Blog\Sites\SitePage.xaml.cs">
-      <DependentUpon>SitePage.xaml</DependentUpon>
+    <Compile Update="Areas\Blog\Sites\SiteListPage.xaml.cs">
+      <DependentUpon>SiteListPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -105,13 +105,16 @@
     <MauiXaml Update="Authentication\GatekeeperPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Areas\Blog\Posts\PostListPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Areas\Blog\Posts\PostEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Areas\Blog\Posts\PostPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Areas\Blog\Sites\SitePage.xaml">
+    <MauiXaml Update="Areas\Blog\Sites\SiteListPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Areas\Visitor\LoginPage.xaml">
