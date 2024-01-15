@@ -4,6 +4,7 @@ public partial class SiteListPage : ContentPage
 {
     public SiteListPage()
     {
+        BindingContext = new SiteListViewModel();
         InitializeComponent();
     }
 }

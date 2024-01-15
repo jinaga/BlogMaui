@@ -4,4 +4,21 @@
              x:Class="BlogMaui.Areas.Blog.Sites.SiteListPage"
              xmlns:fonts="clr-namespace:BlogMaui.Fonts"
              Title="Sites">
+    <VerticalStackLayout>
+        <Label Grid.Row="0" Text="{Binding Status}" FontSize="Large" Margin="15,5" />
+        <ScrollView Grid.Row="1">
+            <ListView ItemsSource="{Binding Sites}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell
+                            Text="{Binding Name}"
+                            Detail="{Binding Url}"
+                            TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                            DetailColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray200}}"
+                            Command="{Binding Select}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollView>
+    </VerticalStackLayout>
 </ContentPage>
