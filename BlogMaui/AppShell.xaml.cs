@@ -10,6 +10,7 @@ public partial class AppShell : Shell
 
         BindingContext = viewModel;
 
+        Routing.RegisterRoute("loggedin/posts", typeof(PostListPage));
         Routing.RegisterRoute("loggedin/posts/detail", typeof(PostPage));
     }
 }

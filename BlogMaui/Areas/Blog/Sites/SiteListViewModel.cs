@@ -51,7 +51,7 @@ public partial class SiteListViewModel : ObservableObject
         observer = jinagaClient.Watch(sites, userProvider.User, projection =>
         {
             Sites.Clear();
-            var siteHeaderViewModel = new SiteHeaderViewModel
+            var siteHeaderViewModel = new SiteHeaderViewModel(projection.site)
             {
                 Name = projection.name,
                 Url = projection.url
