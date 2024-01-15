@@ -1,5 +1,4 @@
-﻿using BlogMaui.Authentication;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using Microsoft.Extensions.Logging;
@@ -10,7 +9,6 @@ namespace BlogMaui.Areas.Blog.Posts;
 public partial class PostListViewModel : ObservableObject, IQueryAttributable
 {
     private readonly JinagaClient jinagaClient;
-    private readonly UserProvider userProvider;
     private readonly ILogger<PostListViewModel> logger;
 
     private IObserver? observer;
@@ -25,10 +23,9 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
 
     public ICommand Refresh { get; }
 
-    public PostListViewModel(JinagaClient jinagaClient, UserProvider userProvider, ILogger<PostListViewModel> logger)
+    public PostListViewModel(JinagaClient jinagaClient, ILogger<PostListViewModel> logger)
     {
         this.jinagaClient = jinagaClient;
-        this.userProvider = userProvider;
         this.logger = logger;
 
         Refresh = new AsyncRelayCommand(HandleRefresh);
