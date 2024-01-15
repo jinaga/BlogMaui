@@ -16,9 +16,6 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
     [ObservableProperty]
     private bool loading = false;
 
-    [ObservableProperty]
-    private string status = string.Empty;
-
     public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
 
     public ICommand Refresh { get; }
@@ -34,8 +31,6 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         Loading = true;
-
-        jinagaClient.OnStatusChanged += JinagaClient_OnStatusChanged;
 
         var postsInBlog = Given<Site>.Match((site, facts) =>
             from post in facts.OfType<Post>()
@@ -78,8 +73,6 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
 
     public void Unload()
     {
-        jinagaClient.OnStatusChanged -= JinagaClient_OnStatusChanged;
-
         observer?.Stop();
         observer = null;
         Posts.Clear();
@@ -132,27 +125,6 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
         finally
         {
             Loading = false;
-        }
-    }
-
-    private void JinagaClient_OnStatusChanged(JinagaStatus status)
-    {
-        if ((!status.IsSaving || status.LastSaveError != null) && status.QueueLength > 0)
-        {
-            // There are facts in the queue, and
-            // the client is not saving, or has
-            // experienced an error.
-            Status = "Red";
-        }
-        else if (status.LastLoadError != null)
-        {
-            // There was an error last time the client
-            // tried loading.
-            Status = "Yellow";
-        }
-        else
-        {
-            Status = "Green";
         }
     }
 }

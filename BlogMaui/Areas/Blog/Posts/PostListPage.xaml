@@ -6,7 +6,7 @@
              Title="Posts">
 
     <Grid RowDefinitions="Auto,*,Auto,Auto">
-        <Label Grid.Row="0" Text="{Binding Status}" FontSize="Large" Margin="15,5" />
+        <Label Grid.Row="0" Text="{Binding Status, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" FontSize="Large" Margin="15,5" />
         <ScrollView Grid.Row="1">
             <ListView ItemsSource="{Binding Posts}">
                 <ListView.ItemTemplate>

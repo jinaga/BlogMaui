@@ -15,9 +15,6 @@ public partial class SiteListViewModel : ObservableObject
     [ObservableProperty]
     private bool loading = false;
 
-    [ObservableProperty]
-    private string status = string.Empty;
-
     public ObservableCollection<SiteHeaderViewModel> Sites { get; } = new();
 
     public SiteListViewModel(JinagaClient jinagaClient, UserProvider userProvider)
@@ -34,8 +31,6 @@ public partial class SiteListViewModel : ObservableObject
         }
 
         Loading = true;
-
-        jinagaClient.OnStatusChanged += JinagaClient_OnStatusChanged;
 
         var sites = Given<User>.Match((user, facts) =>
             from site in facts.OfType<Site>()
@@ -69,8 +64,6 @@ public partial class SiteListViewModel : ObservableObject
 
     public void Unload()
     {
-        jinagaClient.OnStatusChanged -= JinagaClient_OnStatusChanged;
-
         observer?.Stop();
         observer = null;
         Sites.Clear();
@@ -92,27 +85,6 @@ public partial class SiteListViewModel : ObservableObject
         finally
         {
             Loading = false;
-        }
-    }
-
-    private void JinagaClient_OnStatusChanged(JinagaStatus status)
-    {
-        if ((!status.IsSaving || status.LastSaveError != null) && status.QueueLength > 0)
-        {
-            // There are facts in the queue, and
-            // the client is not saving, or has
-            // experienced an error.
-            Status = "Red";
-        }
-        else if (status.IsSaving && status.QueueLength == 0)
-        {
-            // There was an error last time the client
-            // tried loading.
-            Status = "Yellow";
-        }
-        else
-        {
-            Status = "Green";
         }
     }
 }
