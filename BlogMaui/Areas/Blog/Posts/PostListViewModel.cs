@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace BlogMaui.Areas.Blog.Posts;
-public partial class PostListViewModel : ObservableObject
+public partial class PostListViewModel : ObservableObject, IQueryAttributable
 {
     private readonly JinagaClient jinagaClient;
     private readonly UserProvider userProvider;
@@ -34,15 +34,8 @@ public partial class PostListViewModel : ObservableObject
         Refresh = new AsyncRelayCommand(HandleRefresh);
     }
 
-    public void Load()
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (userProvider.User == null || observer != null)
-        {
-            return;
-        }
-
-        string domain = "michaelperry.net";
-
         Loading = true;
 
         jinagaClient.OnStatusChanged += JinagaClient_OnStatusChanged;
@@ -63,7 +56,9 @@ public partial class PostListViewModel : ObservableObject
             }
         );
 
-        var site = new Site(userProvider.User, domain);
+        logger.LogInformation("Getting site");
+        var site = query.GetParameter<Site>("site");
+        logger.LogInformation($"Got site: {site.domain}");
         observer = jinagaClient.Watch(postsInBlog, site, projection =>
         {
             logger.LogInformation("Added post");
