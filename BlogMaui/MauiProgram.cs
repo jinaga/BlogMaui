@@ -1,5 +1,6 @@
 ﻿using BlogMaui.Areas.Account;
-using BlogMaui.Areas.Blog;
+using BlogMaui.Areas.Blog.Posts;
+using BlogMaui.Areas.Blog.Sites;
 using BlogMaui.Areas.Visitor;
 using BlogMaui.Authentication;
 using CommunityToolkit.Maui;
@@ -63,6 +64,9 @@ public static class MauiProgram
 
         builder.Services.AddTransient<VisitorPage>();
         builder.Services.AddTransient<LoginPage>();
+
+        builder.Services.AddTransient<SiteListPage>();
+        builder.Services.AddTransient<SiteListViewModel>();
 
         builder.Services.AddTransient<PostListPage>();
         builder.Services.AddTransient<PostListViewModel>();

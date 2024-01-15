@@ -1,5 +1,4 @@
-﻿using BlogMaui.Areas.Blog;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using System.Collections.Immutable;

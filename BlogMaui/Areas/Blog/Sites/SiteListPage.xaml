@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:root="clr-namespace:BlogMaui"
+             x:Class="BlogMaui.Areas.Blog.Sites.SiteListPage"
+             Title="Sites">
+    <VerticalStackLayout>
+        <Label Grid.Row="0" Text="{Binding Status, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" FontSize="Large" Margin="15,5" />
+        <ScrollView Grid.Row="1">
+            <ListView ItemsSource="{Binding Sites}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell
+                            Text="{Binding Name}"
+                            Detail="{Binding Url}"
+                            TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                            DetailColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray200}}"
+                            Command="{Binding Select}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollView>
+    </VerticalStackLayout>
+</ContentPage>

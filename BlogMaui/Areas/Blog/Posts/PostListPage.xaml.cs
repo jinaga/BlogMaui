@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace BlogMaui.Areas.Blog;
+namespace BlogMaui.Areas.Blog.Posts;
 
 // The refresh view does not use the command to indicate
 // that the user has initiated a refresh. It executes the
@@ -24,31 +24,6 @@ public partial class PostListPage : ContentPage
         InitializeComponent();
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
-    {
-        logger.LogInformation("OnNavigatedTo PostListPage");
-        base.OnNavigatedTo(args);
-    }
-
-    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
-    {
-        logger.LogInformation("OnNavigatedFrom PostListPage");
-        base.OnNavigatedFrom(args);
-    }
-
-    protected override void OnNavigatingFrom(NavigatingFromEventArgs args)
-    {
-        logger.LogInformation("OnNavigatingFrom PostListPage");
-        base.OnNavigatingFrom(args);
-    }
-
-    protected override void OnAppearing()
-    {
-        logger.LogInformation("OnAppearing PostListPage");
-        viewModel.Load();
-        base.OnAppearing();
-    }
-
     protected override void OnDisappearing()
     {
         logger.LogInformation("OnDisappearing PostListPage");
@@ -56,4 +31,3 @@ public partial class PostListPage : ContentPage
         base.OnDisappearing();
     }
 }
-

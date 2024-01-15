@@ -7,10 +7,10 @@ namespace Jinaga.Maui.Authentication;
 
 public class OAuthClient
 {
-    private readonly string authUrl;
-    private readonly string accessTokenUrl;
+    private readonly string? authUrl;
+    private readonly string? accessTokenUrl;
     private readonly string callbackUrl;
-    private readonly string clientId;
+    private readonly string? clientId;
     private readonly string scope;
 
     private readonly IHttpClientFactory httpClientFactory;
@@ -32,6 +32,10 @@ public class OAuthClient
 
     public string BuildRequestUrl()
     {
+        if (authUrl == null || accessTokenUrl == null || clientId == null)
+            throw new Exception("Create a file called Settings.Local.cs and set the AuthUrl, AccessTokenUrl, and ClientId properties."
+                + " Do not check Settings.Local.cs into source control.");
+
         // Generate random strings for the code verifier and state
         codeVerifier = GenerateRandomString();
         state = GenerateRandomString();
@@ -59,6 +63,10 @@ public class OAuthClient
 
     public async Task<TokenResponse> GetTokenResponse(string code)
     {
+        if (accessTokenUrl == null || clientId == null)
+            throw new Exception("Create a file called Settings.Local.cs and set the AccessTokenUrl and ClientId properties."
+                + " Do not check Settings.Local.cs into source control.");
+
         // Build the access token request
         var tokenRequest = new HttpRequestMessage(HttpMethod.Post, accessTokenUrl);
         tokenRequest.Content = new FormUrlEncodedContent(new Dictionary<string, string>
@@ -91,6 +99,10 @@ public class OAuthClient
 
     public async Task<TokenResponse> RequestNewToken(string refreshToken)
     {
+        if (accessTokenUrl == null || clientId == null)
+            throw new Exception("Create a file called Settings.Local.cs and set the AccessTokenUrl and ClientId properties."
+                + " Do not check Settings.Local.cs into source control.");
+
         // Build the refresh request
         var tokenRequest = new HttpRequestMessage(HttpMethod.Post, accessTokenUrl);
         tokenRequest.Content = new FormUrlEncodedContent(new Dictionary<string, string>{

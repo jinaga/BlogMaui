@@ -1,16 +1,14 @@
-﻿using BlogMaui.Authentication;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace BlogMaui.Areas.Blog;
-public partial class PostListViewModel : ObservableObject
+namespace BlogMaui.Areas.Blog.Posts;
+public partial class PostListViewModel : ObservableObject, IQueryAttributable
 {
     private readonly JinagaClient jinagaClient;
-    private readonly UserProvider userProvider;
     private readonly ILogger<PostListViewModel> logger;
 
     private IObserver? observer;
@@ -18,34 +16,21 @@ public partial class PostListViewModel : ObservableObject
     [ObservableProperty]
     private bool loading = false;
 
-    [ObservableProperty]
-    private string status = string.Empty;
-
     public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
 
     public ICommand Refresh { get; }
 
-    public PostListViewModel(JinagaClient jinagaClient, UserProvider userProvider, ILogger<PostListViewModel> logger)
+    public PostListViewModel(JinagaClient jinagaClient, ILogger<PostListViewModel> logger)
     {
         this.jinagaClient = jinagaClient;
-        this.userProvider = userProvider;
         this.logger = logger;
 
         Refresh = new AsyncRelayCommand(HandleRefresh);
     }
 
-    public void Load()
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (userProvider.User == null || observer != null)
-        {
-            return;
-        }
-
-        string domain = "michaelperry.net";
-
         Loading = true;
-
-        jinagaClient.OnStatusChanged += JinagaClient_OnStatusChanged;
 
         var postsInBlog = Given<Site>.Match((site, facts) =>
             from post in facts.OfType<Post>()
@@ -63,7 +48,9 @@ public partial class PostListViewModel : ObservableObject
             }
         );
 
-        var site = new Site(userProvider.User, domain);
+        logger.LogInformation("Getting site");
+        var site = query.GetParameter<Site>("site");
+        logger.LogInformation($"Got site: {site.domain}");
         observer = jinagaClient.Watch(postsInBlog, site, projection =>
         {
             logger.LogInformation("Added post");
@@ -86,8 +73,6 @@ public partial class PostListViewModel : ObservableObject
 
     public void Unload()
     {
-        jinagaClient.OnStatusChanged -= JinagaClient_OnStatusChanged;
-
         observer?.Stop();
         observer = null;
         Posts.Clear();
@@ -140,27 +125,6 @@ public partial class PostListViewModel : ObservableObject
         finally
         {
             Loading = false;
-        }
-    }
-
-    private void JinagaClient_OnStatusChanged(JinagaStatus status)
-    {
-        if ((!status.IsSaving || status.LastSaveError != null) && status.QueueLength > 0)
-        {
-            // There are facts in the queue, and
-            // the client is not saving, or has
-            // experienced an error.
-            Status = "Red";
-        }
-        else if (status.LastLoadError != null)
-        {
-            // There was an error last time the client
-            // tried loading.
-            Status = "Yellow";
-        }
-        else
-        {
-            Status = "Green";
         }
     }
 }
