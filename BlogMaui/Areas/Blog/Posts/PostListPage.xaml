@@ -2,12 +2,23 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:root="clr-namespace:BlogMaui"
+             xmlns:fonts="clr-namespace:BlogMaui.Fonts"
              x:Class="BlogMaui.Areas.Blog.Posts.PostListPage"
              Title="Posts">
 
-    <Grid RowDefinitions="Auto,*,Auto,Auto">
-        <Label Grid.Row="0" Text="{Binding Status, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" FontSize="Large" Margin="15,5" />
-        <ScrollView Grid.Row="1">
+    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto">
+        <Grid Grid.Row="0" RowDefinitions="Auto" ColumnDefinitions="*,Auto">
+            <Label Text="{Binding Title}"
+                   FontSize="Large"
+                   Margin="10,20,10,20"/>
+            <ImageButton Grid.Column="1"
+                         Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_edit_12_regular}, Color={AppThemeBinding Light=Black, Dark=White}}"
+                         HeightRequest="70"
+                         Padding="5"
+                         Command="{Binding Edit}" />
+        </Grid>
+        <Label Grid.Row="1" Text="{Binding Status, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" FontSize="Large" Margin="15,5" />
+        <ScrollView Grid.Row="2">
             <ListView ItemsSource="{Binding Posts}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -16,8 +27,8 @@
                 </ListView.ItemTemplate>
             </ListView>
         </ScrollView>
-        <ActivityIndicator Grid.Row="2" IsVisible="{Binding Loading}" IsRunning="{Binding Loading}" Margin="10" />
-        <HorizontalStackLayout Grid.Row="3">
+        <ActivityIndicator Grid.Row="3" IsVisible="{Binding Loading}" IsRunning="{Binding Loading}" Margin="10" />
+        <HorizontalStackLayout Grid.Row="4">
             <Button Text="Refresh" Command="{Binding Refresh}" Margin="10" />
             <Button Text="View Logs" Command="{Binding ViewLogs, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" Margin="10" />
         </HorizontalStackLayout>
