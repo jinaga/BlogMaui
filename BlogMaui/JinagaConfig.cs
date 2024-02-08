@@ -99,6 +99,20 @@ public static class JinagaConfig
             select self
         ))
         .Share(Given<Site>.Match((site, facts) =>
+            from name in facts.OfType<SiteName>()
+            where name.site == site &&
+                !facts.Any<SiteName>(next =>
+                    next.prior.Contains(name))
+            select name
+        )).With(site => site.creator)
+        .Share(Given<Site>.Match((site, facts) =>
+            from domain in facts.OfType<SiteDomain>()
+            where domain.site == site &&
+                !facts.Any<SiteDomain>(next =>
+                    next.prior.Contains(domain))
+            select domain
+        )).With(site => site.creator)
+        .Share(Given<Site>.Match((site, facts) =>
             from post in facts.OfType<Post>()
             where post.site == site &&
                 !facts.Any<PostDeleted>(deleted =>
