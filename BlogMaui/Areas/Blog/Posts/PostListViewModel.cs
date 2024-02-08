@@ -48,16 +48,12 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
             }
         );
 
-        logger.LogInformation("Getting site");
         var site = query.GetParameter<Site>("site");
-        logger.LogInformation($"Got site: {site.domain}");
         observer = jinagaClient.Watch(postsInBlog, site, projection =>
         {
-            logger.LogInformation("Added post");
             var postHeaderViewModel = new PostHeaderViewModel(projection.post);
             projection.titles.OnAdded(title =>
             {
-                logger.LogInformation($"Updating title: {title}");
                 postHeaderViewModel.Title = title;
             });
             Posts.Add(postHeaderViewModel);
