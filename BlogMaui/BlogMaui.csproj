@@ -68,8 +68,8 @@
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
     <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="Jinaga" Version="0.9.5" />
-    <PackageReference Include="Jinaga.Store.SQLite" Version="0.9.5" />
+    <PackageReference Include="Jinaga" Version="0.9.6" />
+    <PackageReference Include="Jinaga.Store.SQLite" Version="0.9.6" />
     <PackageReference Include="MetroLog.Maui" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
