@@ -72,6 +72,8 @@ public static class JinagaConfig
         .Any<User>()
         .Type<UserName>(name => name.user)
         .Type<Site>(site => site.creator)
+        .Type<SiteName>(name => name.site.creator)
+        .Type<SiteDomain>(domain => domain.site.creator)
         .Type<Post>(post => post.site.creator)
         .Type<PostTitle>(title => title.post.site.creator)
         .Type<PostDeleted>(deleted => deleted.post.site.creator)
