@@ -80,6 +80,7 @@ public static class JinagaConfig
         .Type<Publish>(publish => publish.post.site.creator);
 
     private static DistributionRules Distribute(DistributionRules r) => r
+        // Distribute user names to the user themselves.
         .Share(Given<User>.Match((user, facts) =>
             from name in facts.OfType<UserName>()
             where name.user == user &&
@@ -91,15 +92,33 @@ public static class JinagaConfig
             where self == user
             select self
         ))
+
+        // Distribute sites with names and domains to the site creator.
         .Share(Given<User>.Match((user, facts) =>
             from site in facts.OfType<Site>()
             where site.creator == user
-            select site
+            select new {
+                site,
+                names =
+                    from name in facts.OfType<SiteName>()
+                    where name.site == site &&
+                        !facts.Any<SiteName>(next =>
+                            next.prior.Contains(name))
+                    select name,
+                domains =
+                    from domain in facts.OfType<SiteDomain>()
+                    where domain.site == site &&
+                        !facts.Any<SiteDomain>(next =>
+                            next.prior.Contains(domain))
+                    select domain
+            }
         )).With(Given<User>.Match((user, facts) =>
             from self in facts.OfType<User>()
             where self == user
             select self
         ))
+
+        // Distribute site names to the site creator.
         .Share(Given<Site>.Match((site, facts) =>
             from name in facts.OfType<SiteName>()
             where name.site == site &&
@@ -107,6 +126,8 @@ public static class JinagaConfig
                     next.prior.Contains(name))
             select name
         )).With(site => site.creator)
+
+        // Distribute site domains to the site creator.
         .Share(Given<Site>.Match((site, facts) =>
             from domain in facts.OfType<SiteDomain>()
             where domain.site == site &&
@@ -114,6 +135,8 @@ public static class JinagaConfig
                     next.prior.Contains(domain))
             select domain
         )).With(site => site.creator)
+
+        // Distribute posts with titles to the site creator.
         .Share(Given<Site>.Match((site, facts) =>
             from post in facts.OfType<Post>()
             where post.site == site &&
@@ -122,7 +145,7 @@ public static class JinagaConfig
             select new
             {
                 post,
-                names =
+                titles =
                     from title in facts.OfType<PostTitle>()
                     where title.post == post &&
                         !facts.Any<PostTitle>(next =>
@@ -130,6 +153,8 @@ public static class JinagaConfig
                     select title
             }
         )).With(site => site.creator)
+
+        // Distribute post titles to the site creator.
         .Share(Given<Post>.Match((post, facts) =>
             from title in facts.OfType<PostTitle>()
             where title.post == post &&
