@@ -6,7 +6,13 @@ namespace BlogMaui.Areas.Blog;
 public record UserName(User user, string value, UserName[] prior) { }
 
 [FactType("Blog.Site")]
-public record Site(User creator, string domain) { }
+public record Site(User creator, DateTime createdAt) { }
+
+[FactType("Blog.Site.Name")]
+public record SiteName(Site site, string value, SiteName[] prior) { }
+
+[FactType("Blog.Site.Domain")]
+public record SiteDomain(Site site, string value, SiteDomain[] prior) { }
 
 [FactType("Blog.Post")]
 public record Post(Site site, User author, DateTime createdAt) { }

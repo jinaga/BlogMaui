@@ -66,25 +66,19 @@
     <MauiFont Include="Resources\Fonts\*" />
     <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
-    <PackageReference Include="Jinaga" Version="0.8.4" />
-    <PackageReference Include="Jinaga.Store.SQLite" Version="0.8.4" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="Jinaga" Version="0.9.6" />
+    <PackageReference Include="Jinaga.Store.SQLite" Version="0.9.6" />
     <PackageReference Include="MetroLog.Maui" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.7" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.6" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.8" />
     <PackageReference Include="WinUIEx" Version="2.3.3" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230822000" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
     <Compile Update="Areas\Blog\Posts\PostListPage.xaml.cs">
       <DependentUpon>PostListPage.xaml</DependentUpon>
     </Compile>
@@ -97,8 +91,6 @@
     <Compile Update="Areas\Blog\Sites\SiteListPage.xaml.cs">
       <DependentUpon>SiteListPage.xaml</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <MauiXaml Update="Areas\Account\AccountPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
@@ -123,8 +115,6 @@
     <MauiXaml Update="Areas\Visitor\VisitorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Resources\Images\" />
   </ItemGroup>
   <ProjectExtensions>

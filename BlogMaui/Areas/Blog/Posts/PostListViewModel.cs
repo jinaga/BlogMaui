@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BlogMaui.Areas.Blog.Sites;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using Microsoft.Extensions.Logging;
@@ -11,13 +12,18 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
     private readonly JinagaClient jinagaClient;
     private readonly ILogger<PostListViewModel> logger;
 
+    private Site? site;
     private IObserver? observer;
+
+    [ObservableProperty]
+    private string title = "";
 
     [ObservableProperty]
     private bool loading = false;
 
     public ObservableCollection<PostHeaderViewModel> Posts { get; } = new();
 
+    public ICommand Edit { get; }
     public ICommand Refresh { get; }
 
     public PostListViewModel(JinagaClient jinagaClient, ILogger<PostListViewModel> logger)
@@ -25,12 +31,26 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
         this.jinagaClient = jinagaClient;
         this.logger = logger;
 
+        Edit = new AsyncRelayCommand(HandleEdit);
         Refresh = new AsyncRelayCommand(HandleRefresh);
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
+        site = query.GetParameter<Site>("site");
         Loading = true;
+
+        var namesOfSite = Given<Site>.Match((site, facts) =>
+            from name in facts.OfType<SiteName>()
+            where name.site == site &&
+                !facts.Any<SiteName>(next => next.prior.Contains(name))
+            select name.value
+        );
+
+        jinagaClient.Watch(namesOfSite, site, projection =>
+        {
+            Title = projection;
+        });
 
         var postsInBlog = Given<Site>.Match((site, facts) =>
             from post in facts.OfType<Post>()
@@ -48,16 +68,11 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
             }
         );
 
-        logger.LogInformation("Getting site");
-        var site = query.GetParameter<Site>("site");
-        logger.LogInformation($"Got site: {site.domain}");
         observer = jinagaClient.Watch(postsInBlog, site, projection =>
         {
-            logger.LogInformation("Added post");
             var postHeaderViewModel = new PostHeaderViewModel(projection.post);
             projection.titles.OnAdded(title =>
             {
-                logger.LogInformation($"Updating title: {title}");
                 postHeaderViewModel.Title = title;
             });
             Posts.Add(postHeaderViewModel);
@@ -76,6 +91,31 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
         observer?.Stop();
         observer = null;
         Posts.Clear();
+    }
+
+    private async Task HandleEdit()
+    {
+        if (site != null)
+        {
+            var namesOfSite = Given<Site>.Match((site, facts) =>
+                from name in facts.OfType<SiteName>()
+                where name.site == site &&
+                    !facts.Any<SiteName>(next => next.prior.Contains(name))
+                select name
+            );
+            var names = await jinagaClient.Query(namesOfSite, site);
+
+            var domainsOfSite = Given<Site>.Match((site, facts) =>
+                from domain in facts.OfType<SiteDomain>()
+                where domain.site == site &&
+                    !facts.Any<SiteDomain>(next => next.prior.Contains(domain))
+                select domain
+            );
+            var domains = await jinagaClient.Query(domainsOfSite, site);
+            
+            var viewModel = new SiteEditViewModel(jinagaClient, site, names, domains);
+            await Shell.Current.Navigation.PushModalAsync(new SiteEditPage(viewModel));
+        }
     }
 
     private async Task HandleRefresh()

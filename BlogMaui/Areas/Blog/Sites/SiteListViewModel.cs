@@ -38,20 +38,35 @@ public partial class SiteListViewModel : ObservableObject
             select new
             {
                 site,
-                name = site.domain,
-                url = site.domain
+                names = facts.Observable(
+                    from name in facts.OfType<SiteName>()
+                    where name.site == site &&
+                        !facts.Any<SiteName>(next => next.prior.Contains(name))
+                    select name.value
+                ),
+                domains = facts.Observable(
+                    from domain in facts.OfType<SiteDomain>()
+                    where domain.site == site &&
+                        !facts.Any<SiteDomain>(next => next.prior.Contains(domain))
+                    select domain.value
+                )
             }
         );
 
         observer = jinagaClient.Watch(sites, userProvider.User, projection =>
         {
             Sites.Clear();
-            var siteHeaderViewModel = new SiteHeaderViewModel(projection.site)
-            {
-                Name = projection.name,
-                Url = projection.url
-            };
+            var siteHeaderViewModel = new SiteHeaderViewModel(projection.site);
             Sites.Add(siteHeaderViewModel);
+
+            projection.names.OnAdded(name =>
+            {
+                siteHeaderViewModel.Name = name;
+            });
+            projection.domains.OnAdded(domain =>
+            {
+                siteHeaderViewModel.Url = domain;
+            });
 
             return () =>
             {

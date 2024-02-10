@@ -20,5 +20,8 @@
                 </ListView.ItemTemplate>
             </ListView>
         </ScrollView>
+        <HorizontalStackLayout Grid.Row="3">
+            <Button Text="View Logs" Command="{Binding ViewLogs, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" Margin="10" />
+        </HorizontalStackLayout>
     </VerticalStackLayout>
 </ContentPage>
