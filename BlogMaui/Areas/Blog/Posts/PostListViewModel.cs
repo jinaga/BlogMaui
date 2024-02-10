@@ -1,10 +1,14 @@
-﻿using BlogMaui.Areas.Blog.Sites;
+﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
+
+using Microsoft.Extensions.Logging;
+
+using BlogMaui.Areas.Blog.Sites;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+
 using Jinaga;
-using Microsoft.Extensions.Logging;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace BlogMaui.Areas.Blog.Posts;
 public partial class PostListViewModel : ObservableObject, IQueryAttributable
@@ -37,84 +41,105 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        site = query.GetParameter<Site>("site");
-        Loading = true;
-
-        var namesOfSite = Given<Site>.Match((site, facts) =>
-            from name in facts.OfType<SiteName>()
-            where name.site == site &&
-                !facts.Any<SiteName>(next => next.prior.Contains(name))
-            select name.value
-        );
-
-        jinagaClient.Watch(namesOfSite, site, projection =>
+        try
         {
-            Title = projection;
-        });
+            site = query.GetParameter<Site>("site");
+            Loading = true;
 
-        var postsInBlog = Given<Site>.Match((site, facts) =>
-            from post in facts.OfType<Post>()
-            where post.site == site &&
-                !facts.Any<PostDeleted>(deleted => deleted.post == post)
-            select new
-            {
-                post,
-                titles = facts.Observable(
-                    from title in facts.OfType<PostTitle>()
-                    where title.post == post &&
-                        !facts.Any<PostTitle>(next => next.prior.Contains(title))
-                    select title.value
-                )
-            }
-        );
-
-        observer = jinagaClient.Watch(postsInBlog, site, projection =>
-        {
-            var postHeaderViewModel = new PostHeaderViewModel(projection.post);
-            projection.titles.OnAdded(title =>
-            {
-                postHeaderViewModel.Title = title;
-            });
-            Posts.Add(postHeaderViewModel);
-
-            return () =>
-            {
-                Posts.Remove(postHeaderViewModel);
-            };
-        });
-
-        Monitor(observer);
-    }
-
-    public void Unload()
-    {
-        observer?.Stop();
-        observer = null;
-        Posts.Clear();
-    }
-
-    private async Task HandleEdit()
-    {
-        if (site != null)
-        {
             var namesOfSite = Given<Site>.Match((site, facts) =>
                 from name in facts.OfType<SiteName>()
                 where name.site == site &&
                     !facts.Any<SiteName>(next => next.prior.Contains(name))
-                select name
+                select name.value
             );
-            var names = await jinagaClient.Query(namesOfSite, site);
 
-            var domainsOfSite = Given<Site>.Match((site, facts) =>
-                from domain in facts.OfType<SiteDomain>()
-                where domain.site == site &&
-                    !facts.Any<SiteDomain>(next => next.prior.Contains(domain))
-                select domain
+            jinagaClient.Watch(namesOfSite, site, projection =>
+            {
+                Title = projection;
+            });
+
+            var postsInBlog = Given<Site>.Match((site, facts) =>
+                from post in facts.OfType<Post>()
+                where post.site == site &&
+                    !facts.Any<PostDeleted>(deleted => deleted.post == post)
+                select new
+                {
+                    post,
+                    titles = facts.Observable(
+                        from title in facts.OfType<PostTitle>()
+                        where title.post == post &&
+                            !facts.Any<PostTitle>(next => next.prior.Contains(title))
+                        select title.value
+                    )
+                }
             );
-            var domains = await jinagaClient.Query(domainsOfSite, site);
-            
-            var viewModel = new SiteEditViewModel(jinagaClient, site, names, domains);
-            await Shell.Current.Navigation.PushModalAsync(new SiteEditPage(viewModel));
+
+            observer = jinagaClient.Watch(postsInBlog, site, projection =>
+            {
+                var postHeaderViewModel = new PostHeaderViewModel(projection.post);
+                projection.titles.OnAdded(title =>
+                {
+                    postHeaderViewModel.Title = title;
+                });
+                Posts.Add(postHeaderViewModel);
+
+                return () =>
+                {
+                    Posts.Remove(postHeaderViewModel);
+                };
+            });
+
+            Monitor(observer);
+        }
+        catch (Exception x)
+        {
+            logger.LogError(x, "Error while applying query attributes");
+        }
+    }
+
+    public void Unload()
+    {
+        try
+        {
+            observer?.Stop();
+            observer = null;
+            Posts.Clear();
+        }
+        catch (Exception x)
+        {
+            logger.LogError(x, "Error while unloading");
+        }
+    }
+
+    private async Task HandleEdit()
+    {
+        try
+        {
+            if (site != null)
+            {
+                var namesOfSite = Given<Site>.Match((site, facts) =>
+                    from name in facts.OfType<SiteName>()
+                    where name.site == site &&
+                        !facts.Any<SiteName>(next => next.prior.Contains(name))
+                    select name
+                );
+                var names = await jinagaClient.Query(namesOfSite, site);
+
+                var domainsOfSite = Given<Site>.Match((site, facts) =>
+                    from domain in facts.OfType<SiteDomain>()
+                    where domain.site == site &&
+                        !facts.Any<SiteDomain>(next => next.prior.Contains(domain))
+                    select domain
+                );
+                var domains = await jinagaClient.Query(domainsOfSite, site);
+
+                var viewModel = new SiteEditViewModel(jinagaClient, site, names, domains);
+                await Shell.Current.Navigation.PushModalAsync(new SiteEditPage(viewModel));
+            }
+        }
+        catch (Exception x)
+        {
+            logger.LogError(x, "Error while handling edit");
         }
     }
 
