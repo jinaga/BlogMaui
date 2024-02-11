@@ -11,5 +11,5 @@ internal class AuthenticationToken
     public string RefreshToken { get; set; } = string.Empty;
 
     [JsonPropertyName("expiryDate")]
-    public string ExpryDate { get; set; } = string.Empty;
+    public string ExpiryDate { get; set; } = string.Empty;
 }

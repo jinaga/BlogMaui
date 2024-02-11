@@ -1,4 +1,4 @@
-﻿using Jinaga.Http;
+using Jinaga.Http;
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -29,7 +29,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
             if (authenticationToken != null)
             {
                 // Check for token expiration
-                if (DateTime.TryParse(authenticationToken.ExpryDate, null, DateTimeStyles.RoundtripKind, out var expiryDate))
+                if (DateTime.TryParse(authenticationToken.ExpiryDate, null, DateTimeStyles.RoundtripKind, out var expiryDate))
                 {
                     if (DateTime.UtcNow > expiryDate.AddMinutes(-5))
                     {
@@ -168,7 +168,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         {
             AccessToken = tokenResponse.AccessToken,
             RefreshToken = tokenResponse.RefreshToken,
-            ExpryDate = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
+            ExpiryDate = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
                 .ToString("O", CultureInfo.InvariantCulture)
         };
     }
