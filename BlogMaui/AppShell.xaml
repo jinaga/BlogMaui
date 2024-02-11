@@ -29,7 +29,7 @@
             <Tab.Icon>
                 <FontImageSource FontFamily="FluentSystemIcons" 
                                  Glyph="{x:Static fonts:FluentSystemIcons.IconIc_fluent_incognito_24_regular}" 
-                                 Color="{OnPlatform iOS={AppThemeBinding Dark=White, Light=Black}, Default=Black}" />
+                                 Color="{OnPlatform iOS={AppThemeBinding Dark='White', Light='Black'}}" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate visitor:VisitorPage}" />
         </Tab>
@@ -37,7 +37,7 @@
             <Tab.Icon>
                 <FontImageSource FontFamily="FluentSystemIcons" 
                                  Glyph="{x:Static fonts:FluentSystemIcons.IconIc_fluent_person_key_20_regular}" 
-                                 Color="{OnPlatform iOS={AppThemeBinding Dark='White', Light='Black'}, Default='Black'}" />
+                                 Color="{OnPlatform iOS={AppThemeBinding Dark='White', Light='Black'}}" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate visitor:LoginPage}" />
         </Tab>
@@ -49,7 +49,7 @@
             <Tab.Icon>
                 <FontImageSource FontFamily="FluentSystemIcons" 
                                  Glyph="{x:Static fonts:FluentSystemIcons.IconIc_fluent_home_32_regular}" 
-                                 Color="{OnPlatform iOS={AppThemeBinding Dark='White', Light='Black'}, Default='Black'}" />
+                                 Color="{OnPlatform iOS={AppThemeBinding Dark='White', Light='Black'}}" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate sites:SiteListPage}" />
         </Tab>
@@ -57,7 +57,7 @@
             <Tab.Icon>
                 <FontImageSource FontFamily="FluentSystemIcons" 
                                  Glyph="{x:Static fonts:FluentSystemIcons.IconIc_fluent_person_32_regular}" 
-                                 Color="{OnPlatform iOS={AppThemeBinding Dark='White', Light='Black'}, Default='Black'}" />
+                                 Color="{OnPlatform iOS={AppThemeBinding Dark='White', Light='Black'}}" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate account:AccountPage}" />
         </Tab>
