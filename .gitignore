@@ -4,3 +4,4 @@ obj/
 Settings.Local.cs
 .env.local
 /BlogMaui/BlogMaui.csproj.user
+.DS_Store
