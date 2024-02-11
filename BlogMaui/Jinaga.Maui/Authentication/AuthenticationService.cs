@@ -25,9 +25,9 @@ public class AuthenticationService
         return await GetUser(jinagaClient).ConfigureAwait(false);
     }
 
-    public async Task<User?> Login()
+    public async Task<User?> Login(string provider)
     {
-        var loggedIn = await authenticationProvider.Login().ConfigureAwait(false);
+        var loggedIn = await authenticationProvider.Login(provider).ConfigureAwait(false);
         if (!loggedIn)
         {
             return null;

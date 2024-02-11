@@ -6,8 +6,13 @@
              Title="Log In">
     <VerticalStackLayout VerticalOptions="Center"
                          HorizontalOptions="Center">
-        <Button Text="Log In"
+        <Button Text="Log In with Apple"
                 Command="{Binding LogIn, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}"
+                CommandParameter="Apple"
+                HorizontalOptions="Center" />
+        <Button Text="Log In with Google"
+                Command="{Binding LogIn, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}"
+                CommandParameter="Google"
                 HorizontalOptions="Center" />
 
         <Label Text="{Binding Error, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" />

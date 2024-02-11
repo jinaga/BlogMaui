@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Immutable;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -7,7 +8,7 @@ namespace Jinaga.Maui.Authentication;
 
 public class OAuthClient
 {
-    private readonly string? authUrl;
+    private readonly ImmutableDictionary<string, string> authUrlByProvider;
     private readonly string? accessTokenUrl;
     private readonly string callbackUrl;
     private readonly string? clientId;
@@ -22,7 +23,7 @@ public class OAuthClient
 
     public OAuthClient(AuthenticationSettings authenticationSettings, IHttpClientFactory httpClientFactory)
     {
-        this.authUrl = authenticationSettings.AuthUrl;
+        this.authUrlByProvider = authenticationSettings.AuthUrlByProvider;
         this.accessTokenUrl = authenticationSettings.AccessTokenUrl;
         this.callbackUrl = authenticationSettings.CallbackUrl;
         this.clientId = authenticationSettings.ClientId;
@@ -30,11 +31,18 @@ public class OAuthClient
         this.httpClientFactory = httpClientFactory;
     }
 
-    public string BuildRequestUrl()
+    public string BuildRequestUrl(string provider)
     {
-        if (authUrl == null || accessTokenUrl == null || clientId == null)
-            throw new Exception("Create a file called Settings.Local.cs and set the AuthUrl, AccessTokenUrl, and ClientId properties."
+        if (accessTokenUrl == null || clientId == null)
+        {
+            throw new Exception("Create a file called Settings.Local.cs and set the AccessTokenUrl and ClientId properties."
                 + " Do not check Settings.Local.cs into source control.");
+        }
+
+        if (!authUrlByProvider.TryGetValue(provider, out var authUrl))
+        {
+            throw new Exception($"No authentication URL for provider {provider}");
+        }
 
         // Generate random strings for the code verifier and state
         codeVerifier = GenerateRandomString();

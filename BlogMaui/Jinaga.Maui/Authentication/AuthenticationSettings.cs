@@ -1,11 +1,11 @@
-﻿using Jinaga;
+﻿using System.Collections.Immutable;
 
 namespace Jinaga.Maui.Authentication;
 public class AuthenticationSettings
 {
-    public AuthenticationSettings(string? authUrl, string? accessTokenUrl, string callbackUrl, string? clientId, string scope, Func<JinagaClient, User, UserProfile, Task> updateUserName)
+    public AuthenticationSettings(ImmutableDictionary<string, string> authUrlByProvider, string? accessTokenUrl, string callbackUrl, string? clientId, string scope, Func<JinagaClient, User, UserProfile, Task> updateUserName)
     {
-        AuthUrl = authUrl;
+        AuthUrlByProvider = authUrlByProvider;
         AccessTokenUrl = accessTokenUrl;
         CallbackUrl = callbackUrl;
         ClientId = clientId;
@@ -13,7 +13,7 @@ public class AuthenticationSettings
         UpdateUserName = updateUserName;
     }
 
-    public string? AuthUrl { get; }
+    public ImmutableDictionary<string, string> AuthUrlByProvider { get; }
     public string? AccessTokenUrl { get; }
     public string CallbackUrl { get; }
     public string? ClientId { get; }

@@ -29,7 +29,7 @@ public partial class AppShellViewModel : ObservableObject
 
     public AppShellViewModel(AuthenticationService authenticationService, UserProvider userProvider, JinagaClient jinagaClient)
     {
-        LogIn = new AsyncRelayCommand(HandleLogIn);
+        LogIn = new AsyncRelayCommand<string>(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
         ViewLogs = logController.GoToLogsPageCommand;
 
@@ -50,12 +50,12 @@ public partial class AppShellViewModel : ObservableObject
         jinagaClient.OnStatusChanged -= JinagaClient_OnStatusChanged;
     }
 
-    private async Task HandleLogIn()
+    private async Task HandleLogIn(string? provider)
     {
         try
         {
             Error = string.Empty;
-            var user = await authenticationService.Login();
+            var user = await authenticationService.Login(provider ?? "Apple");
             await Task.Delay(1);
 
             if (user != null)

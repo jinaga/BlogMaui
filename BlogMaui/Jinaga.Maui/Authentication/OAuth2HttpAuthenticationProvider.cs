@@ -42,12 +42,12 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         });
     }
 
-    internal Task<bool> Login()
+    internal Task<bool> Login(string provider)
     {
         return Lock(async () =>
         {
             var client = oauthClient;
-            string requestUrl = client.BuildRequestUrl();
+            string requestUrl = client.BuildRequestUrl(provider);
 #if WINDOWS
             var authResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(
                 new Uri(requestUrl),

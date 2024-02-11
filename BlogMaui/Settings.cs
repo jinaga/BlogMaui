@@ -12,14 +12,15 @@ public partial class Settings
         public Settings()
         {
             ReplicatorUrl = "https://repdev.jinaga.com/xxxXXXXxxxyyyyYYYyyy";
-            AuthUrl = "...";
+            AppleAuthUrl = "...";
             ...
         }
     }
     */
 
     public string? ReplicatorUrl { get; }
-    public string? AuthUrl { get; }
+    public string? AppleAuthUrl { get; }
+    public string? GoogleAuthUrl { get; }
     public string? AccessTokenUrl { get; }
     public string? ClientId { get; }
     public string Scope { get; } = "profile read write";

@@ -1,4 +1,5 @@
-﻿using BlogMaui.Areas.Blog;
+﻿using System.Collections.Immutable;
+using BlogMaui.Areas.Blog;
 using Jinaga;
 using Jinaga.Http;
 using Jinaga.Maui.Authentication;
@@ -17,8 +18,18 @@ public static class JinagaConfig
     {
         var settings = services.GetRequiredService<Settings>();
 
+        var authUrlByProvider = ImmutableDictionary<string, string>.Empty;
+        if (settings.AppleAuthUrl != null)
+        {
+            authUrlByProvider = authUrlByProvider.Add("Apple", settings.AppleAuthUrl);
+        }
+        if (settings.GoogleAuthUrl != null)
+        {
+            authUrlByProvider = authUrlByProvider.Add("Google", settings.GoogleAuthUrl);
+        }
+
         var authenticationSettings = new AuthenticationSettings(
-            settings.AuthUrl,
+            authUrlByProvider,
             settings.AccessTokenUrl,
             settings.CallbackUrl,
             settings.ClientId,
