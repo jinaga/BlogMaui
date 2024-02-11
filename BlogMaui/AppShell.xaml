@@ -25,33 +25,41 @@
 
     <TabBar IsVisible="{Binding AppState, Converter={StaticResource StringEqualsConverter}, ConverterParameter=NotLoggedIn}"
             Route="notloggedin">
-        <Tab Title="Visitor"
-             Icon="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_incognito_24_regular}}"
-             Route="visitor">
-            <ShellContent
-                ContentTemplate="{DataTemplate visitor:VisitorPage}" />
+        <Tab Title="Visitor" Route="visitor">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FluentSystemIcons" 
+                                 Glyph="{x:Static fonts:FluentSystemIcons.IconIc_fluent_incognito_24_regular}" 
+                                 Color="{OnPlatform iOS={AppThemeBinding Dark=White, Light=Black}, Default=Black}" />
+            </Tab.Icon>
+            <ShellContent ContentTemplate="{DataTemplate visitor:VisitorPage}" />
         </Tab>
-        <Tab Title="Log In"
-             Icon="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_person_key_20_regular}}"
-             Route="login">
-            <ShellContent
-                ContentTemplate="{DataTemplate visitor:LoginPage}" />
+        <Tab Title="Log In" Route="login">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FluentSystemIcons" 
+                                 Glyph="{x:Static fonts:FluentSystemIcons.IconIc_fluent_person_key_20_regular}" 
+                                 Color="{OnPlatform iOS={AppThemeBinding Dark='White', Light='Black'}, Default='Black'}" />
+            </Tab.Icon>
+            <ShellContent ContentTemplate="{DataTemplate visitor:LoginPage}" />
         </Tab>
     </TabBar>
 
     <TabBar IsVisible="{Binding AppState, Converter={StaticResource StringEqualsConverter}, ConverterParameter=LoggedIn}"
             Route="loggedin">
-        <Tab Title="Home"
-             Icon="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_home_32_regular}}"
-             Route="blog">
-            <ShellContent
-                ContentTemplate="{DataTemplate sites:SiteListPage}" />
+        <Tab Title="Home" Route="blog">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FluentSystemIcons" 
+                                 Glyph="{x:Static fonts:FluentSystemIcons.IconIc_fluent_home_32_regular}" 
+                                 Color="{OnPlatform iOS={AppThemeBinding Dark='White', Light='Black'}, Default='Black'}" />
+            </Tab.Icon>
+            <ShellContent ContentTemplate="{DataTemplate sites:SiteListPage}" />
         </Tab>
-        <Tab Title="Account"
-             Icon="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_person_32_regular}}"
-             Route="account">
-            <ShellContent
-                ContentTemplate="{DataTemplate account:AccountPage}" />
+        <Tab Title="Account" Route="account">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FluentSystemIcons" 
+                                 Glyph="{x:Static fonts:FluentSystemIcons.IconIc_fluent_person_32_regular}" 
+                                 Color="{OnPlatform iOS={AppThemeBinding Dark='White', Light='Black'}, Default='Black'}" />
+            </Tab.Icon>
+            <ShellContent ContentTemplate="{DataTemplate account:AccountPage}" />
         </Tab>
     </TabBar>
 </Shell>
