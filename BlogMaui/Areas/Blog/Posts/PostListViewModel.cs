@@ -152,12 +152,10 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
 
         try
         {
-            logger.LogInformation("Refreshing post list");
             Loading = true;
             await Task.WhenAll(
                 observer.Refresh(),
                 jinagaClient.Push());
-            logger.LogInformation("Successfully refreshed post list");
         }
         catch (Exception x)
         {
@@ -173,7 +171,6 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
     {
         try
         {
-            logger.LogInformation("Loading post list");
             bool wasInCache = await observer.Cached;
             if (!wasInCache)
             {
@@ -181,7 +178,6 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
                     observer.Loaded,
                     jinagaClient.Push());
             }
-            logger.LogInformation("Successfully loaded post list");
         }
         catch (Exception x)
         {

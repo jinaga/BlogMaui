@@ -12,12 +12,10 @@ namespace BlogMaui.Areas.Blog.Posts;
 public partial class PostListPage : ContentPage
 {
     private readonly PostListViewModel viewModel;
-    private readonly ILogger<PostListPage> logger;
 
-    public PostListPage(PostListViewModel viewModel, ILogger<PostListPage> logger)
+    public PostListPage(PostListViewModel viewModel)
     {
         this.viewModel = viewModel;
-        this.logger = logger;
 
         BindingContext = viewModel;
 
@@ -26,7 +24,6 @@ public partial class PostListPage : ContentPage
 
     protected override void OnDisappearing()
     {
-        logger.LogInformation("OnDisappearing PostListPage");
         viewModel.Unload();
         base.OnDisappearing();
     }
