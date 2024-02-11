@@ -7,7 +7,6 @@ using BlogMaui.Authentication;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using Jinaga;
-using Jinaga.Serialization;
 
 namespace BlogMaui.Areas.Blog.Sites;
 
@@ -66,14 +65,6 @@ public partial class SiteListViewModel : ObservableObject
             observer = jinagaClient.Watch(sites, userProvider.User, projection =>
             {
                 Sites.Clear();
-                if (projection.site is IFactProxy proxy)
-                {
-                    logger.LogInformation("SiteListViewModel: Site is a proxy with graph {graph}", proxy.Graph);
-                }
-                else
-                {
-                    logger.LogInformation("SiteListViewModel: Site is not a proxy");
-                }
                 var siteHeaderViewModel = new SiteHeaderViewModel(projection.site);
                 Sites.Add(siteHeaderViewModel);
 
