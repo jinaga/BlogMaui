@@ -134,7 +134,8 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
                 var domains = await jinagaClient.Query(domainsOfSite, site);
 
                 var viewModel = new SiteEditViewModel(jinagaClient, site, names, domains);
-                await Shell.Current.Navigation.PushModalAsync(new SiteEditPage(viewModel));
+                var page = new NavigationPage(new SiteEditPage(viewModel));
+                await Shell.Current.Navigation.PushModalAsync(page);
             }
         }
         catch (Exception x)

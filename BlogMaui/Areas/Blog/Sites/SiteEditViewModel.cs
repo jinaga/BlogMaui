@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using BlogMaui.Components;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
@@ -12,9 +13,7 @@ public partial class SiteEditViewModel : ObservableObject
     [ObservableProperty]
     private string name = string.Empty;
 
-    public ObservableCollection<string> NameCandidates { get; }
-    [ObservableProperty]
-    private string selectedNameCandidate = string.Empty;
+    private List<string> nameCandidates;
 
     [ObservableProperty]
     private string domain = string.Empty;
@@ -23,6 +22,7 @@ public partial class SiteEditViewModel : ObservableObject
     [ObservableProperty]
     private string selectedDomainCandidate = string.Empty;
 
+    public ICommand MergeCommand { get; }
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
     
@@ -42,7 +42,7 @@ public partial class SiteEditViewModel : ObservableObject
             .Select(n => n.value)
             .Order()
             .FirstOrDefault() ?? string.Empty;
-        NameCandidates = new ObservableCollection<string>(names.Select(n => n.value));
+        nameCandidates = names.Select(n => n.value).ToList();
 
         Domain = domains
             .Select(d => d.value)
@@ -50,18 +50,24 @@ public partial class SiteEditViewModel : ObservableObject
             .FirstOrDefault() ?? string.Empty;
         DomainCandidates = new ObservableCollection<string>(domains.Select(d => d.value));
 
+        MergeCommand = new AsyncRelayCommand(HandleMerge);
         SaveCommand = new AsyncRelayCommand(HandleSave);
         CancelCommand = new AsyncRelayCommand(HandleCancel);
-    }
-
-    partial void OnSelectedNameCandidateChanged(string value)
-    {
-        Name = value;
     }
 
     partial void OnSelectedDomainCandidateChanged(string value)
     {
         Domain = value;
+    }
+
+    private async Task HandleMerge()
+    {
+        var mergeViewModel = new MergeViewModel(nameCandidates, selection => Name = selection);
+        var currentPage = Shell.Current.CurrentPage;
+        if (currentPage.Parent is NavigationPage navigationPage)
+        {
+            await navigationPage.PushAsync(new MergePage(mergeViewModel));
+        }
     }
 
     private async Task HandleSave()
