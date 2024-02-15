@@ -8,7 +8,8 @@
                     SelectedItem="{Binding SelectedCandidate}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding}" />
+                        <TextCell Text="{Binding}"
+                            TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

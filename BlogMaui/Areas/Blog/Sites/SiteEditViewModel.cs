@@ -13,16 +13,19 @@ public partial class SiteEditViewModel : ObservableObject
     [ObservableProperty]
     private string name = string.Empty;
 
+    [ObservableProperty]
+    private bool shouldMergeNames;
     private List<string> nameCandidates;
 
     [ObservableProperty]
     private string domain = string.Empty;
 
-    public ObservableCollection<string> DomainCandidates { get; }
     [ObservableProperty]
-    private string selectedDomainCandidate = string.Empty;
+    private bool shouldMergeDomains;
+    private List<string> domainCandidates;
 
-    public ICommand MergeCommand { get; }
+    public ICommand MergeNamesCommand { get; }
+    public ICommand MergeDomainsCommand { get; }
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
     
@@ -38,31 +41,33 @@ public partial class SiteEditViewModel : ObservableObject
         this.names = names;
         this.domains = domains;
 
-        Name = names
-            .Select(n => n.value)
-            .Order()
-            .FirstOrDefault() ?? string.Empty;
-        nameCandidates = names.Select(n => n.value).ToList();
+        nameCandidates = names.Select(n => n.value).Order().Distinct().ToList();
+        Name = nameCandidates.FirstOrDefault() ?? string.Empty;
+        ShouldMergeNames = nameCandidates.Count > 1;
 
-        Domain = domains
-            .Select(d => d.value)
-            .Order()
-            .FirstOrDefault() ?? string.Empty;
-        DomainCandidates = new ObservableCollection<string>(domains.Select(d => d.value));
+        domainCandidates = domains.Select(d => d.value).Order().Distinct().ToList();
+        Domain = domainCandidates.FirstOrDefault() ?? string.Empty;
+        ShouldMergeDomains = domainCandidates.Count > 1;
 
-        MergeCommand = new AsyncRelayCommand(HandleMerge);
+        MergeNamesCommand = new AsyncRelayCommand(HandleMergeNames);
+        MergeDomainsCommand = new AsyncRelayCommand(HandleMergeDomains);
         SaveCommand = new AsyncRelayCommand(HandleSave);
         CancelCommand = new AsyncRelayCommand(HandleCancel);
     }
 
-    partial void OnSelectedDomainCandidateChanged(string value)
-    {
-        Domain = value;
-    }
-
-    private async Task HandleMerge()
+    private async Task HandleMergeNames()
     {
         var mergeViewModel = new MergeViewModel(nameCandidates, selection => Name = selection);
+        var currentPage = Shell.Current.CurrentPage;
+        if (currentPage.Parent is NavigationPage navigationPage)
+        {
+            await navigationPage.PushAsync(new MergePage(mergeViewModel));
+        }
+    }
+
+    private async Task HandleMergeDomains()
+    {
+        var mergeViewModel = new MergeViewModel(domainCandidates, selection => Domain = selection);
         var currentPage = Shell.Current.CurrentPage;
         if (currentPage.Parent is NavigationPage navigationPage)
         {

@@ -5,7 +5,7 @@
              x:Class="BlogMaui.Areas.Blog.Sites.SiteEditPage"
              Title="Edit Site">
     <VerticalStackLayout>
-        <Label Text="Title"
+        <Label Text="Name"
                FontSize="Medium"
                Margin="10,10,10,0"/>
         <Grid ColumnDefinitions="*,Auto"
@@ -17,20 +17,24 @@
                 <ImageButton Grid.Column="1"
                         Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_merge_24_regular}, Color={AppThemeBinding Light=Black, Dark=White}}"
                         Padding="5"
-                        Command="{Binding MergeCommand}" />
+                        Command="{Binding MergeNamesCommand}"
+                        IsVisible="{Binding ShouldMergeNames}" />
         </Grid>
-        <Picker Title="Candidates"
-                ItemsSource="{Binding NameCandidates}"
-                SelectedItem="{Binding SelectedNameCandidate}"
-                FontSize="Medium"
-                Margin="5"/>
         <Label Text="Domain"
                 FontSize="Medium"
                 Margin="10,10,10,0"/>
-        <Entry Text="{Binding Domain}"
-                Placeholder="Enter site domain"
-                FontSize="Medium"
-                Margin="5,0,5,5"/>
+        <Grid ColumnDefinitions="*,Auto"
+                Margin="5,0,5,5">
+                <Entry Grid.Column="0"
+                        Text="{Binding Domain}"
+                        Placeholder="Enter site domain"
+                        FontSize="Medium"/>
+                <ImageButton Grid.Column="1"
+                        Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_merge_24_regular}, Color={AppThemeBinding Light=Black, Dark=White}}"
+                        Padding="5"
+                        Command="{Binding MergeDomainsCommand}"
+                        IsVisible="{Binding ShouldMergeDomains}" />
+        </Grid>
         <HorizontalStackLayout>
             <Button Text="Save"
                     Command="{Binding SaveCommand}"
