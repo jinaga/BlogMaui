@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:root="clr-namespace:BlogMaui"
              x:Class="BlogMaui.Areas.Blog.Sites.SiteListPage"
              Title="Sites">
-    <VerticalStackLayout>
-        <Label Grid.Row="0" Text="{Binding Status, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" FontSize="Large" Margin="15,5" />
-        <ScrollView Grid.Row="1">
+    <toolkit:DockLayout>
+        <Label toolkit:DockLayout.DockPosition="Top"
+            Text="{Binding Status, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" FontSize="Large" Margin="15,5" />
+        <HorizontalStackLayout toolkit:DockLayout.DockPosition="Bottom">
+            <Button Text="View Logs" Command="{Binding ViewLogs, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" Margin="10" />
+        </HorizontalStackLayout>
+        <ScrollView>
             <ListView ItemsSource="{Binding Sites}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -20,8 +25,5 @@
                 </ListView.ItemTemplate>
             </ListView>
         </ScrollView>
-        <HorizontalStackLayout Grid.Row="3">
-            <Button Text="View Logs" Command="{Binding ViewLogs, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" Margin="10" />
-        </HorizontalStackLayout>
-    </VerticalStackLayout>
+    </toolkit:DockLayout>
 </ContentPage>

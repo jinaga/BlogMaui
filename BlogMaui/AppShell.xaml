@@ -3,10 +3,10 @@
     x:Class="BlogMaui.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:local="clr-namespace:BlogMaui"
     xmlns:account="clr-namespace:BlogMaui.Areas.Account"
     xmlns:authentication="clr-namespace:BlogMaui.Authentication"
-    xmlns:binding="clr-namespace:BlogMaui.Binding"
     xmlns:sites="clr-namespace:BlogMaui.Areas.Blog.Sites"
     xmlns:fonts="clr-namespace:BlogMaui.Fonts"
     xmlns:visitor="clr-namespace:BlogMaui.Areas.Visitor"
@@ -14,7 +14,7 @@
 
     <Shell.Resources>
         <ResourceDictionary>
-            <binding:StringEqualsConverter x:Key="StringEqualsConverter" />
+            <toolkit:IsEqualConverter x:Key="IsEqualConverter" />
         </ResourceDictionary>
     </Shell.Resources>
 
@@ -23,7 +23,7 @@
         ContentTemplate="{DataTemplate authentication:GatekeeperPage}"
         Route="gatekeeper" />
 
-    <TabBar IsVisible="{Binding AppState, Converter={StaticResource StringEqualsConverter}, ConverterParameter=NotLoggedIn}"
+    <TabBar IsVisible="{Binding AppState, Converter={StaticResource IsEqualConverter}, ConverterParameter=NotLoggedIn}"
             Route="notloggedin">
         <Tab Title="Visitor" Route="visitor">
             <Tab.Icon>
@@ -43,7 +43,7 @@
         </Tab>
     </TabBar>
 
-    <TabBar IsVisible="{Binding AppState, Converter={StaticResource StringEqualsConverter}, ConverterParameter=LoggedIn}"
+    <TabBar IsVisible="{Binding AppState, Converter={StaticResource IsEqualConverter}, ConverterParameter=LoggedIn}"
             Route="loggedin">
         <Tab Title="Home" Route="blog">
             <Tab.Icon>

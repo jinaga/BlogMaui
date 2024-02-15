@@ -1,28 +1,40 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:BlogMaui.Fonts"
              x:Class="BlogMaui.Areas.Blog.Sites.SiteEditPage"
              Title="Edit Site">
     <VerticalStackLayout>
-        <Label Text="Title"
+        <Label Text="Name"
                FontSize="Medium"
                Margin="10,10,10,0"/>
-        <Entry Text="{Binding Name}"
-               Placeholder="Enter site name"
-               FontSize="Medium"
-               Margin="5,0,5,5"/>
-        <Picker Title="Candidates"
-                ItemsSource="{Binding NameCandidates}"
-                SelectedItem="{Binding SelectedNameCandidate}"
-                FontSize="Medium"
-                Margin="5"/>
+        <Grid ColumnDefinitions="*,Auto"
+                Margin="5,0,5,5">
+                <Entry Grid.Column="0"
+                        Text="{Binding Name}"
+                        Placeholder="Enter site name"
+                        FontSize="Medium"/>
+                <ImageButton Grid.Column="1"
+                        Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_merge_24_regular}, Color={AppThemeBinding Light=Black, Dark=White}}"
+                        Padding="5"
+                        Command="{Binding MergeNamesCommand}"
+                        IsVisible="{Binding ShouldMergeNames}" />
+        </Grid>
         <Label Text="Domain"
                 FontSize="Medium"
                 Margin="10,10,10,0"/>
-        <Entry Text="{Binding Domain}"
-                Placeholder="Enter site domain"
-                FontSize="Medium"
-                Margin="5,0,5,5"/>
+        <Grid ColumnDefinitions="*,Auto"
+                Margin="5,0,5,5">
+                <Entry Grid.Column="0"
+                        Text="{Binding Domain}"
+                        Placeholder="Enter site domain"
+                        FontSize="Medium"/>
+                <ImageButton Grid.Column="1"
+                        Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_merge_24_regular}, Color={AppThemeBinding Light=Black, Dark=White}}"
+                        Padding="5"
+                        Command="{Binding MergeDomainsCommand}"
+                        IsVisible="{Binding ShouldMergeDomains}" />
+        </Grid>
         <HorizontalStackLayout>
             <Button Text="Save"
                     Command="{Binding SaveCommand}"
