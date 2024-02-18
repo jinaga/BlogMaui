@@ -33,8 +33,17 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
                 {
                     if (DateTime.UtcNow > expiryDate.AddMinutes(-5))
                     {
-                        await RefreshToken().ConfigureAwait(false);
-                        await SaveToken().ConfigureAwait(false);
+                        try
+                        {
+                            await RefreshToken().ConfigureAwait(false);
+                            await SaveToken().ConfigureAwait(false);
+                        }
+                        catch (Exception)
+                        {
+                            // We might be offline.
+                            // We'll get a new token when we try to use it online.
+                            // Don't prevent the user from using the app.
+                        }
                     }
                 }
             }
