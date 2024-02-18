@@ -2,9 +2,15 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:root="clr-namespace:BlogMaui"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="BlogMaui.Authentication.GatekeeperPage"
              Title="GatekeeperPage"
              Shell.NavBarIsVisible="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:IsStringNotNullOrEmptyConverter x:Key="IsStringNotNullOrEmptyConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <VerticalStackLayout
         HorizontalOptions="Center"
@@ -12,6 +18,14 @@
 
         <Label Text="{Binding Error}" />
         <Label Text="{Binding Error, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" />
-        <Button Text="View Logs" Command="{Binding ViewLogs, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" Margin="10" />
+        <StackLayout Orientation="Horizontal"
+                    IsVisible="{Binding Error, Converter={StaticResource IsStringNotNullOrEmptyConverter}}">
+            <Button Text="View Logs" 
+                    Command="{Binding ViewLogs, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" 
+                    Margin="10" />
+            <Button Text="Log Out" 
+                    Command="{Binding LogOut, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" 
+                    Margin="10" /> 
+        </StackLayout>
     </VerticalStackLayout>
 </ContentPage>

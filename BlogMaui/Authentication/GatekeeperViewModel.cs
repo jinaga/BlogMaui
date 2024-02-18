@@ -48,15 +48,6 @@ public partial class GatekeeperViewModel : ObservableObject
         {
             logger.LogError(ex, "Error initializing GatekeeperViewModel");
             Error = $"Error while initializing: {ex.GetMessage()}";
-            try
-            {
-                await authenticationService.LogOut();
-            }
-            catch (Exception ex2)
-            {
-                logger.LogError(ex2, "Error logging out after error initializing GatekeeperViewModel");
-                Error = $"Error while logging out: {ex2.GetMessage()}";
-            }
         }
     }
 }
