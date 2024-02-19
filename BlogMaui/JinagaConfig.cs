@@ -107,7 +107,11 @@ public static class JinagaConfig
         // Distribute sites with names and domains to the site creator.
         .Share(Given<User>.Match((user, facts) =>
             from site in facts.OfType<Site>()
-            where site.creator == user
+            where site.creator == user &&
+                !facts.Any<SiteDeleted>(deleted =>
+                    deleted.site == site &&
+                        !facts.Any<SiteRestored>(restored =>
+                            restored.deleted == deleted))
             select new {
                 site,
                 names =
@@ -152,7 +156,9 @@ public static class JinagaConfig
             from post in facts.OfType<Post>()
             where post.site == site &&
                 !facts.Any<PostDeleted>(deleted =>
-                    deleted.post == post)
+                    deleted.post == post &&
+                        !facts.Any<PostRestored>(restored =>
+                            restored.deleted == deleted))
             select new
             {
                 post,

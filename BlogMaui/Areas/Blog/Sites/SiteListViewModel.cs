@@ -43,7 +43,10 @@ public partial class SiteListViewModel : ObservableObject
 
             var sites = Given<User>.Match((user, facts) =>
                 from site in facts.OfType<Site>()
-                where site.creator == user
+                where site.creator == user &&
+                    !facts.Any<SiteDeleted>(deleted => deleted.site == site &&
+                        !facts.Any<SiteRestored>(restored => restored.deleted == deleted)
+                    )
                 select new
                 {
                     site,

@@ -61,7 +61,8 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
             var postsInBlog = Given<Site>.Match((site, facts) =>
                 from post in facts.OfType<Post>()
                 where post.site == site &&
-                    !facts.Any<PostDeleted>(deleted => deleted.post == post)
+                    !facts.Any<PostDeleted>(deleted => deleted.post == post &&
+                        !facts.Any<PostRestored>(restored => restored.deleted == deleted))
                 select new
                 {
                     post,
