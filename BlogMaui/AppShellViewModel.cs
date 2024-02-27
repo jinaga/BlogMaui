@@ -105,15 +105,11 @@ public partial class AppShellViewModel : ObservableObject
                 Error = status.LastSaveError.GetMessage();
             }
         }
-        else if (status.IsSaving && status.QueueLength == 0)
+        else if (status.LastLoadError != null)
         {
-            // There was an error last time the client
-            // tried loading.
+            // The client has experienced an error on load.
             Status = "Yellow";
-            if (status.LastLoadError != null)
-            {
-                Error = status.LastLoadError.GetMessage();
-            }
+            Error = status.LastLoadError.GetMessage();
         }
         else
         {
