@@ -124,7 +124,7 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
                         !facts.Any<SiteName>(next => next.prior.Contains(name))
                     select name
                 );
-                var names = await jinagaClient.Query(namesOfSite, site);
+                var names = await jinagaClient.QueryLocal(namesOfSite, site);
 
                 var domainsOfSite = Given<Site>.Match((site, facts) =>
                     from domain in facts.OfType<SiteDomain>()
@@ -132,7 +132,7 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
                         !facts.Any<SiteDomain>(next => next.prior.Contains(domain))
                     select domain
                 );
-                var domains = await jinagaClient.Query(domainsOfSite, site);
+                var domains = await jinagaClient.QueryLocal(domainsOfSite, site);
 
                 var viewModel = new SiteEditViewModel(jinagaClient, site, names, domains);
                 var page = new NavigationPage(new SiteEditPage(viewModel));
