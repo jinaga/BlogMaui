@@ -4,6 +4,7 @@ using Jinaga;
 using Jinaga.Http;
 using Jinaga.Maui.Authentication;
 using Jinaga.Store.SQLite;
+using Microsoft.Extensions.Logging;
 
 namespace BlogMaui;
 public static class JinagaConfig
@@ -70,6 +71,7 @@ public static class JinagaConfig
             opt.SQLitePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "blog.db");
+            opt.LoggerFactory = services.GetRequiredService<ILoggerFactory>();
         });
         return jinagaClient;
     }
