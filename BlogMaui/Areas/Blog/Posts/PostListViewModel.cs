@@ -18,6 +18,7 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
 
     private Site? site;
     private IObserver? observer;
+    private IObserver? nameObserver;
 
     [ObservableProperty]
     private string title = "";
@@ -53,7 +54,7 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
                 select name.value
             );
 
-            jinagaClient.Watch(namesOfSite, site, projection =>
+            nameObserver = jinagaClient.Watch(namesOfSite, site, projection =>
             {
                 Title = projection;
             });
@@ -104,6 +105,8 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
         {
             observer?.Stop();
             observer = null;
+            nameObserver?.Stop();
+            nameObserver = null;
             Posts.Clear();
         }
         catch (Exception x)
