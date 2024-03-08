@@ -26,11 +26,18 @@ public static class MauiProgram
             });
 
         builder.Logging
+            .SetMinimumLevel(LogLevel.Information)
+            .AddTraceLogger(
+                options =>
+                {
+                    options.MinLevel = LogLevel.Trace;
+                    options.MaxLevel = LogLevel.Critical;
+                }) // Will write to the Debug Output
             .AddInMemoryLogger(
                 options =>
                 {
                     options.MaxLines = 1000;
-                    options.MinLevel = LogLevel.Debug;
+                    options.MinLevel = LogLevel.Trace;
                     options.MaxLevel = LogLevel.Critical;
                 })
             .AddStreamingFileLogger(
@@ -39,12 +46,12 @@ public static class MauiProgram
                     options.RetainDays = 2;
                     options.FolderPath = Path.Combine(
                         FileSystem.CacheDirectory,
-                        "MetroLogs");
+                        "BlogMauiLogs");
                 })
             .AddConsoleLogger(
                 options =>
                 {
-                    options.MinLevel = LogLevel.Information;
+                    options.MinLevel = LogLevel.Trace;
                     options.MaxLevel = LogLevel.Critical;
                 }); // Will write to the Console Output (logcat for android)
 
