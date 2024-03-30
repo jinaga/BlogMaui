@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace BlogMaui.Areas.Blog;
+namespace BlogMaui.Areas.Blog.Posts;
 public partial class PostEditViewModel : ObservableObject
 {
     [ObservableProperty]

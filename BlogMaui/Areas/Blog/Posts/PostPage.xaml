@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BlogMaui.Areas.Blog.Posts"
              x:Class="BlogMaui.Areas.Blog.Posts.PostPage"
+             x:DataType="local:PostViewModel"
              xmlns:fonts="clr-namespace:BlogMaui.Fonts"
              Title="Post">
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="*">

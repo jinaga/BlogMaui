@@ -2,7 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:root="clr-namespace:BlogMaui"
+             xmlns:local="clr-namespace:BlogMaui.Areas.Account"
              x:Class="BlogMaui.Areas.Account.AccountPage"
+             x:DataType="local:AccountViewModel"
              Title="Account">
     <Grid RowDefinitions="*,Auto">
         <Label Text="{Binding UserName}"
