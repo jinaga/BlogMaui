@@ -9,6 +9,8 @@ using MetroLog.MicrosoftExtensions;
 using MetroLog.Operators;
 using Microsoft.Extensions.Logging;
 
+[assembly:XamlCompilation(XamlCompilationOptions.Compile)]
+
 namespace BlogMaui;
 public static class MauiProgram
 {

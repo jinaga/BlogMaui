@@ -3,7 +3,6 @@ using MetroLog.Maui;
 
 namespace BlogMaui;
 
-[XamlCompilation(XamlCompilationOptions.Compile)]
 public partial class App : Application
 {
     public App(AppShell appShell)
