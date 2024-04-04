@@ -1,0 +1,86 @@
+POST {{replicatorUrl}}/load
+Content-Type: application/json
+Accept: application/x-jinaga-graph-v1
+Authorization: oauth2 authorization_code
+
+{
+  "references": [
+    {
+      "type": "Blog.Post",
+      "hash": "z54skyEvI13uOkMtryIPJQHuZWkggfrEFxOm7wzO7HsSsdpHiZyKIgWjw4AglGXhBHMwTLqf9AfiXe/W1211Aw=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "2M8u9AgBHBedyPcSRPRB7TWQwrK1hCaG9V81YwI3epThSIZQD7fIEpJ7u4TgjMr3NXIf1+ZoODTqLY0oHpj7mg=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "wMmgsEdFzrLDBQItxFngNb14N3aSr8snBICKBbQ2pzs55mG99TwXJT+mCCqdtAGR3nf1rnTKe08ihyGKCzljHw=="
+    },
+    {
+      "type": "Blog.Post",
+      "hash": "ST4o09yXRMe4VkmFBhoYxEF0E9jSBPjtcA8px3/M+v8+ODaNBgIXko7HZunnR9vWrGSKgdAzWtzu3isGaxKo4Q=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "fTY+MrtwzhCwLoLYo/vzEm72zmYvOUsj0qojtXdGcg98zzBvnTvPr+mINl13WCKG5YrfBbuBb6hfU2jkCP9kQA=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "onmBJB/HIdw1PDwnpNQf/8CEQG/5UWb0I2vnsF01N2PNdf1z9KEZ545bffGQVu8okRcPHqegES5Y7rRlYqv/lg=="
+    },
+    {
+      "type": "Blog.Post",
+      "hash": "j+3h9NYNUEZCwlMOmJAm+NOO/EuQXH9w3aqg/EeVVg5nJd8zw/uEeH0gsIDvEmPz7A+cc/AEteiHm+uUBSUAaA=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "swqhHCaulBzS4dnLLGGb9ZF+5Q7sjyY/dFzHhbKowi6AqbXUnsGvIIuAsDTqfA2dw5WIJAnwD19RUkPRQ0ZWzQ=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "Cva/Fagn+SeU9dCFEUFO2n/UaAgrjC/3ZY9FP9dCnDUxaQToGyULb7xRtWQ6A6WRPP3jONmp7uTPUuLVtEJy7Q=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "4Os+nRO0DieLF7GY/p8mKdllv7Xo4DiMGM+EXuLt3V6co3FsRKpCAX5vbQpJw2SIdQlixeNJLbG25TnxA+B6iw=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "8M/rBG7BV1klCDSZixoAkqDtLQVP6eCdB/iS5YnVBkKhYZRFTAEeMRhCVbIsEGE9UwDmycjPpnyig7gdhJM8lA=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "b7ewha5lEqEOIioCUxDUZZ+ZmTpSh0cSKYx8qnLA/mrFO2qR9ocN7BsW1fDJKymwMFsAt9wJaAYVkRlU6ITtzw=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "KyHr/87opJ2CQU0UC9IZK5C9BGrlPPGuCjVKGhbj6rAbe4hUZ6yPlWWRqx++DpOA920mYeMfd34NhEFLHHhmyw=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "8yp4NRKGdfz50lADQ2rK0OdSl8V95rAFkVOiPeZECYlhd/XbkQ4g1gnfT6clNTWppatxH3goHrO5S1luGe3tAA=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "gsprbU52UVgnl7xk/BA+4eUBqY/xpQiDaBP4s0xS6Qqz3KFAKCoAGRIkd8xrVkFSMZRXQMLktkmv0Lls7mM54Q=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "ux/kCRqCK3AJ8WlvMkrBB87N2l6e7v8LIKSMbYLXN2sXtF8pcavxzPLKu5mnwh4kjHhzUgSSOEJcGjGOxVpHMQ=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "N6+hAKDKYD9/KZJOmbFEPQTYAvDCx3GyPmWQIj7NMnHudKyR4LxGGGAAbx754pmKJ88q3Cc4zY6emm8GNPFsrQ=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "tutD62WXBXKss/bcFoUsHQdw+4anb4dBITzCXZXY7wN7jtNX7cRimStDWGkDzJeonICf4cTEwaJiKKGg0hx7nw=="
+    },
+    {
+      "type": "Blog.Post.Title",
+      "hash": "Q0DR21O95rBqcAr80KVNOoT653/+741/um9T1hh0Zz5ghEksd5ZkorlES1SjH+wZXkK/rQWgvrsfHPUGAbDFlg=="
+    }
+  ],
+  "bookmark": "214.144.131"
+}

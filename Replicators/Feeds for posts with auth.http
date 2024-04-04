@@ -1,4 +1,4 @@
-POST {{replicatorUrl}}/read
+POST {{replicatorUrl}}/feeds
 Content-Type: text/plain
 Authorization: oauth2 authorization_code
 
