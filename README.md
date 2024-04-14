@@ -5,7 +5,7 @@ An example Jinaga application showcasing disconnected mobile apps in MAUI.
 ## Developer Setup
 
 To use this application, you will want to set up your own [Jinaga Replicator](https://jinaga.com/documents/replicator/).
-You can use the replicator as a service at [dev.jinaga.com](https://dev.jinaga.com/).
+You can use the replicator as a service at [app.jinaga.com](https://app.jinaga.com/).
 This service is free.
 
 Create a new replicator called Blog and set the environment to dev.
@@ -17,7 +17,7 @@ partial class Settings
 {
     public Settings()
     {
-        ReplicatorUrl = "https://repdev.jinaga.com/xxxxxxxxxxxxxxx";
+        ReplicatorUrl = "https://rep.jinaga.com/xxxxxxxxxxxxxxx";
     }
 }
 ```
@@ -25,7 +25,7 @@ partial class Settings
 Also create a file in the `Replicators` folder called `.env.local`:
 
 ```
-replicatorUrl=https://repdev.jinaga.com/xxxxxxxxxxxxxxx
+replicatorUrl=https://rep.jinaga.com/xxxxxxxxxxxxxxx
 ```
 
 ### Authentication
@@ -50,19 +50,19 @@ partial class Settings
 {
     public Settings()
     {
-        ReplicatorUrl = "https://repdev.jinaga.com/xxxxxxxxxxxxxxx";
-        AuthUrl = "https://repdev.jinaga.com/xxxxxxxxxxxxxxx/auth/apple";
-        AccessTokenUrl = "https://repdev.jinaga.com/xxxxxxxxxxxxxxx/auth/token";
+        ReplicatorUrl = "https://rep.jinaga.com/xxxxxxxxxxxxxxx";
+        AuthUrl = "https://rep.jinaga.com/xxxxxxxxxxxxxxx/auth/apple";
+        AccessTokenUrl = "https://rep.jinaga.com/xxxxxxxxxxxxxxx/auth/token";
         ClientId = "xxxxxxxxxxxxxxx";
     }
 }
 ```
 
 ```
-replicatorUrl=https://repdev.jinaga.com/xxxxxxxxxxxxxxx
+replicatorUrl=https://rep.jinaga.com/xxxxxxxxxxxxxxx
 
-oauth2_authorizationEndpoint=https://repdev.jinaga.com/xxxxxxxxxxxxxxx/auth/apple
-oauth2_tokenEndpoint=https://repdev.jinaga.com/xxxxxxxxxxxxxxx/auth/token
+oauth2_authorizationEndpoint=https://rep.jinaga.com/xxxxxxxxxxxxxxx/auth/apple
+oauth2_tokenEndpoint=https://rep.jinaga.com/xxxxxxxxxxxxxxx/auth/token
 oauth2_clientId=xxxxxxxxxxxxxxx
 oauth2_usePkce=true
 ```
@@ -104,7 +104,7 @@ To deploy test data, you will need to install the Visual Studio Code extension [
 With this extension, you can open the `http` files in the `Replicators` folder.
 
 Open `Create post with auth.http`.
-Click the "env" link at the top to selcet the "local" environment.
+Click the "env" link at the top to select the "local" environment.
 This maps to your `.env.local` file.
 Once this is selected, you can click the "send" link to upload the data.
 
@@ -135,7 +135,7 @@ The first method loads the configuration settings that you overrode during devel
 
 The `Settings` class is partial.
 One part is checked into the source code repository, and the other part is developer-specific.
-This allows each developer to provide their own replicator configuraiton.
+This allows each developer to provide their own replicator configuration.
 It also allows the CI/CD pipeline to supply replicator settings prior to the test or production build.
 
 The Jinaga configuration class uses `JinagaSQLiteClient.Create` to create a Jinaga client that uses a SQLite database for local persistence.
@@ -167,7 +167,7 @@ Distribution rules control who is allowed to run specifications.
 These rules are also defined in `JinagaConfig`.
 
 The replicator enforces authorization and distribution rules.
-To upload the rules to the repliator, run the script described in developer setup.
+To upload the rules to the replicator, run the script described in developer setup.
 Run this script again whenever you change authorization or distribution rules.
 
 ### Authentication Guard
@@ -192,7 +192,7 @@ It then sets the `AppState` property and navigates to the corresponding tab bar.
 ### View Models and Specifications
 
 As in other MAUI apps, view models in a Jinaga app implement `INotifyPropertyChanged` to support data binding.
-This example uses Comunity Toolkit MVVM to do so.
+This example uses Community Toolkit MVVM to do so.
 View models inherit `ObservableObject`.
 They are also partial classes so that the source generator can inject code for each `ObservableProperty`.
 
