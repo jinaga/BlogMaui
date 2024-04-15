@@ -1,4 +1,6 @@
 using Jinaga.Http;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -10,21 +12,24 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
     private const string AuthenticationTokenKey = "Jinaga.AuthenticationToken";
 
     private readonly OAuthClient oauthClient;
+    private readonly ILogger<OAuth2HttpAuthenticationProvider> logger;
 
     private readonly SemaphoreSlim semaphore = new(1);
     volatile private AuthenticationToken? authenticationToken;
 
     internal bool IsLoggedIn => authenticationToken != null;
 
-    public OAuth2HttpAuthenticationProvider(OAuthClient oauthClient)
+    public OAuth2HttpAuthenticationProvider(OAuthClient oauthClient, ILogger<OAuth2HttpAuthenticationProvider> logger)
     {
         this.oauthClient = oauthClient;
+        this.logger = logger;
     }
 
-    internal Task Initialize()
+    internal void Initialize()
     {
-        return Lock(async () =>
+        var task = Lock(async () =>
         {
+            logger.LogInformation("Initializing authentication");
             await LoadToken().ConfigureAwait(false);
             if (authenticationToken != null)
             {
@@ -33,21 +38,32 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
                 {
                     if (DateTime.UtcNow > expiryDate.AddMinutes(-5))
                     {
-                        try
-                        {
-                            await RefreshToken().ConfigureAwait(false);
-                            await SaveToken().ConfigureAwait(false);
-                        }
-                        catch (Exception)
-                        {
-                            // We might be offline.
-                            // We'll get a new token when we try to use it online.
-                            // Don't prevent the user from using the app.
-                        }
+                        var stopwatch = Stopwatch.StartNew();
+                        logger.LogInformation("Refreshing token");
+
+                        await RefreshToken().ConfigureAwait(false);
+                        await SaveToken().ConfigureAwait(false);
+
+                        logger.LogInformation("Token refreshed in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
+                    }
+                    else
+                    {
+                        logger.LogInformation("Cached token is still valid");
                     }
                 }
             }
+            else
+            {
+                logger.LogInformation("No cached token");
+            }
             return true;
+        });
+        task.ContinueWith(t =>
+        {
+            if (t.IsFaulted)
+            {
+                logger.LogError(t.Exception, "Failed to initialize authentication");
+            }
         });
     }
 
@@ -55,6 +71,8 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
     {
         return Lock(async () =>
         {
+            logger.LogInformation("Logging in with {Provider}", provider);
+
             var client = oauthClient;
             string requestUrl = client.BuildRequestUrl(provider);
 #if WINDOWS
@@ -68,17 +86,30 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
 #endif
             if (authResult == null)
             {
+                logger.LogInformation("Authentication cancelled");
                 return false;
             }
 
-            string state = authResult.Properties["state"];
-            string code = authResult.Properties["code"];
+            var stopwatch = Stopwatch.StartNew();
+            logger.LogInformation("Received authentication result");
 
-            client.ValidateState(state);
-            var tokenResponse = await client.GetTokenResponse(code).ConfigureAwait(false);
-            authenticationToken = ResponseToToken(tokenResponse);
-            await SaveToken().ConfigureAwait(false);
-            return true;
+            try
+            {
+                string state = authResult.Properties["state"];
+                string code = authResult.Properties["code"];
+
+                client.ValidateState(state);
+                var tokenResponse = await client.GetTokenResponse(code).ConfigureAwait(false);
+                authenticationToken = ResponseToToken(tokenResponse);
+                await SaveToken().ConfigureAwait(false);
+                logger.LogInformation("Token received in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to get token");
+                return false;
+            }
         });
     }
 
@@ -86,6 +117,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
     {
         return Lock(async () =>
         {
+            logger.LogInformation("Logging out");
             authenticationToken = null;
             await SaveToken().ConfigureAwait(false);
             return true;

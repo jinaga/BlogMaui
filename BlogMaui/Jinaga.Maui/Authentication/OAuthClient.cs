@@ -88,6 +88,7 @@ public class OAuthClient
 
         // Send the access token request
         var client = httpClientFactory.CreateClient();
+        client.Timeout = TimeSpan.FromSeconds(30);
         var tokenResponse = await client.SendAsync(tokenRequest);
         if (!tokenResponse.IsSuccessStatusCode)
         {
@@ -121,6 +122,7 @@ public class OAuthClient
 
         // Send the refresh request
         var client = httpClientFactory.CreateClient();
+        client.Timeout = TimeSpan.FromSeconds(30);
         var tokenResponse = await client.SendAsync(tokenRequest);
         if (!tokenResponse.IsSuccessStatusCode)
         {
