@@ -20,7 +20,7 @@ public class AuthenticationService
 
     public async Task<User?> Initialize()
     {
-        await authenticationProvider.Initialize().ConfigureAwait(false);
+        authenticationProvider.Initialize();
         await LoadUser().ConfigureAwait(false);
         return await GetUser(jinagaClient).ConfigureAwait(false);
     }
