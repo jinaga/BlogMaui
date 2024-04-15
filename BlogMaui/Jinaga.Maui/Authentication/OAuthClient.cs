@@ -106,7 +106,7 @@ public class OAuthClient
         return token;
     }
 
-    public async Task<TokenResponse> RequestNewToken(string refreshToken)
+    public async Task<TokenResponse?> RequestNewToken(string refreshToken)
     {
         if (accessTokenUrl == null || clientId == null)
             throw new Exception("Create a file called Settings.Local.cs and set the AccessTokenUrl and ClientId properties."
@@ -126,6 +126,10 @@ public class OAuthClient
         var tokenResponse = await client.SendAsync(tokenRequest);
         if (!tokenResponse.IsSuccessStatusCode)
         {
+            if (tokenResponse.StatusCode == HttpStatusCode.Unauthorized || tokenResponse.StatusCode == HttpStatusCode.BadRequest)
+            {
+                return null;
+            }
             throw new Exception($"Failed to refresh the token: {(int)tokenResponse.StatusCode} {tokenResponse.ReasonPhrase}");
         }
         var tokenContent = await tokenResponse.Content.ReadAsStringAsync();

@@ -178,7 +178,7 @@ public class OAuth2HttpAuthenticationProvider : IHttpAuthenticationProvider
         }
 
         var tokenResponse = await oauthClient.RequestNewToken(authenticationToken.RefreshToken).ConfigureAwait(false);
-        authenticationToken = ResponseToToken(tokenResponse);
+        authenticationToken = tokenResponse == null ? null : ResponseToToken(tokenResponse);
     }
 
     private async Task<T> Lock<T>(Func<Task<T>> action)
