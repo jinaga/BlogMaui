@@ -28,6 +28,14 @@ public static class JinagaConfig
         {
             authUrlByProvider = authUrlByProvider.Add("Google", settings.GoogleAuthUrl);
         }
+        if (settings.AccessTokenUrl == null)
+        {
+            throw new Exception("No access token URL is configured.");
+        }
+        if (settings.ClientId == null)
+        {
+            throw new Exception("No client ID is configured.");
+        }
 
         var authenticationSettings = new AuthenticationSettings(
             authUrlByProvider,
