@@ -16,7 +16,7 @@ public partial class SiteListViewModel : ObservableObject
     private readonly UserProvider userProvider;
     private readonly ILogger<SiteListViewModel> logger;
 
-    private IObserver? observer;
+    private UserProvider.Handler? handler;
 
     [ObservableProperty]
     private bool loading = false;
@@ -32,13 +32,13 @@ public partial class SiteListViewModel : ObservableObject
 
     public void Load()
     {
-        try
+        if (handler != null)
         {
-            if (userProvider.User == null || observer != null)
-            {
-                return;
-            }
+            return;
+        }
 
+        handler = userProvider.AddHandler(user =>
+        {
             Loading = true;
 
             var sites = Given<User>.Match((user, facts) =>
@@ -65,8 +65,7 @@ public partial class SiteListViewModel : ObservableObject
                 }
             );
 
-            Sites.Clear();
-            observer = jinagaClient.Watch(sites, userProvider.User, projection =>
+            var observer = jinagaClient.Watch(sites, user, projection =>
             {
                 var siteHeaderViewModel = new SiteHeaderViewModel(projection.site);
                 Sites.Add(siteHeaderViewModel);
@@ -87,24 +86,22 @@ public partial class SiteListViewModel : ObservableObject
             });
 
             Monitor(observer);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error initializing SiteListViewModel");
-        }
+
+            return () =>
+            {
+                observer.Stop();
+                observer = null;
+                Sites.Clear();
+            };
+        });
     }
 
     public void Unload()
     {
-        try
+        if (handler != null)
         {
-            observer?.Stop();
-            observer = null;
-            Sites.Clear();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error unloading SiteListViewModel");
+            userProvider.RemoveHandler(handler);
+            handler = null;
         }
     }
 
