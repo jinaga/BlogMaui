@@ -1,10 +1,18 @@
 ﻿using System.Collections.Immutable;
 using Jinaga;
+using Microsoft.Extensions.Logging;
 
 namespace BlogMaui.Authentication;
 
 public class UserProvider
 {
+    private readonly ILogger<UserProvider> logger;
+
+    public UserProvider(ILogger<UserProvider> logger)
+    {
+        this.logger = logger;
+    }
+
     private readonly object syncRoot = new object();
     private User? user;
     private ImmutableList<Handler> handlers = ImmutableList<Handler>.Empty;
@@ -96,7 +104,17 @@ public class UserProvider
         {
             foreach (var handler in handlers)
             {
-                handler.SetClear(handler.WithUser(user));
+                try
+                {
+                    var clearAction = handler.WithUser(user);
+                    handler.SetClear(clearAction);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error setting user");
+                    handler.SetClear(() => { });
+                    // Continue with the rest of the handlers
+                }
             }
         }
     }
