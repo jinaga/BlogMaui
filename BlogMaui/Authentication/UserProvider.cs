@@ -91,7 +91,15 @@ public class UserProvider
         {
             foreach (var handler in handlers)
             {
-                handler.InvokeClear();
+                try
+                {
+                    handler.InvokeClear();
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error invoking clear");
+                    // Continue with the rest of the handlers
+                }
                 handler.SetClear(() => { });
             }
         }
