@@ -60,7 +60,7 @@ public partial class AppShellViewModel : ObservableObject
 
             if (user != null)
             {
-                userProvider.User = user;
+                userProvider.SetUser(user);
                 AppState = "LoggedIn";
 
                 // Use two slashes to prevent back navigation to the gatekeeper page.
@@ -80,7 +80,7 @@ public partial class AppShellViewModel : ObservableObject
             Error = string.Empty;
             await authenticationService.LogOut();
 
-            userProvider.User = null;
+            userProvider.ClearUser();
             AppState = "NotLoggedIn";
 
             // Use two slashes to prevent back navigation.

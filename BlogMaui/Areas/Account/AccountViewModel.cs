@@ -12,7 +12,7 @@ public partial class AccountViewModel : ObservableObject
     private readonly JinagaClient jinagaClient;
     private readonly UserProvider userProvider;
 
-    private IObserver? observer;
+    private UserProvider.Handler? handler;
 
     public AccountViewModel(JinagaClient jinagaClient, UserProvider userProvider)
     {
@@ -22,24 +22,34 @@ public partial class AccountViewModel : ObservableObject
 
     public void Load()
     {
-        if (userProvider.User == null || observer != null)
+        if (handler != null)
         {
             return;
         }
 
-        var namesOfUser = Given<User>.Match((user, facts) =>
-            from name in facts.OfType<UserName>()
-            where name.user == user &&
-                !facts.Any<UserName>(next => next.prior.Contains(name))
-            select name.value
-        );
-
-        observer = jinagaClient.Watch(namesOfUser, userProvider.User, projection =>
+        handler = userProvider.AddHandler(user =>
         {
-            UserName = projection;
-        });
+            var namesOfUser = Given<User>.Match((user, facts) =>
+                from name in facts.OfType<UserName>()
+                where name.user == user &&
+                    !facts.Any<UserName>(next => next.prior.Contains(name))
+                select name.value
+            );
 
-        Monitor(observer);
+            var observer = jinagaClient.Watch(namesOfUser, user, projection =>
+            {
+                UserName = projection;
+            });
+
+            Monitor(observer);
+
+            return () =>
+            {
+                observer.Stop();
+                observer = null;
+                UserName = string.Empty;
+            };
+        });
     }
 
     private void Monitor(IObserver observer)
@@ -59,7 +69,10 @@ public partial class AccountViewModel : ObservableObject
 
     public void Unload()
     {
-        observer?.Stop();
-        observer = null;
+        if (handler != null)
+        {
+            userProvider.RemoveHandler(handler);
+            handler = null;
+        }
     }
 }
