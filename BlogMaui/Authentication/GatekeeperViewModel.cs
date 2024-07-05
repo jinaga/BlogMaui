@@ -31,7 +31,7 @@ public partial class GatekeeperViewModel : ObservableObject
 
             if (user != null)
             {
-                userProvider.User = user;
+                userProvider.SetUser(user);
                 appShellViewModel.AppState = "LoggedIn";
 
                 // Use two slashes to prevent back navigation to the gatekeeper page.
