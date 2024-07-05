@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Jinaga;
 
 namespace BlogMaui.Authentication;
@@ -13,11 +12,21 @@ public class UserProvider
     public class Handler
     {
         public Func<User, Action> WithUser { get; }
-        public Action Clear { get; set; } = () => { };
+        private Action Clear { get; set; } = () => { };
 
         public Handler(Func<User, Action> withUser)
         {
             WithUser = withUser;
+        }
+
+        internal void InvokeClear()
+        {
+            Clear();
+        }
+
+        internal void SetClear(Action clearAction)
+        {
+            Clear = clearAction;
         }
     }
 
@@ -49,7 +58,7 @@ public class UserProvider
             handlers = handlers.Add(handler);
             if (user != null)
             {
-                handler.Clear = handler.WithUser(user);
+                handler.SetClear(handler.WithUser(user));
             }
             return handler;
         }
@@ -62,7 +71,7 @@ public class UserProvider
             handlers = handlers.Remove(handler);
             if (user != null)
             {
-                handler.Clear();
+                handler.InvokeClear();
             }
         }
     }
@@ -74,8 +83,8 @@ public class UserProvider
         {
             foreach (var handler in handlers)
             {
-                handler.Clear();
-                handler.Clear = () => { };
+                handler.InvokeClear();
+                handler.SetClear(() => { });
             }
         }
     }
@@ -87,7 +96,7 @@ public class UserProvider
         {
             foreach (var handler in handlers)
             {
-                handler.Clear = handler.WithUser(user);
+                handler.SetClear(handler.WithUser(user));
             }
         }
     }
