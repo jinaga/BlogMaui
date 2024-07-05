@@ -1,10 +1,15 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using Jinaga;
 
 namespace BlogMaui.Authentication;
 
 public class UserProvider
 {
+    private readonly object syncRoot = new object();
+    private User? user;
+    private ImmutableList<Handler> handlers = ImmutableList<Handler>.Empty;
+
     public class Handler
     {
         public Func<User, Action> WithUser { get; }
@@ -16,45 +21,55 @@ public class UserProvider
         }
     }
 
-    private User? user;
-    private ImmutableList<Handler> handlers = ImmutableList<Handler>.Empty;
-
     public void SetUser(User user)
     {
-        BeforeSetUser();
-        this.user = user;
-        AfterSetUser();
+        lock (syncRoot)
+        {
+            BeforeSetUser();
+            this.user = user;
+            AfterSetUser();
+        }
     }
 
     public void ClearUser()
     {
-        BeforeSetUser();
-        user = null;
-        AfterSetUser();
+        lock (syncRoot)
+        {
+            BeforeSetUser();
+            user = null;
+            AfterSetUser();
+        }
     }
 
     public Handler AddHandler(Func<User, Action> withUser)
     {
-        var handler = new Handler(withUser);
-        handlers = handlers.Add(handler);
-        if (user != null)
+        lock (syncRoot)
         {
-            handler.Clear = handler.WithUser(user);
+            var handler = new Handler(withUser);
+            handlers = handlers.Add(handler);
+            if (user != null)
+            {
+                handler.Clear = handler.WithUser(user);
+            }
+            return handler;
         }
-        return handler;
     }
 
     public void RemoveHandler(Handler handler)
     {
-        handlers = handlers.Remove(handler);
-        if (user != null)
+        lock (syncRoot)
         {
-            handler.Clear();
+            handlers = handlers.Remove(handler);
+            if (user != null)
+            {
+                handler.Clear();
+            }
         }
     }
 
     private void BeforeSetUser()
     {
+        // Assumes this is called within a lock
         if (user != null)
         {
             foreach (var handler in handlers)
@@ -67,6 +82,7 @@ public class UserProvider
 
     private void AfterSetUser()
     {
+        // Assumes this is called within a lock
         if (user != null)
         {
             foreach (var handler in handlers)
