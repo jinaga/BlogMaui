@@ -5,6 +5,7 @@ using BlogMaui.Areas.Visitor;
 using BlogMaui.Authentication;
 using CommunityToolkit.Maui;
 using Jinaga.Maui;
+using Jinaga.Maui.Binding;
 using MetroLog.MicrosoftExtensions;
 using MetroLog.Operators;
 using Microsoft.Extensions.Logging;
