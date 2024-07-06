@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga.Maui.Authentication;
+using Jinaga.Maui.Binding;
 using Microsoft.Extensions.Logging;
 
 namespace BlogMaui.Authentication;

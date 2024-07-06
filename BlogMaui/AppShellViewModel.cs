@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using Jinaga.Maui.Authentication;
+using Jinaga.Maui.Binding;
 using MetroLog.Maui;
 using System.Windows.Input;
 

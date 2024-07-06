@@ -2,6 +2,7 @@
 using BlogMaui.Authentication;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga;
+using Jinaga.Maui.Binding;
 
 namespace BlogMaui.Areas.Account;
 public partial class AccountViewModel : ObservableObject

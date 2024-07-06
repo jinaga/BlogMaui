@@ -7,6 +7,7 @@ using BlogMaui.Authentication;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using Jinaga;
+using Jinaga.Maui.Binding;
 
 namespace BlogMaui.Areas.Blog.Sites;
 
