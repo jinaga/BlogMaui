@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga.Maui.Authentication;
+using Jinaga.Maui.Binding;
 using Microsoft.Extensions.Logging;
 
 namespace BlogMaui.Authentication;
@@ -31,7 +32,7 @@ public partial class GatekeeperViewModel : ObservableObject
 
             if (user != null)
             {
-                userProvider.User = user;
+                userProvider.SetUser(user);
                 appShellViewModel.AppState = "LoggedIn";
 
                 // Use two slashes to prevent back navigation to the gatekeeper page.
