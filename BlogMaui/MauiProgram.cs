@@ -63,7 +63,7 @@ public static class MauiProgram
         builder.Services.AddSingleton(JinagaConfig.CreateAuthenticationSettings);
         builder.Services.AddSingleton(JinagaConfig.CreateJinagaClient);
 #if WINDOWS
-        builder.Services.AddSingleton(WinUIEx.WebAuthenticator);
+        builder.Services.AddSingleton<IWebAuthenticator, WindowsWebAuthenticator>();
 #else
         builder.Services.AddSingleton(WebAuthenticator.Default);
 #endif
