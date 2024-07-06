@@ -2,8 +2,6 @@ using System.Collections.ObjectModel;
 
 using Microsoft.Extensions.Logging;
 
-using BlogMaui.Authentication;
-
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using Jinaga;

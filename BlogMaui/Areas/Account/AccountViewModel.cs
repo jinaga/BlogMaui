@@ -1,5 +1,4 @@
 ﻿using BlogMaui.Areas.Blog;
-using BlogMaui.Authentication;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga;
 using Jinaga.Maui.Binding;
