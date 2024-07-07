@@ -1,11 +1,10 @@
-using System.Collections.ObjectModel;
-
 using Microsoft.Extensions.Logging;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using Jinaga;
 using Jinaga.Maui.Binding;
+using BlogMaui.Binding;
 
 namespace BlogMaui.Areas.Blog.Sites;
 
@@ -20,7 +19,7 @@ public partial class SiteListViewModel : ObservableObject
     [ObservableProperty]
     private bool loading = false;
 
-    public ObservableCollection<SiteHeaderViewModel> Sites { get; } = new();
+    public ViewModelCollection Sites { get; } = new();
 
     public SiteListViewModel(JinagaClient jinagaClient, UserProvider userProvider, ILogger<SiteListViewModel> logger)
     {
@@ -64,33 +63,19 @@ public partial class SiteListViewModel : ObservableObject
                 }
             );
 
-            var observer = jinagaClient.Watch(sites, user, projection =>
-            {
-                var siteHeaderViewModel = new SiteHeaderViewModel(projection.site);
-                Sites.Add(siteHeaderViewModel);
-
-                projection.names.OnAdded(name =>
+            var observer = Sites.Watch(jinagaClient, sites, user, projection =>
+                new SiteListViewModel(jinagaClient, userProvider, logger),
+                (projection, viewModel) =>
                 {
-                    siteHeaderViewModel.Name = name;
+                    viewModel.Name = projection.names.LastOrDefault() ?? "Untitled";
+                    viewModel.Url = projection.domains.LastOrDefault() ?? "example.com";
                 });
-                projection.domains.OnAdded(domain =>
-                {
-                    siteHeaderViewModel.Url = domain;
-                });
-
-                return () =>
-                {
-                    Sites.Remove(siteHeaderViewModel);
-                };
-            });
 
             Monitor(observer);
 
             return () =>
             {
                 observer.Stop();
-                observer = null;
-                Sites.Clear();
             };
         });
     }
