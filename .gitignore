@@ -6,3 +6,4 @@ Settings.Local.cs
 /BlogMaui/BlogMaui.csproj.user
 .DS_Store
 Notebooks/settings.json
+set-variables.sh

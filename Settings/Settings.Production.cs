@@ -5,10 +5,10 @@ partial class Settings
 {
     public Settings()
     {
-        ReplicatorUrl = "https://rep.jinaga.com/oAR7fIZpyKw6y90sGb1UD2IKw85XYFvq6BDb6MxMzxUcehBwTGeFlBZ8KbSwuA43dvDpDXKgKJwab__w_iavuw";
-        AppleAuthUrl = "https://rep.jinaga.com/oAR7fIZpyKw6y90sGb1UD2IKw85XYFvq6BDb6MxMzxUcehBwTGeFlBZ8KbSwuA43dvDpDXKgKJwab__w_iavuw/auth/apple";
-        GoogleAuthUrl = "https://rep.jinaga.com/oAR7fIZpyKw6y90sGb1UD2IKw85XYFvq6BDb6MxMzxUcehBwTGeFlBZ8KbSwuA43dvDpDXKgKJwab__w_iavuw/auth/google";
-        AccessTokenUrl = "https://rep.jinaga.com/oAR7fIZpyKw6y90sGb1UD2IKw85XYFvq6BDb6MxMzxUcehBwTGeFlBZ8KbSwuA43dvDpDXKgKJwab__w_iavuw/auth/token";
-        ClientId = "oAR7fIZpyKw6y90sGb1UD2IKw85XYFvq6BDb6MxMzxUcehBwTGeFlBZ8KbSwuA43dvDpDXKgKJwab__w_iavuw";
+        ReplicatorUrl = "https://rep.jinaga.com/TWmcRHSmiSBJkr4PZ5ALOx5djvqBQmJ6KzyiWOd-YGfMkvas80kq3tIpUOl046JKKMl9jArD5FHwvtrAcMDjDw";
+        AppleAuthUrl = "https://rep.jinaga.com/TWmcRHSmiSBJkr4PZ5ALOx5djvqBQmJ6KzyiWOd-YGfMkvas80kq3tIpUOl046JKKMl9jArD5FHwvtrAcMDjDw/auth/apple";
+        GoogleAuthUrl = "https://rep.jinaga.com/TWmcRHSmiSBJkr4PZ5ALOx5djvqBQmJ6KzyiWOd-YGfMkvas80kq3tIpUOl046JKKMl9jArD5FHwvtrAcMDjDw/auth/google";
+        AccessTokenUrl = "https://rep.jinaga.com/TWmcRHSmiSBJkr4PZ5ALOx5djvqBQmJ6KzyiWOd-YGfMkvas80kq3tIpUOl046JKKMl9jArD5FHwvtrAcMDjDw/auth/token";
+        ClientId = "TWmcRHSmiSBJkr4PZ5ALOx5djvqBQmJ6KzyiWOd-YGfMkvas80kq3tIpUOl046JKKMl9jArD5FHwvtrAcMDjDw";
     }
 }
