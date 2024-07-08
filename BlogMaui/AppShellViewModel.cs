@@ -52,10 +52,10 @@ public partial class AppShellViewModel : ObservableObject
         try
         {
             Error = string.Empty;
-            var user = await authenticationService.Login(provider ?? "Apple");
+            var isLoggedIn = await authenticationService.Login(provider ?? "Apple");
             await Task.Delay(1);
 
-            if (user != null)
+            if (isLoggedIn)
             {
                 AppState = "LoggedIn";
 
