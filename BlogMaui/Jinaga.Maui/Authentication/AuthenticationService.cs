@@ -234,30 +234,51 @@ public class AuthenticationService : IHttpAuthenticationProvider
 
     private async Task<bool> RefreshToken()
     {
-        if (authenticationToken == null)
+        if (authenticationToken?.RefreshToken == null)
         {
             return false;
         }
-
-        // Refresh the token.
-        var tokenResponse = await oauthClient.RequestNewToken(authenticationToken.RefreshToken).ConfigureAwait(false);
-        if (tokenResponse == null)
+    
+        try
         {
-            // If the refresh token is invalid, clear the state.
-            authenticationToken = null;
-            this.user = null;
-            userProvider.ClearUser();
-            await SaveState().ConfigureAwait(false);
+            var tokenResponse = await RequestNewTokenSafe(authenticationToken.RefreshToken).ConfigureAwait(false);
+            if (tokenResponse == null)
+            {
+                await ClearAuthenticationState().ConfigureAwait(false);
+                return false;
+            }
+    
+            await UpdateAuthenticationState(tokenResponse).ConfigureAwait(false);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to refresh token");
+            await ClearAuthenticationState().ConfigureAwait(false);
             return false;
         }
-
-        // Update the state with the new token.
+    }
+    
+    private async Task<TokenResponse?> RequestNewTokenSafe(string refreshToken)
+    {
+        return await oauthClient.RequestNewToken(refreshToken).ConfigureAwait(false);
+    }
+    
+    private async Task ClearAuthenticationState()
+    {
+        authenticationToken = null;
+        this.user = null;
+        userProvider.ClearUser();
+        await SaveState().ConfigureAwait(false);
+    }
+    
+    private async Task UpdateAuthenticationState(TokenResponse tokenResponse)
+    {
         authenticationToken = ResponseToToken(tokenResponse);
         var (user, profile) = await jinagaClient.Login().ConfigureAwait(false);
         await updateUserName(jinagaClient, user, profile);
         this.user = user;
         await SaveState().ConfigureAwait(false);
-        return true;
     }
 
     private bool IsTokenExpired()
