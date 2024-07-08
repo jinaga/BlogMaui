@@ -35,7 +35,7 @@ public class AuthenticationService : IHttpAuthenticationProvider
     private User? user;
     private Task<bool> refreshTask = Task.FromResult(false);
 
-    public AuthenticationService(UserProvider userProvider, IWebAuthenticator webAuthenticator, OAuthClient oauthClient, JinagaClient jinagaClient, AuthenticationSettings authenticationSettings, ILogger<AuthenticationService> logger)
+    public AuthenticationService(UserProvider userProvider, IWebAuthenticator webAuthenticator, OAuthClient oauthClient, JinagaClient jinagaClient, AuthenticationSettings authenticationSettings, ILogger<AuthenticationService> logger, AuthenticationProviderProxy authenticationProviderProxy)
     {
         this.userProvider = userProvider;
         this.webAuthenticator = webAuthenticator;
@@ -43,6 +43,8 @@ public class AuthenticationService : IHttpAuthenticationProvider
         this.jinagaClient = jinagaClient;
         this.logger = logger;
         updateUserName = authenticationSettings.UpdateUserName;
+
+        authenticationProviderProxy.SetProvider(this);
     }
 
     public async Task<bool> Initialize()
