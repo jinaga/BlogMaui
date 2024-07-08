@@ -197,11 +197,10 @@ public class AuthenticationService : IHttpAuthenticationProvider
     {
         logger.LogInformation("Logging in with {Provider}", provider);
 
-        var client = oauthClient;
-        string requestUrl = client.BuildRequestUrl(provider);
+        string requestUrl = oauthClient.BuildRequestUrl(provider);
         var authResult = await webAuthenticator.AuthenticateAsync(
             new Uri(requestUrl),
-            new Uri(client.CallbackUrl)).ConfigureAwait(false);
+            new Uri(oauthClient.CallbackUrl)).ConfigureAwait(false);
         if (authResult == null)
         {
             logger.LogInformation("Authentication cancelled");
@@ -213,15 +212,16 @@ public class AuthenticationService : IHttpAuthenticationProvider
 
         try
         {
-            string state = authResult.Properties["state"];
-            string code = authResult.Properties["code"];
+            if (!authResult.Properties.TryGetValue("state", out string? state) ||
+                !authResult.Properties.TryGetValue("code", out string? code))
+            {
+                logger.LogError("Authentication result did not contain expected properties.");
+                return false;
+            }
 
-            client.ValidateState(state);
-            var tokenResponse = await client.GetTokenResponse(code).ConfigureAwait(false);
-            authenticationToken = ResponseToToken(tokenResponse);
-            var (user, profile) = await jinagaClient.Login().ConfigureAwait(false);
-            await updateUserName(jinagaClient, user, profile);
-            await SaveState().ConfigureAwait(false);
+            oauthClient.ValidateState(state);
+            var tokenResponse = await oauthClient.GetTokenResponse(code).ConfigureAwait(false);
+            await UpdateAuthenticationState(tokenResponse).ConfigureAwait(false);
             logger.LogInformation("Token received in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
             return true;
         }
