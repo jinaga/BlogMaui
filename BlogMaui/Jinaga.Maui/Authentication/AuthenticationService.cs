@@ -1,7 +1,26 @@
 ﻿using Microsoft.Maui.Storage;
 
 namespace Jinaga.Maui.Authentication;
+
 public class AuthenticationService
+{
+    public async Task<User> Initialize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<User> Login(string provider)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task LogOut()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class AuthenticationServiceOld
 {
     private const string PublicKeyKey = "Jinaga.PublicKey";
 
@@ -13,7 +32,7 @@ public class AuthenticationService
 
     private readonly SemaphoreSlim semaphore = new(1);
 
-    public AuthenticationService(OAuth2HttpAuthenticationProvider authenticationProvider, JinagaClient jinagaClient, AuthenticationSettings authenticationSettings)
+    public AuthenticationServiceOld(OAuth2HttpAuthenticationProvider authenticationProvider, JinagaClient jinagaClient, AuthenticationSettings authenticationSettings)
     {
         this.authenticationProvider = authenticationProvider;
         this.jinagaClient = jinagaClient;

@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga.Maui.Authentication;
-using Jinaga.Maui.Binding;
 using Microsoft.Extensions.Logging;
 
 namespace BlogMaui.Authentication;
@@ -9,17 +8,15 @@ public partial class GatekeeperViewModel : ObservableObject
 {
     private readonly AuthenticationService authenticationService;
     private readonly AppShellViewModel appShellViewModel;
-    private readonly UserProvider userProvider;
     private readonly ILogger<GatekeeperViewModel> logger;
 
     [ObservableProperty]
     private string error = string.Empty;
 
-    public GatekeeperViewModel(AuthenticationService authenticationService, AppShellViewModel appShellViewModel, UserProvider userProvider, ILogger<GatekeeperViewModel> logger)
+    public GatekeeperViewModel(AuthenticationService authenticationService, AppShellViewModel appShellViewModel, ILogger<GatekeeperViewModel> logger)
     {
         this.authenticationService = authenticationService;
         this.appShellViewModel = appShellViewModel;
-        this.userProvider = userProvider;
         this.logger = logger;
     }
 
@@ -32,7 +29,6 @@ public partial class GatekeeperViewModel : ObservableObject
 
             if (user != null)
             {
-                userProvider.SetUser(user);
                 appShellViewModel.AppState = "LoggedIn";
 
                 // Use two slashes to prevent back navigation to the gatekeeper page.
