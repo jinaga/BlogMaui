@@ -120,7 +120,7 @@ public class AuthenticationService : IHttpAuthenticationProvider
         switch (state)
         {
             case State.Offline:
-                return await TryRefreshToken();
+                return await TryRefreshAndThenLogin(provider);
             case State.Refreshing:
                 return await WaitForRefresh();
             case State.LoggedIn:
@@ -133,11 +133,24 @@ public class AuthenticationService : IHttpAuthenticationProvider
         }
     }
 
-    private async Task<bool> TryRefreshToken()
+    private async Task<bool> TryRefreshAndThenLogin(string provider)
     {
-        var refreshed = await RefreshToken().ConfigureAwait(false);
-        state = refreshed ? State.LoggedIn : State.LoggedOut;
-        return refreshed;
+        try
+        {
+            state = State.Refreshing;
+            refreshTask = RefreshToken();
+            var refreshed = await refreshTask.ConfigureAwait(false);
+            if (refreshed)
+            {
+                state = State.LoggedIn;
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to refresh token");
+        }
+        return await TryLogin(provider);
     }
 
     private async Task<bool> WaitForRefresh()
