@@ -66,15 +66,17 @@ public class AuthenticationService : IHttpAuthenticationProvider
             var (tokenJson, publicKey) = await LoadTokenAndKey();
             if (tokenJson == null || publicKey == null)
             {
+                state = State.LoggedOut;
                 return false;
             }
 
-            return ProcessLoadedToken(tokenJson, publicKey);
+            return await ProcessLoadedToken(tokenJson, publicKey);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to load authentication token");
             await ClearAuthenticationState().ConfigureAwait(false);
+            state = State.LoggedOut;
             return false;
         }
     }
@@ -86,11 +88,13 @@ public class AuthenticationService : IHttpAuthenticationProvider
         return (tokenJson, publicKey);
     }
 
-    private bool ProcessLoadedToken(string tokenJson, string publicKey)
+    private async Task<bool> ProcessLoadedToken(string tokenJson, string publicKey)
     {
         var loadedAuthenticationToken = JsonSerializer.Deserialize<AuthenticationToken>(tokenJson);
         if (loadedAuthenticationToken == null)
         {
+            await ClearAuthenticationState().ConfigureAwait(false);
+            state = State.LoggedOut;
             return false;
         }
 
