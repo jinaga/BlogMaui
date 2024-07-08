@@ -190,7 +190,7 @@ public class AuthenticationService : IHttpAuthenticationProvider
             {
                 state = State.LoggedOut;
             }
-        });
+        }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 
     private async Task<bool> Authenticate(string provider)
