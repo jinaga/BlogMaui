@@ -95,51 +95,46 @@ public class AuthenticationService : IHttpAuthenticationProvider
 
     public async Task<bool> Login(string provider)
     {
-        if (state == State.Offline)
+        switch (state)
         {
-            var refreshed = await RefreshToken().ConfigureAwait(false);
-            if (refreshed)
-            {
-                state = State.LoggedIn;
+            case State.Offline:
+                return await TryRefreshToken();
+            case State.Refreshing:
+                return await WaitForRefresh();
+            case State.LoggedIn:
                 return true;
-            }
-            else
-            {
-                state = State.LoggedOut;
-            }
+            case State.LoggedOut:
+            case State.LoggingIn:
+                return await TryLogin(provider);
+            default:
+                throw new InvalidOperationException($"Unexpected state: {state}");
         }
-
-        if (state == State.Refreshing)
-        {
-            return await refreshTask.ConfigureAwait(false);
-        }
-
-        if (state != State.LoggedOut)
-        {
-            return state == State.LoggedIn;
-        }
-
+    }
+    
+    private async Task<bool> TryRefreshToken()
+    {
+        var refreshed = await RefreshToken().ConfigureAwait(false);
+        state = refreshed ? State.LoggedIn : State.LoggedOut;
+        return refreshed;
+    }
+    
+    private async Task<bool> WaitForRefresh()
+    {
+        return await refreshTask.ConfigureAwait(false);
+    }
+    
+    private async Task<bool> TryLogin(string provider)
+    {
         state = State.LoggingIn;
         var loggedIn = await Authenticate(provider).ConfigureAwait(false);
-        if (loggedIn)
-        {
-            state = State.LoggedIn;
-            return true;
-        }
-        else
-        {
-            state = State.LoggedOut;
-            return false;
-        }
+        state = loggedIn ? State.LoggedIn : State.LoggedOut;
+        return loggedIn;
     }
 
     public async Task LogOut()
     {
         state = State.LoggedOut;
-        authenticationToken = null;
-        user = null;
-        userProvider.ClearUser();
-        await SaveState().ConfigureAwait(false);
+        await ClearAuthenticationState().ConfigureAwait(false);
     }
 
     public void SetRequestHeaders(HttpRequestHeaders headers)
