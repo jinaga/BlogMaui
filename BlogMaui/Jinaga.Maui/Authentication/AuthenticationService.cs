@@ -53,44 +53,66 @@ public class AuthenticationService : IHttpAuthenticationProvider
             return state != State.LoggedOut;
         }
 
+        return await LoadAuthenticationState();
+    }
+
+    private async Task<bool> LoadAuthenticationState()
+    {
         try
         {
-            // Load the state from secure storage.
             logger.LogInformation("Loading authentication token");
-            string? tokenJson = await SecureStorage.GetAsync(AuthenticationTokenKey).ConfigureAwait(false);
-            string? publicKey = await SecureStorage.GetAsync(PublicKeyKey).ConfigureAwait(false);
-            if (tokenJson != null && publicKey != null)
+            var (tokenJson, publicKey) = await LoadTokenAndKey();
+            if (tokenJson == null || publicKey == null)
             {
-                // Deserialize the token.
-                AuthenticationToken? loadedAuthenticationToken = JsonSerializer.Deserialize<AuthenticationToken>(tokenJson);
-                authenticationToken = loadedAuthenticationToken;
-                user = new User(publicKey);
-                userProvider.SetUser(user);
-                if (IsTokenExpired())
-                {
-                    // If the token is expired, start refreshing it.
-                    logger.LogInformation("Token expired, refreshing");
-                    state = State.Refreshing;
-                    BeginRefresh();
-                }
-                else
-                {
-                    logger.LogInformation("Token loaded");
-                    state = State.LoggedIn;
-                }
-                return true;
+                return false;
             }
+
+            return ProcessLoadedToken(tokenJson, publicKey);
         }
         catch (Exception ex)
         {
-            // If there was an error loading the state, log it and clear the state.
             logger.LogError(ex, "Failed to load authentication token");
-            authenticationToken = null;
-            user = null;
-            userProvider.ClearUser();
-            await SaveState().ConfigureAwait(false);
+            await ClearAuthenticationState().ConfigureAwait(false);
+            return false;
         }
-        return false;
+    }
+
+    private async Task<(string? tokenJson, string? publicKey)> LoadTokenAndKey()
+    {
+        string? tokenJson = await SecureStorage.GetAsync(AuthenticationTokenKey).ConfigureAwait(false);
+        string? publicKey = await SecureStorage.GetAsync(PublicKeyKey).ConfigureAwait(false);
+        return (tokenJson, publicKey);
+    }
+
+    private bool ProcessLoadedToken(string tokenJson, string publicKey)
+    {
+        var loadedAuthenticationToken = JsonSerializer.Deserialize<AuthenticationToken>(tokenJson);
+        if (loadedAuthenticationToken == null)
+        {
+            return false;
+        }
+
+        SetUserFromToken(publicKey, loadedAuthenticationToken);
+        return true;
+    }
+
+    private void SetUserFromToken(string publicKey, AuthenticationToken loadedAuthenticationToken)
+    {
+        authenticationToken = loadedAuthenticationToken;
+        user = new User(publicKey);
+        userProvider.SetUser(user);
+
+        if (IsTokenExpired())
+        {
+            logger.LogInformation("Token expired, refreshing");
+            state = State.Refreshing;
+            BeginRefresh();
+        }
+        else
+        {
+            logger.LogInformation("Token loaded");
+            state = State.LoggedIn;
+        }
     }
 
     public async Task<bool> Login(string provider)
@@ -110,19 +132,19 @@ public class AuthenticationService : IHttpAuthenticationProvider
                 throw new InvalidOperationException($"Unexpected state: {state}");
         }
     }
-    
+
     private async Task<bool> TryRefreshToken()
     {
         var refreshed = await RefreshToken().ConfigureAwait(false);
         state = refreshed ? State.LoggedIn : State.LoggedOut;
         return refreshed;
     }
-    
+
     private async Task<bool> WaitForRefresh()
     {
         return await refreshTask.ConfigureAwait(false);
     }
-    
+
     private async Task<bool> TryLogin(string provider)
     {
         state = State.LoggingIn;
@@ -233,7 +255,7 @@ public class AuthenticationService : IHttpAuthenticationProvider
         {
             return false;
         }
-    
+
         try
         {
             var tokenResponse = await RequestNewTokenSafe(authenticationToken.RefreshToken).ConfigureAwait(false);
@@ -242,7 +264,7 @@ public class AuthenticationService : IHttpAuthenticationProvider
                 await ClearAuthenticationState().ConfigureAwait(false);
                 return false;
             }
-    
+
             await UpdateAuthenticationState(tokenResponse).ConfigureAwait(false);
             return true;
         }
@@ -253,12 +275,12 @@ public class AuthenticationService : IHttpAuthenticationProvider
             return false;
         }
     }
-    
+
     private async Task<TokenResponse?> RequestNewTokenSafe(string refreshToken)
     {
         return await oauthClient.RequestNewToken(refreshToken).ConfigureAwait(false);
     }
-    
+
     private async Task ClearAuthenticationState()
     {
         authenticationToken = null;
@@ -266,7 +288,7 @@ public class AuthenticationService : IHttpAuthenticationProvider
         userProvider.ClearUser();
         await SaveState().ConfigureAwait(false);
     }
-    
+
     private async Task UpdateAuthenticationState(TokenResponse tokenResponse)
     {
         authenticationToken = ResponseToToken(tokenResponse);
