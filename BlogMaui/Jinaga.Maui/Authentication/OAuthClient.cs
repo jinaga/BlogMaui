@@ -58,7 +58,7 @@ public class OAuthClient
         var builder = new UriBuilder(authUrl);
         var urlEncodedCallbackUrl = WebUtility.UrlEncode(callbackUrl);
         var urlEncodedScope = WebUtility.UrlEncode(scope);
-        builder.Query = $"response_type=code&client_id={clientId}&redirect_uri={urlEncodedCallbackUrl}&scope={urlEncodedScope}&state={state}&code_challenge={codeChallenge}&code_challenge_method=S256";
+        builder.Query = $"response_type=code&client_id={clientId}&redirect_uri={urlEncodedCallbackUrl}&scope={urlEncodedScope}&state={state}&code_challenge={codeChallenge}&code_challenge_method=S256&prompt=login";
         return builder.ToString();
     }
 
