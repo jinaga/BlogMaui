@@ -118,6 +118,7 @@ public class AuthenticationService : IHttpAuthenticationProvider
 
         try
         {
+            logger.LogInformation("Logging in");
             var result = await Authenticate(provider).ConfigureAwait(false);
             if (result.Token == null || result.User == null)
             {
@@ -284,6 +285,11 @@ public class AuthenticationService : IHttpAuthenticationProvider
         oauthClient.ValidateState(state);
         var tokenResponse = await oauthClient.GetTokenResponse(code).ConfigureAwait(false);
         var authenticationToken = ResponseToToken(tokenResponse);
+        lock (stateLock)
+        {
+            // Set the authentication token so that it can be used to get the user
+            authenticationState = new AuthenticationResult(authenticationToken, null);
+        }
         var (user, profile) = await jinagaClient.Login().ConfigureAwait(false);
         await updateUserName(jinagaClient, user, profile);
         return new AuthenticationResult(authenticationToken, user);
