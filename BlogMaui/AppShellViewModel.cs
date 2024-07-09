@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using Jinaga.Maui.Authentication;
-using Jinaga.Maui.Binding;
 using MetroLog.Maui;
 using System.Windows.Input;
 
@@ -11,7 +10,6 @@ namespace BlogMaui;
 public partial class AppShellViewModel : ObservableObject
 {
     private readonly AuthenticationService authenticationService;
-    private readonly UserProvider userProvider;
     private readonly JinagaClient jinagaClient;
     private readonly LogController logController = new LogController();
 
@@ -27,14 +25,13 @@ public partial class AppShellViewModel : ObservableObject
     public ICommand LogOut { get; }
     public ICommand ViewLogs { get; }
 
-    public AppShellViewModel(AuthenticationService authenticationService, UserProvider userProvider, JinagaClient jinagaClient)
+    public AppShellViewModel(AuthenticationService authenticationService, JinagaClient jinagaClient)
     {
         LogIn = new AsyncRelayCommand<string>(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
         ViewLogs = logController.GoToLogsPageCommand;
 
         this.authenticationService = authenticationService;
-        this.userProvider = userProvider;
         this.jinagaClient = jinagaClient;
 
         logController.IsShakeEnabled = true;
@@ -55,12 +52,11 @@ public partial class AppShellViewModel : ObservableObject
         try
         {
             Error = string.Empty;
-            var user = await authenticationService.Login(provider ?? "Apple");
+            var isLoggedIn = await authenticationService.Login(provider ?? "Apple");
             await Task.Delay(1);
 
-            if (user != null)
+            if (isLoggedIn)
             {
-                userProvider.SetUser(user);
                 AppState = "LoggedIn";
 
                 // Use two slashes to prevent back navigation to the gatekeeper page.
@@ -80,7 +76,6 @@ public partial class AppShellViewModel : ObservableObject
             Error = string.Empty;
             await authenticationService.LogOut();
 
-            userProvider.ClearUser();
             AppState = "NotLoggedIn";
 
             // Use two slashes to prevent back navigation.
