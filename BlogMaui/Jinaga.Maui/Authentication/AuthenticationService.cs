@@ -148,16 +148,15 @@ public class AuthenticationService : IHttpAuthenticationProvider
     /// <returns>Resolves when logout is successful</returns>
     public async Task LogOut()
     {
-        lock (stateLock)
+        var cachedAuthenticationToken = authenticationState.Token;
+
+        if (cachedAuthenticationToken == null)
         {
-            if (authenticationState.Token == null)
-            {
-                // Already logged out.
-                return;
-            }
+            // Already logged out.
+            return;
         }
 
-        // TODO: Call the log out endpoint on the server.
+        await InvalidateToken(cachedAuthenticationToken).ConfigureAwait(false);
         lock (stateLock)
         {
             authenticationState = AuthenticationResult.Empty;
@@ -299,6 +298,12 @@ public class AuthenticationService : IHttpAuthenticationProvider
         }
         var token = ResponseToToken(response);
         return token;
+    }
+
+    private Task InvalidateToken(AuthenticationToken cachedAuthenticationToken)
+    {
+        // TODO: Implement token invalidation.
+        return Task.CompletedTask;
     }
 
     private static bool IsExpired(AuthenticationToken token)
