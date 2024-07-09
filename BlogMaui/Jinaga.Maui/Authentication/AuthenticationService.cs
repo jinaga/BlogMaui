@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Net.Http.Headers;
-using System.Text.Json;
 using Jinaga.Http;
 using Jinaga.Maui.Binding;
 using Microsoft.Extensions.Logging;
@@ -10,9 +8,7 @@ namespace Jinaga.Maui.Authentication;
 
 public class AuthenticationService : IHttpAuthenticationProvider
 {
-    private const string PublicKeyKey = "Jinaga.PublicKey";
-    private const string AuthenticationTokenKey = "Jinaga.AuthenticationToken";
-
+    private readonly ITokenStorage tokenStorage;
     private readonly UserProvider userProvider;
     private readonly IWebAuthenticator webAuthenticator;
     private readonly OAuthClient oauthClient;
@@ -20,23 +16,13 @@ public class AuthenticationService : IHttpAuthenticationProvider
     private readonly Func<JinagaClient, User, UserProfile, Task> updateUserName;
     private readonly ILogger<AuthenticationService> logger;
 
-    enum State
-    {
-        Uninitialized,
-        LoggedOut,
-        LoggingIn,
-        LoggedIn,
-        Refreshing,
-        Offline
-    }
+    private readonly object stateLock = new();
+    private bool initialized;
+    private AuthenticationResult authenticationState = AuthenticationResult.Empty;
 
-    private volatile State state = State.Uninitialized;
-    private AuthenticationToken? authenticationToken;
-    private User? user;
-    private Task<bool> refreshTask = Task.FromResult(false);
-
-    public AuthenticationService(UserProvider userProvider, IWebAuthenticator webAuthenticator, OAuthClient oauthClient, JinagaClient jinagaClient, AuthenticationSettings authenticationSettings, ILogger<AuthenticationService> logger, AuthenticationProviderProxy authenticationProviderProxy)
+    public AuthenticationService(ITokenStorage tokenStorage, UserProvider userProvider, IWebAuthenticator webAuthenticator, OAuthClient oauthClient, JinagaClient jinagaClient, AuthenticationSettings authenticationSettings, ILogger<AuthenticationService> logger, AuthenticationProviderProxy authenticationProviderProxy)
     {
+        this.tokenStorage = tokenStorage;
         this.userProvider = userProvider;
         this.webAuthenticator = webAuthenticator;
         this.oauthClient = oauthClient;
@@ -49,282 +35,240 @@ public class AuthenticationService : IHttpAuthenticationProvider
 
     public async Task<bool> Initialize()
     {
-        // If called a second time, return true if logged in, false if logged out.
-        if (state != State.Uninitialized)
+        lock (stateLock)
         {
-            return state != State.LoggedOut;
+            // If called a second time, return true if logged in.
+            if (initialized)
+            {
+                return authenticationState.Token != null;
+            }
+            initialized = true;
         }
 
-        return await LoadAuthenticationState();
-    }
-
-    private async Task<bool> LoadAuthenticationState()
-    {
         try
         {
-            logger.LogInformation("Loading authentication token");
-            var (tokenJson, publicKey) = await LoadTokenAndKey();
-            if (tokenJson == null || publicKey == null)
+            var loaded = await tokenStorage.LoadTokenAndUser().ConfigureAwait(false);
+            if (loaded.Token == null || loaded.User == null)
             {
-                state = State.LoggedOut;
+                // No persisted token, so we are logged out.
+                logger.LogInformation("Initialized authentication service with no token");
                 return false;
             }
 
-            return await ProcessLoadedToken(tokenJson, publicKey);
+            if (IsExpired(loaded.Token))
+            {
+                // The token is expired, so refresh it in the background.
+                logger.LogInformation("Initialized authentication service with expired token");
+                TriggerRefresh(loaded.Token);
+            }
+            else
+            {
+                // The token is still valid.
+                logger.LogInformation("Initialized authentication service with valid token");
+            }
+
+            lock (stateLock)
+            {
+                authenticationState = loaded;
+            }
+            userProvider.SetUser(loaded.User);
+            return true;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to load authentication token");
-            await ClearAuthenticationState().ConfigureAwait(false);
-            state = State.LoggedOut;
+            await tokenStorage.SaveTokenAndUser(AuthenticationResult.Empty).ConfigureAwait(false);
+            logger.LogError(ex, "Failed to initialize authentication service");
             return false;
-        }
-    }
-
-    private async Task<(string? tokenJson, string? publicKey)> LoadTokenAndKey()
-    {
-        string? tokenJson = await SecureStorage.GetAsync(AuthenticationTokenKey).ConfigureAwait(false);
-        string? publicKey = await SecureStorage.GetAsync(PublicKeyKey).ConfigureAwait(false);
-        return (tokenJson, publicKey);
-    }
-
-    private async Task<bool> ProcessLoadedToken(string tokenJson, string publicKey)
-    {
-        var loadedAuthenticationToken = JsonSerializer.Deserialize<AuthenticationToken>(tokenJson);
-        if (loadedAuthenticationToken == null)
-        {
-            await ClearAuthenticationState().ConfigureAwait(false);
-            state = State.LoggedOut;
-            return false;
-        }
-
-        SetUserFromToken(publicKey, loadedAuthenticationToken);
-        return true;
-    }
-
-    private void SetUserFromToken(string publicKey, AuthenticationToken loadedAuthenticationToken)
-    {
-        authenticationToken = loadedAuthenticationToken;
-        user = new User(publicKey);
-        userProvider.SetUser(user);
-
-        if (IsTokenExpired())
-        {
-            logger.LogInformation("Token expired, refreshing");
-            state = State.Refreshing;
-            BeginRefresh();
-        }
-        else
-        {
-            logger.LogInformation("Token loaded");
-            state = State.LoggedIn;
         }
     }
 
     public async Task<bool> Login(string provider)
     {
-        switch (state)
+        lock (stateLock)
         {
-            case State.Offline:
-                return await TryRefreshAndThenLogin(provider);
-            case State.Refreshing:
-                return await WaitForRefresh();
-            case State.LoggedIn:
-                return true;
-            case State.LoggedOut:
-            case State.LoggingIn:
-                return await TryLogin(provider);
-            default:
-                throw new InvalidOperationException($"Unexpected state: {state}");
-        }
-    }
-
-    private async Task<bool> TryRefreshAndThenLogin(string provider)
-    {
-        try
-        {
-            state = State.Refreshing;
-            refreshTask = RefreshToken();
-            var refreshed = await refreshTask.ConfigureAwait(false);
-            if (refreshed)
+            if (authenticationState.Token != null)
             {
-                state = State.LoggedIn;
+                // Already logged in.
                 return true;
             }
         }
+
+        try
+        {
+            AuthenticationResult result = await Authenticate(provider).ConfigureAwait(false);
+            if (result.Token == null || result.User == null)
+            {
+                // Failed to log in.
+                logger.LogInformation("Failed to log in");
+                return false;
+            }
+
+            lock (stateLock)
+            {
+                authenticationState = result;
+            }
+            userProvider.SetUser(result.User);
+            await tokenStorage.SaveTokenAndUser(result).ConfigureAwait(false);
+            logger.LogInformation("Logged in");
+            return true;
+        }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to refresh token");
+            logger.LogError(ex, "Failed to log in");
+            return false;
         }
-        return await TryLogin(provider);
-    }
-
-    private async Task<bool> WaitForRefresh()
-    {
-        return await refreshTask.ConfigureAwait(false);
-    }
-
-    private async Task<bool> TryLogin(string provider)
-    {
-        state = State.LoggingIn;
-        var loggedIn = await Authenticate(provider).ConfigureAwait(false);
-        state = loggedIn ? State.LoggedIn : State.LoggedOut;
-        return loggedIn;
     }
 
     public async Task LogOut()
     {
-        state = State.LoggedOut;
-        await ClearAuthenticationState().ConfigureAwait(false);
+        lock (stateLock)
+        {
+            if (authenticationState.Token == null)
+            {
+                // Already logged out.
+                return;
+            }
+        }
+
+        // TODO: Call the log out endpoint on the server.
+        lock (stateLock)
+        {
+            authenticationState = AuthenticationResult.Empty;
+        }
+        userProvider.ClearUser();
+        await tokenStorage.SaveTokenAndUser(AuthenticationResult.Empty).ConfigureAwait(false);
+        logger.LogInformation("Logged out");
     }
 
     public void SetRequestHeaders(HttpRequestHeaders headers)
     {
-        var cachedAuthenticationToken = authenticationToken;
+        var cachedAuthenticationToken= authenticationState.Token;
         if (cachedAuthenticationToken != null)
         {
             headers.Authorization = new AuthenticationHeaderValue("Bearer", cachedAuthenticationToken.AccessToken);
         }
     }
 
-    public Task<bool> Reauthenticate()
+    public async Task<bool> Reauthenticate()
     {
-        if (state == State.Offline)
+        var cachedAuthenticationToken = authenticationState.Token;
+        if (cachedAuthenticationToken == null)
         {
-            return Task.FromResult(false);
+            // Not logged in.
+            return false;
         }
 
-        if (state == State.Refreshing)
+        try
         {
-            return refreshTask;
-        }
-
-        if (state == State.LoggedIn)
-        {
-            return Task.FromResult(true);
-        }
-
-        state = State.Refreshing;
-        refreshTask = RefreshToken();
-        return refreshTask;
-    }
-
-    private void BeginRefresh()
-    {
-        refreshTask = RefreshToken();
-        refreshTask.ContinueWith(t =>
-        {
-            if (t.IsFaulted)
+            var refreshedToken = await RefreshToken(cachedAuthenticationToken).ConfigureAwait(false);
+            if (refreshedToken == null)
             {
-                logger.LogError(t.Exception, "Failed to refresh token");
-            }
-            else if (t.Result)
-            {
-                state = State.LoggedIn;
+                // Failed to refresh token.
+                lock (stateLock)
+                {
+                    authenticationState = AuthenticationResult.Empty;
+                }
+                userProvider.ClearUser();
+                await tokenStorage.SaveTokenAndUser(AuthenticationResult.Empty).ConfigureAwait(false);
+                logger.LogInformation("Failed to refresh token");
+                return false;
             }
             else
             {
-                state = State.LoggedOut;
+                // Refreshed token.
+                AuthenticationResult authenticationResult;
+                lock (stateLock)
+                {
+                    authenticationResult = new AuthenticationResult(refreshedToken, authenticationState.User);
+                    authenticationState = authenticationResult;
+                }
+                await tokenStorage.SaveTokenAndUser(authenticationResult).ConfigureAwait(false);
+                logger.LogInformation("Refreshed token");
+                return true;
             }
-        }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to reauthenticate");
+            return false;
+        }
     }
 
-    private async Task<bool> Authenticate(string provider)
+    private async void TriggerRefresh(AuthenticationToken authenticationToken)
     {
-        logger.LogInformation("Logging in with {Provider}", provider);
+        try
+        {
+            var refreshedToken = await RefreshToken(authenticationToken).ConfigureAwait(false);
+            if (refreshedToken == null)
+            {
+                // Failed to refresh token.
+                lock (stateLock)
+                {
+                    authenticationState = AuthenticationResult.Empty;
+                }
+                userProvider.ClearUser();
+                await tokenStorage.SaveTokenAndUser(AuthenticationResult.Empty).ConfigureAwait(false);
+                logger.LogInformation("Failed to refresh token");
+            }
+            else
+            {
+                // Refreshed token.
+                AuthenticationResult authenticationResult;
+                lock (stateLock)
+                {
+                    authenticationResult = new AuthenticationResult(refreshedToken, authenticationState.User);
+                    authenticationState = authenticationResult;
+                }
+                await tokenStorage.SaveTokenAndUser(authenticationResult).ConfigureAwait(false);
+                logger.LogInformation("Refreshed token");
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to refresh token");
+        }
+    }
 
+    private async Task<AuthenticationResult> Authenticate(string provider)
+    {
         string requestUrl = oauthClient.BuildRequestUrl(provider);
         var authResult = await webAuthenticator.AuthenticateAsync(
             new Uri(requestUrl),
             new Uri(oauthClient.CallbackUrl)).ConfigureAwait(false);
         if (authResult == null)
         {
-            logger.LogInformation("Authentication cancelled");
-            return false;
+            return AuthenticationResult.Empty;
         }
 
-        var stopwatch = Stopwatch.StartNew();
-        logger.LogInformation("Received authentication result");
-
-        try
+        if (!authResult.Properties.TryGetValue("state", out string? state) ||
+            !authResult.Properties.TryGetValue("code", out string? code))
         {
-            if (!authResult.Properties.TryGetValue("state", out string? state) ||
-                !authResult.Properties.TryGetValue("code", out string? code))
-            {
-                logger.LogError("Authentication result did not contain expected properties.");
-                return false;
-            }
-
-            oauthClient.ValidateState(state);
-            var tokenResponse = await oauthClient.GetTokenResponse(code).ConfigureAwait(false);
-            await UpdateAuthenticationState(tokenResponse).ConfigureAwait(false);
-            logger.LogInformation("Token received in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to get token");
-            return false;
-        }
-    }
-
-    private async Task<bool> RefreshToken()
-    {
-        if (authenticationToken?.RefreshToken == null)
-        {
-            return false;
+            logger.LogError("Authentication result did not contain expected properties.");
+            return AuthenticationResult.Empty;
         }
 
-        try
-        {
-            var tokenResponse = await RequestNewTokenSafe(authenticationToken.RefreshToken).ConfigureAwait(false);
-            if (tokenResponse == null)
-            {
-                await ClearAuthenticationState().ConfigureAwait(false);
-                return false;
-            }
-
-            await UpdateAuthenticationState(tokenResponse).ConfigureAwait(false);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to refresh token");
-            await ClearAuthenticationState().ConfigureAwait(false);
-            return false;
-        }
-    }
-
-    private async Task<TokenResponse?> RequestNewTokenSafe(string refreshToken)
-    {
-        return await oauthClient.RequestNewToken(refreshToken).ConfigureAwait(false);
-    }
-
-    private async Task ClearAuthenticationState()
-    {
-        authenticationToken = null;
-        this.user = null;
-        userProvider.ClearUser();
-        await SaveState().ConfigureAwait(false);
-    }
-
-    private async Task UpdateAuthenticationState(TokenResponse tokenResponse)
-    {
-        authenticationToken = ResponseToToken(tokenResponse);
+        oauthClient.ValidateState(state);
+        var tokenResponse = await oauthClient.GetTokenResponse(code).ConfigureAwait(false);
+        var authenticationToken = ResponseToToken(tokenResponse);
         var (user, profile) = await jinagaClient.Login().ConfigureAwait(false);
         await updateUserName(jinagaClient, user, profile);
-        this.user = user;
-        await SaveState().ConfigureAwait(false);
+        return new AuthenticationResult(authenticationToken, user);
     }
 
-    private bool IsTokenExpired()
+    private async Task<AuthenticationToken?> RefreshToken(AuthenticationToken authenticationToken)
     {
-        // Check for token expiration
-        if (authenticationToken == null)
+        var response = await oauthClient.RequestNewToken(authenticationToken.RefreshToken).ConfigureAwait(false);
+        if (response == null)
         {
-            return true;
+            return null;
         }
-        if (DateTime.TryParse(authenticationToken.ExpiryDate, null, DateTimeStyles.RoundtripKind, out var expiryDate))
+        var token = ResponseToToken(response);
+        return token;
+    }
+
+    private static bool IsExpired(AuthenticationToken token)
+    {
+        if (DateTime.TryParse(token.ExpiryDate, null, DateTimeStyles.RoundtripKind, out var expiryDate))
         {
             return DateTime.UtcNow > expiryDate.AddMinutes(-5);
         }
@@ -340,26 +284,5 @@ public class AuthenticationService : IHttpAuthenticationProvider
             ExpiryDate = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
                 .ToString("O", CultureInfo.InvariantCulture)
         };
-    }
-
-    private async Task SaveState()
-    {
-        if (authenticationToken == null)
-        {
-            SecureStorage.Remove(AuthenticationTokenKey);
-        }
-        else
-        {
-            string tokenJson = JsonSerializer.Serialize(authenticationToken);
-            await SecureStorage.SetAsync(AuthenticationTokenKey, tokenJson).ConfigureAwait(false);
-        }
-        if (user == null)
-        {
-            SecureStorage.Remove(PublicKeyKey);
-        }
-        else
-        {
-            await SecureStorage.SetAsync(PublicKeyKey, user.publicKey).ConfigureAwait(false);
-        }
     }
 }
