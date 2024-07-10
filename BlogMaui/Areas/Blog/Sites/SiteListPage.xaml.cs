@@ -17,8 +17,13 @@ public partial class SiteListPage : ContentPage
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        viewModel.Load();
         base.OnNavigatedTo(args);
+    }
+
+    protected override void OnAppearing()
+    {
+        viewModel.Load();
+        base.OnAppearing();
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)

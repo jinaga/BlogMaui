@@ -74,6 +74,7 @@ public partial class SiteListViewModel : ObservableObject
                 projection.names.OnAdded(name =>
                 {
                     siteHeaderViewModel.Name = name;
+                    logger.LogInformation("SiteListViewModel.Load {name}", name);
                 });
                 projection.domains.OnAdded(domain =>
                 {

@@ -28,6 +28,6 @@ public partial class SiteHeaderViewModel : ObservableObject
         {
             { "site", site }
         };
-        await Shell.Current.GoToAsync("//posts", parameters);
+        await Shell.Current.GoToAsync("/posts", parameters);
     }
 }

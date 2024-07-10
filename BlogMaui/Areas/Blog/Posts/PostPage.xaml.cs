@@ -5,6 +5,7 @@ namespace BlogMaui.Areas.Blog.Posts;
 public partial class PostPage : ContentPage
 {
     private readonly PostViewModel viewModel;
+    private Page? previousPage;
 
     public PostPage(PostViewModel viewModel)
 	{
@@ -15,18 +16,21 @@ public partial class PostPage : ContentPage
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        viewModel.Load();
+        if (previousPage == null)
+        {
+            previousPage = args.GetPreviousPage();
+            viewModel.Load();
+        }
         base.OnNavigatedTo(args);
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        if (this.PageIsInStack())
+        if (previousPage == null || args.GetDestinationPage() == previousPage)
         {
-            return;
+            viewModel.Unload();
         }
 
-        viewModel.Unload();
         base.OnNavigatedFrom(args);
     }
 }
