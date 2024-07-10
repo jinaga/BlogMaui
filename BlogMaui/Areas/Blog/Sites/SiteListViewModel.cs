@@ -31,6 +31,8 @@ public partial class SiteListViewModel : ObservableObject
 
     public void Load()
     {
+        logger.LogInformation("SiteListViewModel.Load");
+
         if (handler != null)
         {
             return;
@@ -97,6 +99,8 @@ public partial class SiteListViewModel : ObservableObject
 
     public void Unload()
     {
+        logger.LogInformation("SiteListViewModel.Unload");
+
         if (handler != null)
         {
             userProvider.RemoveHandler(handler);

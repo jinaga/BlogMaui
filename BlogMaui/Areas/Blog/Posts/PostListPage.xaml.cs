@@ -20,6 +20,12 @@ public partial class PostListPage : ContentPage
         InitializeComponent();
     }
 
+    protected override void OnAppearing()
+    {
+        viewModel.Load();
+        base.OnAppearing();
+    }
+
     protected override void OnDisappearing()
     {
         viewModel.Unload();

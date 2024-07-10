@@ -42,9 +42,21 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
+        site = query.GetParameter<Site>("site");
+        logger.LogInformation("PostListViewModel.ApplyQueryAttributes {site}", site);
+    }
+
+    public void Load()
+    {
+        logger.LogInformation("PostListViewModel.Load");
+
+        if (site == null)
+        {
+            return;
+        }
+
         try
         {
-            site = query.GetParameter<Site>("site");
             Loading = true;
 
             var namesOfSite = Given<Site>.Match((site, facts) =>
@@ -95,12 +107,13 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
         }
         catch (Exception x)
         {
-            logger.LogError(x, "Error while applying query attributes");
+            logger.LogError(x, "Error while loading");
         }
     }
 
     public void Unload()
     {
+        logger.LogInformation("PostListViewModel.Unload");
         try
         {
             observer?.Stop();

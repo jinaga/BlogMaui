@@ -56,7 +56,19 @@ public static class MauiProgram
                 {
                     options.MinLevel = LogLevel.Trace;
                     options.MaxLevel = LogLevel.Critical;
-                }); // Will write to the Console Output (logcat for android)
+                }) // Will write to the Console Output (logcat for android)
+            .AddFilter((category, level) =>
+            {
+                if (category == null)
+                {
+                    return level >= LogLevel.Warning;
+                }
+                if (category.StartsWith("Jinaga"))
+                {
+                    return level >= LogLevel.Warning;
+                }
+                return true;
+            });
 
         builder.Services.AddHttpClient();
         builder.Services.AddSingleton(JinagaConfig.CreateSettings);
