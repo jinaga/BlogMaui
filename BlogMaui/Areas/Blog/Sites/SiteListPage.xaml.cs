@@ -1,3 +1,5 @@
+using Jinaga.Maui;
+
 namespace BlogMaui.Areas.Blog.Sites;
 
 public partial class SiteListPage : ContentPage
@@ -13,16 +15,15 @@ public partial class SiteListPage : ContentPage
         InitializeComponent();
     }
 
-    protected override void OnAppearing()
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         viewModel.Load();
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        if (Shell.Current.Navigation.NavigationStack.Any(page => page == this) ||
-            Shell.Current.Navigation.ModalStack.Any(page => page == this))
+        if (this.PageIsInStack())
         {
             return;
         }

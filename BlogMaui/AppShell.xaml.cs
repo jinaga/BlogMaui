@@ -1,4 +1,5 @@
 ﻿using BlogMaui.Areas.Blog.Posts;
+using Jinaga.Maui;
 
 namespace BlogMaui;
 
@@ -17,17 +18,15 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("loggedin/posts/detail", typeof(PostPage));
     }
 
-    protected override void OnAppearing()
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
-
         viewModel.Load();
+        base.OnNavigatedTo(args);
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        if (Shell.Current.Navigation.NavigationStack.Any(page => page == this) ||
-            Shell.Current.Navigation.ModalStack.Any(page => page == this))
+        if (this.PageIsInStack())
         {
             return;
         }
