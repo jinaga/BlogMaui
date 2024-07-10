@@ -38,12 +38,12 @@ public partial class PostViewModel : ObservableObject, IQueryAttributable
 
     public void Load()
     {
-        logger.LogInformation("PostViewModel.Load");
-
-        if (post == null)
+        if (post == null || titlesObserver != null)
         {
             return;
         }
+
+        logger.LogInformation("PostViewModel.Load");
 
         var titlesOfPost = Given<Post>.Match((post, facts) =>
             from title in facts.OfType<PostTitle>()

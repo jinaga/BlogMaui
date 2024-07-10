@@ -48,12 +48,12 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
 
     public void Load()
     {
-        logger.LogInformation("PostListViewModel.Load");
-
-        if (site == null)
+        if (site == null || nameObserver != null || observer != null)
         {
             return;
         }
+
+        logger.LogInformation("PostListViewModel.Load");
 
         try
         {

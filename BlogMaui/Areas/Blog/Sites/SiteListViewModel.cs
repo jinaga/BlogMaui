@@ -31,12 +31,12 @@ public partial class SiteListViewModel : ObservableObject
 
     public void Load()
     {
-        logger.LogInformation("SiteListViewModel.Load");
-
         if (handler != null)
         {
             return;
         }
+
+        logger.LogInformation("SiteListViewModel.Load");
 
         handler = userProvider.AddHandler(user =>
         {
