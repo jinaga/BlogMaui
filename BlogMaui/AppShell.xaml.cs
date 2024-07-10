@@ -24,9 +24,15 @@ public partial class AppShell : Shell
         viewModel.Load();
     }
 
-    protected override void OnDisappearing()
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        base.OnDisappearing();
+        if (Shell.Current.Navigation.NavigationStack.Any(page => page == this) ||
+            Shell.Current.Navigation.ModalStack.Any(page => page == this))
+        {
+            return;
+        }
+
+        base.OnNavigatedFrom(args);
 
         viewModel.Unload();
     }

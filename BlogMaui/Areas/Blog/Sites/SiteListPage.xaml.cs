@@ -19,9 +19,15 @@ public partial class SiteListPage : ContentPage
         base.OnAppearing();
     }
 
-    protected override void OnDisappearing()
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
+        if (Shell.Current.Navigation.NavigationStack.Any(page => page == this) ||
+            Shell.Current.Navigation.ModalStack.Any(page => page == this))
+        {
+            return;
+        }
+
         viewModel.Unload();
-        base.OnDisappearing();
+        base.OnNavigatedFrom(args);
     }
 }
