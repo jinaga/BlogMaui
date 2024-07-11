@@ -33,6 +33,7 @@ public class NavigationLifecycleManager : INavigationLifecycleManager
         if (visibleViewModels.Contains(viewModel))
         {
             visibleViewModels = visibleViewModels.Remove(viewModel);
+            RestoreInvariants();
         }
     }
 
