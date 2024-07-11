@@ -21,9 +21,9 @@ public partial class SiteListPage : ContentPage
         base.OnAppearing();
     }
 
-    override protected void OnDisappearing()
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
         navigationLifecycleManager.OnDisappearing(viewModel);
-        base.OnDisappearing();
+        base.OnNavigatedFrom(args);
     }
 }

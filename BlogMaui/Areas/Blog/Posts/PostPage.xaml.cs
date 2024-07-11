@@ -21,9 +21,9 @@ public partial class PostPage : ContentPage
         base.OnAppearing();
     }
 
-    protected override void OnDisappearing()
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
         navigationLifecycleManager.OnDisappearing(viewModel);
-        base.OnDisappearing();
+        base.OnNavigatedFrom(args);
     }
 }
