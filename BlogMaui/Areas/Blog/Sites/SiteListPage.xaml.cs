@@ -17,13 +17,13 @@ public partial class SiteListPage : ContentPage
 
     protected override void OnAppearing()
     {
-        navigationLifecycleManager.StartManaging(viewModel);
+        navigationLifecycleManager.Visible(viewModel);
         base.OnAppearing();
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        navigationLifecycleManager.StopManaging(viewModel);
+        navigationLifecycleManager.Hidden(viewModel);
         base.OnNavigatedFrom(args);
     }
 }

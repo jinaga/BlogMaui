@@ -17,13 +17,13 @@ public partial class GatekeeperPage : ContentPage
 
     protected override void OnAppearing()
     {
-        navigationLifecycleManager.StartManaging(viewModel);
+        navigationLifecycleManager.Visible(viewModel);
         base.OnAppearing();
     }
 
     protected override void OnDisappearing()
     {
-        navigationLifecycleManager.StopManaging(viewModel);
+        navigationLifecycleManager.Hidden(viewModel);
         base.OnDisappearing();
     }
 }

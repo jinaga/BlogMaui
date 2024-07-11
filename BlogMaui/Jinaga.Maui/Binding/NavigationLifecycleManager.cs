@@ -14,7 +14,7 @@ public class NavigationLifecycleManager : INavigationLifecycleManager
         this.tree = tree;
     }
 
-    public void StartManaging(INavigationLifecycleAware viewModel)
+    public void Visible(INavigationLifecycleAware viewModel)
     {
         if (!visibleViewModels.Contains(viewModel))
         {
@@ -28,7 +28,7 @@ public class NavigationLifecycleManager : INavigationLifecycleManager
         }
     }
 
-    public void StopManaging(INavigationLifecycleAware viewModel)
+    public void Hidden(INavigationLifecycleAware viewModel)
     {
         if (visibleViewModels.Contains(viewModel))
         {
