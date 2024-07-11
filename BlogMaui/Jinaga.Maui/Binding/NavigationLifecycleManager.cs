@@ -1,8 +1,13 @@
+using System.Collections.Immutable;
+
 namespace Jinaga.Maui.Binding;
 
 public class NavigationLifecycleManager : INavigationLifecycleManager
 {
-    private NavigationTree tree;
+    private readonly NavigationTree tree;
+
+    private ImmutableHashSet<INavigationLifecycleAware> visibleViewModels = ImmutableHashSet<INavigationLifecycleAware>.Empty;
+    private ImmutableHashSet<INavigationLifecycleAware> loadedViewModels = ImmutableHashSet<INavigationLifecycleAware>.Empty;
 
     internal NavigationLifecycleManager(NavigationTree tree)
     {
@@ -11,11 +16,53 @@ public class NavigationLifecycleManager : INavigationLifecycleManager
 
     public void OnAppearing(INavigationLifecycleAware viewModel)
     {
-        viewModel.Load();
+        if (!visibleViewModels.Contains(viewModel))
+        {
+            visibleViewModels = visibleViewModels.Add(viewModel);
+            if (!loadedViewModels.Contains(viewModel))
+            {
+                viewModel.Load();
+                loadedViewModels = loadedViewModels.Add(viewModel);
+            }
+            RestoreInvariants();
+        }
     }
 
     public void OnDisappearing(INavigationLifecycleAware viewModel)
     {
-        viewModel.Unload();
+        if (visibleViewModels.Contains(viewModel))
+        {
+            visibleViewModels = visibleViewModels.Remove(viewModel);
+        }
+    }
+
+    // Invariants:
+    // All visible view models are loaded.
+    // No descendants of a visible view model are loaded, unless
+    // they are also visible or have a visible descendant.
+
+    private void RestoreInvariants()
+    {
+        // Look for loaded view models that are not visible, and
+        // have no visible view models below them in the tree.
+        foreach (var viewModel in loadedViewModels.Except(visibleViewModels))
+        {
+            bool isBelowVisible = visibleViewModels.Any(visible =>
+                tree.HasPathFrom(visible.GetType(), viewModel.GetType())
+            );
+            if (!isBelowVisible)
+            {
+                continue;
+            }
+
+            bool isAboveVisible = visibleViewModels.Any(visible =>
+                tree.HasPathFrom(viewModel.GetType(), visible.GetType())
+            );
+            if (!isAboveVisible)
+            {
+                viewModel.Unload();
+                loadedViewModels = loadedViewModels.Remove(viewModel);
+            }
+        }
     }
 }

@@ -21,8 +21,7 @@ public static class ConfigurationExtensions
     {
         services.AddSingleton<INavigationLifecycleManager>(s =>
         {
-            var builder = new NavigationTreeBuilder();
-            NavigationTree tree = configure(builder).Build();
+            var tree = configure(NavigationTreeBuilder.Empty).Build();
             return new NavigationLifecycleManager(tree);
         });
         return services;
