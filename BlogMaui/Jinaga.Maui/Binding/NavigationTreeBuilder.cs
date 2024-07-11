@@ -4,16 +4,16 @@ public class NavigationTreeBuilder
 {
     public NavigationTreeBuilder AddPage<T>() where T: INavigationLifecycleAware
     {
-        throw new NotImplementedException();
+        return this;
     }
 
     public NavigationTreeBuilder AddPage<T>(Func<NavigationTreeBuilder, NavigationTreeBuilder> pages) where T: INavigationLifecycleAware
     {
-        throw new NotImplementedException();
+        return this;
     }
 
     internal NavigationTree Build()
     {
-        throw new NotImplementedException();
+        return new NavigationTree();
     }
 }
