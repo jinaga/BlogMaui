@@ -80,13 +80,13 @@ public static class MauiProgram
 #endif
         builder.Services.AddJinagaAuthentication();
         builder.Services.AddJinagaNavigation(t => t
-            .AddPage<GatekeeperViewModel>(t => t
-                .AddPage<SiteListViewModel>(t => t
-                    .AddPage<PostListViewModel>(t => t
-                        .AddPage<PostViewModel>()
+            .Add<GatekeeperViewModel>(t => t
+                .Add<SiteListViewModel>(t => t
+                    .Add<PostListViewModel>(t => t
+                        .Add<PostViewModel>()
                     )
                 )
-                .AddPage<AccountViewModel>()
+                .Add<AccountViewModel>()
             )
     );
 
