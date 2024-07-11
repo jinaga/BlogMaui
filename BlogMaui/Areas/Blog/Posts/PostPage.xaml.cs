@@ -17,13 +17,13 @@ public partial class PostPage : ContentPage
 
     protected override void OnAppearing()
     {
-        navigationLifecycleManager.OnAppearing(viewModel);
+        navigationLifecycleManager.StartManaging(viewModel);
         base.OnAppearing();
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        navigationLifecycleManager.OnDisappearing(viewModel);
+        navigationLifecycleManager.StopManaging(viewModel);
         base.OnNavigatedFrom(args);
     }
 }
