@@ -16,4 +16,15 @@ public static class ConfigurationExtensions
         services.AddSingleton<AuthenticationService>();
         return services;
     }
+
+    public static IServiceCollection AddJinagaNavigation(this IServiceCollection services, Func<NavigationTreeBuilder, NavigationTreeBuilder> configure)
+    {
+        services.AddSingleton<INavigationLifecycleManager>(s =>
+        {
+            var builder = new NavigationTreeBuilder();
+            NavigationTree tree = configure(builder).Build();
+            return new NavigationLifecycleManager(tree);
+        });
+        return services;
+    }
 }

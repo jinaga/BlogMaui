@@ -1,25 +1,29 @@
+using Jinaga.Maui.Binding;
+
 namespace BlogMaui.Areas.Blog.Posts;
 
 public partial class PostPage : ContentPage
 {
     private readonly PostViewModel viewModel;
+    private readonly INavigationLifecycleManager navigationLifecycleManager;
 
-    public PostPage(PostViewModel viewModel)
-	{
+    public PostPage(PostViewModel viewModel, INavigationLifecycleManager navigationLifecycleManager)
+    {
         this.viewModel = viewModel;
         BindingContext = viewModel;
         InitializeComponent();
+        this.navigationLifecycleManager = navigationLifecycleManager;
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override void OnAppearing()
     {
-        viewModel.Load();
-        base.OnNavigatedTo(args);
+        navigationLifecycleManager.OnAppearing(viewModel);
+        base.OnAppearing();
     }
 
-    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    protected override void OnDisappearing()
     {
-        viewModel.Unload();
-        base.OnNavigatedFrom(args);
+        navigationLifecycleManager.OnDisappearing(viewModel);
+        base.OnDisappearing();
     }
 }

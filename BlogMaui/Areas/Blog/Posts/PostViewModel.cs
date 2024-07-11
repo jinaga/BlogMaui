@@ -1,13 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
+using Jinaga.Maui.Binding;
 using Microsoft.Extensions.Logging;
 using System.Collections.Immutable;
 using System.Windows.Input;
 
 namespace BlogMaui.Areas.Blog.Posts;
 
-public partial class PostViewModel : ObservableObject, IQueryAttributable
+public partial class PostViewModel : ObservableObject, IQueryAttributable, INavigationLifecycleAware
 {
     private readonly JinagaClient jinagaClient;
     private readonly ILogger<PostViewModel> logger;

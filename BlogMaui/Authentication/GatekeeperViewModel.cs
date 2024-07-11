@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga.Maui.Authentication;
+using Jinaga.Maui.Binding;
 using Microsoft.Extensions.Logging;
 
 namespace BlogMaui.Authentication;
 
-public partial class GatekeeperViewModel : ObservableObject
+public partial class GatekeeperViewModel : ObservableObject, INavigationLifecycleAware
 {
     private readonly AuthenticationService authenticationService;
     private readonly AppShellViewModel appShellViewModel;
@@ -20,7 +21,7 @@ public partial class GatekeeperViewModel : ObservableObject
         this.logger = logger;
     }
 
-    public async void Initialize()
+    public async void Load()
     {
         try
         {
@@ -46,5 +47,10 @@ public partial class GatekeeperViewModel : ObservableObject
             logger.LogError(ex, "Error initializing GatekeeperViewModel");
             Error = $"Error while initializing: {ex.GetMessage()}";
         }
+    }
+
+    public void Unload()
+    {
+        logger.LogInformation("Unloading gatekeeper");
     }
 }

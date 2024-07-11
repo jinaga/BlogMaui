@@ -1,32 +1,29 @@
+using Jinaga.Maui.Binding;
+
 namespace BlogMaui.Areas.Blog.Sites;
 
 public partial class SiteListPage : ContentPage
 {
     private readonly SiteListViewModel viewModel;
+    private readonly INavigationLifecycleManager navigationLifecycleManager;
 
-    public SiteListPage(SiteListViewModel viewModel)
+    public SiteListPage(SiteListViewModel viewModel, INavigationLifecycleManager navigationLifecycleManager)
     {
-        this.viewModel = viewModel;
-
-        BindingContext = viewModel;
-
         InitializeComponent();
-    }
-
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
-    {
-        base.OnNavigatedTo(args);
+        BindingContext = viewModel;
+        this.viewModel = viewModel;
+        this.navigationLifecycleManager = navigationLifecycleManager;
     }
 
     protected override void OnAppearing()
     {
-        viewModel.Load();
+        navigationLifecycleManager.OnAppearing(viewModel);
         base.OnAppearing();
     }
 
-    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    override protected void OnDisappearing()
     {
-        viewModel.Unload();
-        base.OnNavigatedFrom(args);
+        navigationLifecycleManager.OnDisappearing(viewModel);
+        base.OnDisappearing();
     }
 }

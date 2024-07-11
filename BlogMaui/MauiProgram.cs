@@ -5,12 +5,11 @@ using BlogMaui.Areas.Visitor;
 using BlogMaui.Authentication;
 using CommunityToolkit.Maui;
 using Jinaga.Maui;
-using Jinaga.Maui.Binding;
 using MetroLog.MicrosoftExtensions;
 using MetroLog.Operators;
 using Microsoft.Extensions.Logging;
 
-[assembly:XamlCompilation(XamlCompilationOptions.Compile)]
+[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 
 namespace BlogMaui;
 public static class MauiProgram
@@ -80,6 +79,16 @@ public static class MauiProgram
         builder.Services.AddSingleton(WebAuthenticator.Default);
 #endif
         builder.Services.AddJinagaAuthentication();
+        builder.Services.AddJinagaNavigation(t => t
+            .AddPage<GatekeeperViewModel>(t => t
+                .AddPage<SiteListViewModel>(t => t
+                    .AddPage<PostListViewModel>(t => t
+                        .AddPage<PostViewModel>()
+                    )
+                )
+                .AddPage<AccountViewModel>()
+            )
+    );
 
         builder.Services.AddSingleton(LogOperatorRetriever.Instance);
 

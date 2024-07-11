@@ -1,4 +1,6 @@
-﻿namespace BlogMaui.Areas.Blog.Posts;
+﻿using Jinaga.Maui.Binding;
+
+namespace BlogMaui.Areas.Blog.Posts;
 
 // The refresh view does not use the command to indicate
 // that the user has initiated a refresh. It executes the
@@ -10,25 +12,25 @@
 public partial class PostListPage : ContentPage
 {
     private readonly PostListViewModel viewModel;
+    private readonly INavigationLifecycleManager navigationLifecycleManager;
 
-    public PostListPage(PostListViewModel viewModel)
+    public PostListPage(PostListViewModel viewModel, INavigationLifecycleManager navigationLifecycleManager)
     {
-        this.viewModel = viewModel;
-
-        BindingContext = viewModel;
-
         InitializeComponent();
+        BindingContext = viewModel;
+        this.viewModel = viewModel;
+        this.navigationLifecycleManager = navigationLifecycleManager;
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override void OnAppearing()
     {
-        viewModel.Load();
-        base.OnNavigatedTo(args);
+        navigationLifecycleManager.OnAppearing(viewModel);
+        base.OnAppearing();
     }
 
-    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    override protected void OnDisappearing()
     {
-        viewModel.Unload();
-        base.OnNavigatedFrom(args);
+        navigationLifecycleManager.OnDisappearing(viewModel);
+        base.OnDisappearing();
     }
 }
