@@ -1,5 +1,3 @@
-using Jinaga.Maui;
-
 namespace BlogMaui.Areas.Blog.Sites;
 
 public partial class SiteListPage : ContentPage
@@ -28,11 +26,6 @@ public partial class SiteListPage : ContentPage
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        if (this.PageIsInStack())
-        {
-            return;
-        }
-
         viewModel.Unload();
         base.OnNavigatedFrom(args);
     }

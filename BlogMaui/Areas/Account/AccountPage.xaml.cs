@@ -1,5 +1,3 @@
-using Jinaga.Maui;
-
 namespace BlogMaui.Areas.Account;
 
 public partial class AccountPage : ContentPage
@@ -22,11 +20,6 @@ public partial class AccountPage : ContentPage
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        if (this.PageIsInStack())
-        {
-            return;
-        }
-
         viewModel.Unload();
         base.OnNavigatedFrom(args);
     }

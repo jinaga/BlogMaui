@@ -1,11 +1,8 @@
-using Jinaga.Maui;
-
 namespace BlogMaui.Areas.Blog.Posts;
 
 public partial class PostPage : ContentPage
 {
     private readonly PostViewModel viewModel;
-    private Page? previousPage;
 
     public PostPage(PostViewModel viewModel)
 	{
@@ -16,21 +13,13 @@ public partial class PostPage : ContentPage
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        if (previousPage == null)
-        {
-            previousPage = args.GetPreviousPage();
-            viewModel.Load();
-        }
+        viewModel.Load();
         base.OnNavigatedTo(args);
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        if (previousPage == null || args.GetDestinationPage() == previousPage)
-        {
-            viewModel.Unload();
-        }
-
+        viewModel.Unload();
         base.OnNavigatedFrom(args);
     }
 }

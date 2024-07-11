@@ -1,6 +1,4 @@
-﻿using Jinaga.Maui;
-
-namespace BlogMaui.Areas.Blog.Posts;
+﻿namespace BlogMaui.Areas.Blog.Posts;
 
 // The refresh view does not use the command to indicate
 // that the user has initiated a refresh. It executes the
@@ -30,11 +28,6 @@ public partial class PostListPage : ContentPage
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        if (this.PageIsInStack())
-        {
-            return;
-        }
-
         viewModel.Unload();
         base.OnNavigatedFrom(args);
     }

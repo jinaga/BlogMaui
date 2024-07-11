@@ -1,5 +1,4 @@
 ﻿using BlogMaui.Areas.Blog.Posts;
-using Jinaga.Maui;
 
 namespace BlogMaui;
 
@@ -26,11 +25,6 @@ public partial class AppShell : Shell
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        if (this.PageIsInStack())
-        {
-            return;
-        }
-
         base.OnNavigatedFrom(args);
 
         viewModel.Unload();
