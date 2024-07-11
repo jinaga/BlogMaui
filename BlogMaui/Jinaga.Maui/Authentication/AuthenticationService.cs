@@ -73,15 +73,13 @@ public class AuthenticationService : IHttpAuthenticationProvider
                 return false;
             }
 
+            // Log whether the token is expired.
             if (IsExpired(loaded.Token))
             {
-                // The token is expired, so refresh it in the background.
                 logger.LogInformation("Initialized authentication service with expired token");
-                TriggerRefresh(loaded.Token);
             }
             else
             {
-                // The token is still valid.
                 logger.LogInformation("Initialized authentication service with valid token");
             }
 
@@ -205,7 +203,7 @@ public class AuthenticationService : IHttpAuthenticationProvider
                 }
                 userProvider.ClearUser();
                 await tokenStorage.SaveTokenAndUser(AuthenticationResult.Empty).ConfigureAwait(false);
-                logger.LogInformation("Failed to refresh token");
+                logger.LogInformation("Token refresh failed. Cleared authentication state.");
                 return false;
             }
             else
@@ -218,49 +216,14 @@ public class AuthenticationService : IHttpAuthenticationProvider
                     authenticationState = authenticationResult;
                 }
                 await tokenStorage.SaveTokenAndUser(authenticationResult).ConfigureAwait(false);
-                logger.LogInformation("Refreshed token");
+                logger.LogInformation("Token refresh succeeded.");
                 return true;
             }
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to reauthenticate");
+            logger.LogError(ex, "Error while refreshing token.");
             return false;
-        }
-    }
-
-    private async void TriggerRefresh(AuthenticationToken authenticationToken)
-    {
-        try
-        {
-            var refreshedToken = await RefreshToken(authenticationToken).ConfigureAwait(false);
-            if (refreshedToken == null)
-            {
-                // Failed to refresh token.
-                lock (stateLock)
-                {
-                    authenticationState = AuthenticationResult.Empty;
-                }
-                userProvider.ClearUser();
-                await tokenStorage.SaveTokenAndUser(AuthenticationResult.Empty).ConfigureAwait(false);
-                logger.LogInformation("Failed to refresh token");
-            }
-            else
-            {
-                // Refreshed token.
-                AuthenticationResult authenticationResult;
-                lock (stateLock)
-                {
-                    authenticationResult = new AuthenticationResult(refreshedToken, authenticationState.User);
-                    authenticationState = authenticationResult;
-                }
-                await tokenStorage.SaveTokenAndUser(authenticationResult).ConfigureAwait(false);
-                logger.LogInformation("Refreshed token");
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to refresh token");
         }
     }
 
