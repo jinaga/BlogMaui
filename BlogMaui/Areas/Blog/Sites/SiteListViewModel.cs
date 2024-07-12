@@ -9,7 +9,7 @@ using Jinaga.Maui.Binding;
 
 namespace BlogMaui.Areas.Blog.Sites;
 
-public partial class SiteListViewModel : ObservableObject
+public partial class SiteListViewModel : ObservableObject, ILifecycleManaged
 {
     private readonly JinagaClient jinagaClient;
     private readonly UserProvider userProvider;
@@ -35,6 +35,8 @@ public partial class SiteListViewModel : ObservableObject
         {
             return;
         }
+
+        logger.LogInformation("SiteListViewModel.Load");
 
         handler = userProvider.AddHandler(user =>
         {
@@ -72,6 +74,7 @@ public partial class SiteListViewModel : ObservableObject
                 projection.names.OnAdded(name =>
                 {
                     siteHeaderViewModel.Name = name;
+                    logger.LogInformation("SiteListViewModel.Load {name}", name);
                 });
                 projection.domains.OnAdded(domain =>
                 {
@@ -97,6 +100,8 @@ public partial class SiteListViewModel : ObservableObject
 
     public void Unload()
     {
+        logger.LogInformation("SiteListViewModel.Unload");
+
         if (handler != null)
         {
             userProvider.RemoveHandler(handler);

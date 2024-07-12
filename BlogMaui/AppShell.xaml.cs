@@ -17,16 +17,15 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("loggedin/posts/detail", typeof(PostPage));
     }
 
-    protected override void OnAppearing()
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
-        base.OnAppearing();
-
         viewModel.Load();
+        base.OnNavigatedTo(args);
     }
 
-    protected override void OnDisappearing()
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
-        base.OnDisappearing();
+        base.OnNavigatedFrom(args);
 
         viewModel.Unload();
     }

@@ -1,14 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
+using Jinaga.Maui.Binding;
+using Microsoft.Extensions.Logging;
 using System.Collections.Immutable;
 using System.Windows.Input;
 
 namespace BlogMaui.Areas.Blog.Posts;
 
-public partial class PostViewModel : ObservableObject, IQueryAttributable
+public partial class PostViewModel : ObservableObject, IQueryAttributable, ILifecycleManaged
 {
     private readonly JinagaClient jinagaClient;
+    private readonly ILogger<PostViewModel> logger;
 
     [ObservableProperty]
     private string title = "";
@@ -19,9 +22,10 @@ public partial class PostViewModel : ObservableObject, IQueryAttributable
     private IObserver? titlesObserver = null;
     private ImmutableList<PostTitle> titles = ImmutableList<PostTitle>.Empty;
 
-    public PostViewModel(JinagaClient jinagaClient)
+    public PostViewModel(JinagaClient jinagaClient, ILogger<PostViewModel> logger)
     {
         this.jinagaClient = jinagaClient;
+        this.logger = logger;
 
         EditCommand = new AsyncRelayCommand(HandleEdit);
     }
@@ -29,6 +33,18 @@ public partial class PostViewModel : ObservableObject, IQueryAttributable
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         post = query.GetParameter<Post>("post");
+
+        logger.LogInformation("PostViewModel.ApplyQueryAttributes {post}", post);
+    }
+
+    public void Load()
+    {
+        if (post == null || titlesObserver != null)
+        {
+            return;
+        }
+
+        logger.LogInformation("PostViewModel.Load");
 
         var titlesOfPost = Given<Post>.Match((post, facts) =>
             from title in facts.OfType<PostTitle>()
@@ -52,6 +68,8 @@ public partial class PostViewModel : ObservableObject, IQueryAttributable
 
     public void Unload()
     {
+        logger.LogInformation("PostViewModel.Unload");
+
         titlesObserver?.Stop();
         titlesObserver = null;
     }

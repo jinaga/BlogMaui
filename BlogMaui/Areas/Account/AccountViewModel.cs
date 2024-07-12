@@ -4,7 +4,7 @@ using Jinaga;
 using Jinaga.Maui.Binding;
 
 namespace BlogMaui.Areas.Account;
-public partial class AccountViewModel : ObservableObject
+public partial class AccountViewModel : ObservableObject, ILifecycleManaged
 {
     [ObservableProperty]
     public string userName = string.Empty;

@@ -5,12 +5,11 @@ using BlogMaui.Areas.Visitor;
 using BlogMaui.Authentication;
 using CommunityToolkit.Maui;
 using Jinaga.Maui;
-using Jinaga.Maui.Binding;
 using MetroLog.MicrosoftExtensions;
 using MetroLog.Operators;
 using Microsoft.Extensions.Logging;
 
-[assembly:XamlCompilation(XamlCompilationOptions.Compile)]
+[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 
 namespace BlogMaui;
 public static class MauiProgram
@@ -56,7 +55,19 @@ public static class MauiProgram
                 {
                     options.MinLevel = LogLevel.Trace;
                     options.MaxLevel = LogLevel.Critical;
-                }); // Will write to the Console Output (logcat for android)
+                }) // Will write to the Console Output (logcat for android)
+            .AddFilter((category, level) =>
+            {
+                if (category == null)
+                {
+                    return level >= LogLevel.Warning;
+                }
+                if (category.StartsWith("Jinaga"))
+                {
+                    return level >= LogLevel.Warning;
+                }
+                return true;
+            });
 
         builder.Services.AddHttpClient();
         builder.Services.AddSingleton(JinagaConfig.CreateSettings);
@@ -68,6 +79,16 @@ public static class MauiProgram
         builder.Services.AddSingleton(WebAuthenticator.Default);
 #endif
         builder.Services.AddJinagaAuthentication();
+        builder.Services.AddJinagaNavigation(t => t
+            .Add<GatekeeperViewModel>(t => t
+                .Add<SiteListViewModel>(t => t
+                    .Add<PostListViewModel>(t => t
+                        .Add<PostViewModel>()
+                    )
+                )
+                .Add<AccountViewModel>()
+            )
+    );
 
         builder.Services.AddSingleton(LogOperatorRetriever.Instance);
 

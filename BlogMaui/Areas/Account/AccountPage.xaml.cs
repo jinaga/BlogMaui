@@ -12,15 +12,15 @@ public partial class AccountPage : ContentPage
         InitializeComponent();
     }
 
-    protected override void OnAppearing()
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         viewModel.Load();
-        base.OnAppearing();
+        base.OnNavigatedTo(args);
     }
 
-    protected override void OnDisappearing()
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
         viewModel.Unload();
-        base.OnDisappearing();
+        base.OnNavigatedFrom(args);
     }
 }

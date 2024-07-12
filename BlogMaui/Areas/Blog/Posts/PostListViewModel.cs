@@ -9,9 +9,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Jinaga;
+using Jinaga.Maui.Binding;
 
 namespace BlogMaui.Areas.Blog.Posts;
-public partial class PostListViewModel : ObservableObject, IQueryAttributable
+public partial class PostListViewModel : ObservableObject, IQueryAttributable, ILifecycleManaged
 {
     private readonly JinagaClient jinagaClient;
     private readonly ILogger<PostListViewModel> logger;
@@ -42,9 +43,21 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
+        site = query.GetParameter<Site>("site");
+        logger.LogInformation("PostListViewModel.ApplyQueryAttributes {site}", site);
+    }
+
+    public void Load()
+    {
+        if (site == null || nameObserver != null || observer != null)
+        {
+            return;
+        }
+
+        logger.LogInformation("PostListViewModel.Load");
+
         try
         {
-            site = query.GetParameter<Site>("site");
             Loading = true;
 
             var namesOfSite = Given<Site>.Match((site, facts) =>
@@ -95,12 +108,13 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable
         }
         catch (Exception x)
         {
-            logger.LogError(x, "Error while applying query attributes");
+            logger.LogError(x, "Error while loading");
         }
     }
 
     public void Unload()
     {
+        logger.LogInformation("PostListViewModel.Unload");
         try
         {
             observer?.Stop();
