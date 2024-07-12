@@ -12,7 +12,7 @@ using Jinaga;
 using Jinaga.Maui.Binding;
 
 namespace BlogMaui.Areas.Blog.Posts;
-public partial class PostListViewModel : ObservableObject, IQueryAttributable, INavigationLifecycleAware
+public partial class PostListViewModel : ObservableObject, IQueryAttributable, ILifecycleManaged
 {
     private readonly JinagaClient jinagaClient;
     private readonly ILogger<PostListViewModel> logger;

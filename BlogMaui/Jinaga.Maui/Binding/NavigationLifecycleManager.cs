@@ -6,15 +6,15 @@ public class NavigationLifecycleManager : INavigationLifecycleManager
 {
     private readonly NavigationTree tree;
 
-    private ImmutableHashSet<INavigationLifecycleAware> visibleViewModels = ImmutableHashSet<INavigationLifecycleAware>.Empty;
-    private ImmutableHashSet<INavigationLifecycleAware> loadedViewModels = ImmutableHashSet<INavigationLifecycleAware>.Empty;
+    private ImmutableHashSet<ILifecycleManaged> visibleViewModels = ImmutableHashSet<ILifecycleManaged>.Empty;
+    private ImmutableHashSet<ILifecycleManaged> loadedViewModels = ImmutableHashSet<ILifecycleManaged>.Empty;
 
     internal NavigationLifecycleManager(NavigationTree tree)
     {
         this.tree = tree;
     }
 
-    public void Visible(INavigationLifecycleAware viewModel)
+    public void Visible(ILifecycleManaged viewModel)
     {
         if (!visibleViewModels.Contains(viewModel))
         {
@@ -28,7 +28,7 @@ public class NavigationLifecycleManager : INavigationLifecycleManager
         }
     }
 
-    public void Hidden(INavigationLifecycleAware viewModel)
+    public void Hidden(ILifecycleManaged viewModel)
     {
         if (visibleViewModels.Contains(viewModel))
         {

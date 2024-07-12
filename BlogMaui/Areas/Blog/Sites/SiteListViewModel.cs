@@ -9,7 +9,7 @@ using Jinaga.Maui.Binding;
 
 namespace BlogMaui.Areas.Blog.Sites;
 
-public partial class SiteListViewModel : ObservableObject, INavigationLifecycleAware
+public partial class SiteListViewModel : ObservableObject, ILifecycleManaged
 {
     private readonly JinagaClient jinagaClient;
     private readonly UserProvider userProvider;

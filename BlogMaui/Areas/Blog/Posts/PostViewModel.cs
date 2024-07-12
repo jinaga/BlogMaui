@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace BlogMaui.Areas.Blog.Posts;
 
-public partial class PostViewModel : ObservableObject, IQueryAttributable, INavigationLifecycleAware
+public partial class PostViewModel : ObservableObject, IQueryAttributable, ILifecycleManaged
 {
     private readonly JinagaClient jinagaClient;
     private readonly ILogger<PostViewModel> logger;

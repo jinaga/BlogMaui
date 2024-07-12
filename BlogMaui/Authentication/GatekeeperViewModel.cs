@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BlogMaui.Authentication;
 
-public partial class GatekeeperViewModel : ObservableObject, INavigationLifecycleAware
+public partial class GatekeeperViewModel : ObservableObject, ILifecycleManaged
 {
     private readonly AuthenticationService authenticationService;
     private readonly AppShellViewModel appShellViewModel;

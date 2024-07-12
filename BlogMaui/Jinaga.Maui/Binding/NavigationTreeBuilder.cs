@@ -13,13 +13,13 @@ public class NavigationTreeBuilder
         this.children = children;
     }
 
-    public NavigationTreeBuilder Add<T>() where T: INavigationLifecycleAware
+    public NavigationTreeBuilder Add<T>() where T: ILifecycleManaged
     {
         return new NavigationTreeBuilder(children.Add(typeof(T),
             new NavigationTree(ImmutableDictionary<Type, NavigationTree>.Empty)));
     }
 
-    public NavigationTreeBuilder Add<T>(Func<NavigationTreeBuilder, NavigationTreeBuilder> pages) where T: INavigationLifecycleAware
+    public NavigationTreeBuilder Add<T>(Func<NavigationTreeBuilder, NavigationTreeBuilder> pages) where T: ILifecycleManaged
     {
         return new NavigationTreeBuilder(children.Add(typeof(T),
             pages(Empty).Build()));
