@@ -197,13 +197,14 @@ public class AuthenticationService : IHttpAuthenticationProvider
             if (refreshedToken == null)
             {
                 // Failed to refresh token.
+                AuthenticationResult authenticationResult;
                 lock (stateLock)
                 {
-                    authenticationState = AuthenticationResult.Empty;
+                    authenticationResult = new AuthenticationResult(AuthenticationResult.Empty.Token, authenticationState.User);
+                    authenticationState = authenticationResult;
                 }
-                userProvider.ClearUser();
-                await tokenStorage.SaveTokenAndUser(AuthenticationResult.Empty).ConfigureAwait(false);
-                logger.LogInformation("Token refresh failed. Cleared authentication state.");
+                await tokenStorage.SaveTokenAndUser(authenticationResult).ConfigureAwait(false);
+                logger.LogInformation("Token refresh failed. Cleared authentication token.");
                 return false;
             }
             else
