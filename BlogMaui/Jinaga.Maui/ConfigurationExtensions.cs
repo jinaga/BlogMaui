@@ -5,6 +5,18 @@ using Jinaga.Maui.Binding;
 namespace Jinaga.Maui;
 public static class ConfigurationExtensions
 {
+    /// <summary>
+    /// Add Jinaga authentication services to the application.
+    /// This registers the following services:
+    /// - ITokenStorage
+    /// - UserProvider
+    /// - AuthenticationProviderProxy
+    /// - IHttpAuthenticationProvider
+    /// - OAuthClient
+    /// - AuthenticationService
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
     public static IServiceCollection AddJinagaAuthentication(this IServiceCollection services)
     {
         services.AddSingleton<ITokenStorage, SecureTokenStorage>();
@@ -17,6 +29,13 @@ public static class ConfigurationExtensions
         return services;
     }
 
+    /// <summary>
+    /// Add Jinaga navigation services to the application.
+    /// This registers the INavigationLifecycleManager service.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configure">A tree of view models to control lifecycle</param>
+    /// <returns></returns>
     public static IServiceCollection AddJinagaNavigation(this IServiceCollection services, Func<NavigationTreeBuilder, NavigationTreeBuilder> configure)
     {
         services.AddSingleton<INavigationLifecycleManager>(s =>
