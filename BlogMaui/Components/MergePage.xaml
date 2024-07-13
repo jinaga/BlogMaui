@@ -6,7 +6,7 @@
              x:DataType="local:MergeViewModel">
     <toolkit:DockLayout>
         <ScrollView>
-            <ListView ItemsSource="{Binding Candidates}"
+            <ListView CachingStrategy="RecycleElement" ItemsSource="{Binding Candidates}"
                     SelectedItem="{Binding SelectedCandidate}">
                 <ListView.ItemTemplate>
                     <DataTemplate>

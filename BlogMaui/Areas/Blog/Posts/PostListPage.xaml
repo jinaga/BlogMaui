@@ -21,7 +21,7 @@
         </Grid>
         <Label Grid.Row="1" Text="{Binding Status, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" FontSize="Large" Margin="15,5" />
         <ScrollView Grid.Row="2">
-            <ListView ItemsSource="{Binding Posts}">
+            <ListView CachingStrategy="RecycleElement" ItemsSource="{Binding Posts}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:PostHeaderViewModel">
                         <TextCell Text="{Binding Title}" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}" Command="{Binding Select}" />
