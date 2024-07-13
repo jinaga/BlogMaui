@@ -14,7 +14,7 @@
             <Button Text="View Logs" Command="{Binding ViewLogs, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" Margin="10" />
         </HorizontalStackLayout>
         <ScrollView>
-            <ListView ItemsSource="{Binding Sites}">
+            <ListView CachingStrategy="RecycleElement" ItemsSource="{Binding Sites}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:SiteHeaderViewModel">
                         <TextCell
