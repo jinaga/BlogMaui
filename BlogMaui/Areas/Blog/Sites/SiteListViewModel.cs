@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using Jinaga;
+using Jinaga.Maui.Authentication;
 using Jinaga.Maui.Binding;
 
 namespace BlogMaui.Areas.Blog.Sites;
