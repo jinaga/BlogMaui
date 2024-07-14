@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using Jinaga.Maui.Authentication;
+using Jinaga.Maui.Binding;
 using MetroLog.Maui;
 using System.Windows.Input;
 
@@ -11,6 +12,7 @@ public partial class AppShellViewModel : ObservableObject
 {
     private readonly AuthenticationService authenticationService;
     private readonly JinagaClient jinagaClient;
+    private readonly INavigationLifecycleManager navigationLifecycleManager;
     private readonly LogController logController = new LogController();
 
     [ObservableProperty]
@@ -25,7 +27,7 @@ public partial class AppShellViewModel : ObservableObject
     public ICommand LogOut { get; }
     public ICommand ViewLogs { get; }
 
-    public AppShellViewModel(AuthenticationService authenticationService, JinagaClient jinagaClient)
+    public AppShellViewModel(AuthenticationService authenticationService, JinagaClient jinagaClient, INavigationLifecycleManager navigationLifecycleManager)
     {
         LogIn = new AsyncRelayCommand<string>(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
@@ -33,6 +35,7 @@ public partial class AppShellViewModel : ObservableObject
 
         this.authenticationService = authenticationService;
         this.jinagaClient = jinagaClient;
+        this.navigationLifecycleManager = navigationLifecycleManager;
 
         logController.IsShakeEnabled = true;
     }
@@ -75,6 +78,7 @@ public partial class AppShellViewModel : ObservableObject
         {
             Error = string.Empty;
             await authenticationService.LogOut();
+            //navigationLifecycleManager.UnloadInvisible();
 
             AppState = "NotLoggedIn";
 
