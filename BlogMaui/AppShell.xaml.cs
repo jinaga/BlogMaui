@@ -21,19 +21,18 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("loggedin/posts/detail", typeof(PostPage));
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override void OnAppearing()
     {
         viewModel.PropertyChanged += ViewModel_PropertyChanged;
         viewModel.Load();
-        base.OnNavigatedTo(args);
+        base.OnAppearing();
     }
 
-    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    protected override void OnDisappearing()
     {
-        base.OnNavigatedFrom(args);
-
         viewModel.Unload();
         viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+        base.OnDisappearing();
     }
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs args)
