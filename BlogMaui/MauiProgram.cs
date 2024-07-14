@@ -64,7 +64,7 @@ public static class MauiProgram
                 }
                 if (category.StartsWith("Jinaga"))
                 {
-                    return level >= LogLevel.Warning;
+                    return level >= LogLevel.Information;
                 }
                 return true;
             });
