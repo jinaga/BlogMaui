@@ -78,7 +78,7 @@ public partial class AppShellViewModel : ObservableObject
         {
             Error = string.Empty;
             await authenticationService.LogOut();
-            //navigationLifecycleManager.UnloadInvisible();
+            navigationLifecycleManager.UnloadInvisible();
 
             AppState = "NotLoggedIn";
 
