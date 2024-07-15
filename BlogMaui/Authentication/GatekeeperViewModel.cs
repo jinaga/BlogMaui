@@ -7,14 +7,14 @@ namespace BlogMaui.Authentication;
 
 public partial class GatekeeperViewModel : ObservableObject, ILifecycleManaged
 {
-    private readonly AuthenticationService authenticationService;
+    private readonly IAuthenticationService authenticationService;
     private readonly AppShellViewModel appShellViewModel;
     private readonly ILogger<GatekeeperViewModel> logger;
 
     [ObservableProperty]
     private string error = string.Empty;
 
-    public GatekeeperViewModel(AuthenticationService authenticationService, AppShellViewModel appShellViewModel, ILogger<GatekeeperViewModel> logger)
+    public GatekeeperViewModel(IAuthenticationService authenticationService, AppShellViewModel appShellViewModel, ILogger<GatekeeperViewModel> logger)
     {
         this.authenticationService = authenticationService;
         this.appShellViewModel = appShellViewModel;

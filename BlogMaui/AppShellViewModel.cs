@@ -10,7 +10,7 @@ namespace BlogMaui;
 
 public partial class AppShellViewModel : ObservableObject
 {
-    private readonly AuthenticationService authenticationService;
+    private readonly IAuthenticationService authenticationService;
     private readonly JinagaClient jinagaClient;
     private readonly INavigationLifecycleManager navigationLifecycleManager;
     private readonly LogController logController = new LogController();
@@ -27,7 +27,7 @@ public partial class AppShellViewModel : ObservableObject
     public ICommand LogOut { get; }
     public ICommand ViewLogs { get; }
 
-    public AppShellViewModel(AuthenticationService authenticationService, JinagaClient jinagaClient, INavigationLifecycleManager navigationLifecycleManager)
+    public AppShellViewModel(IAuthenticationService authenticationService, JinagaClient jinagaClient, INavigationLifecycleManager navigationLifecycleManager)
     {
         LogIn = new AsyncRelayCommand<string>(HandleLogIn);
         LogOut = new AsyncRelayCommand(HandleLogOut);
@@ -55,7 +55,7 @@ public partial class AppShellViewModel : ObservableObject
         try
         {
             Error = string.Empty;
-            var isLoggedIn = await authenticationService.Login(provider ?? "Apple");
+            var isLoggedIn = await authenticationService.LogIn(provider ?? "Apple");
             await Task.Delay(1);
 
             if (isLoggedIn)
