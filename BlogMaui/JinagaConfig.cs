@@ -32,6 +32,10 @@ public static class JinagaConfig
         {
             throw new Exception("No access token URL is configured.");
         }
+        if (settings.RevokeUrl == null)
+        {
+            throw new Exception("No revoke URL is configured.");
+        }
         if (settings.ClientId == null)
         {
             throw new Exception("No client ID is configured.");
@@ -40,6 +44,7 @@ public static class JinagaConfig
         var authenticationSettings = new AuthenticationSettings(
             authUrlByProvider,
             settings.AccessTokenUrl,
+            settings.RevokeUrl,
             settings.CallbackUrl,
             settings.ClientId,
             settings.Scope,

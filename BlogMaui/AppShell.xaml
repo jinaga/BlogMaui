@@ -46,7 +46,7 @@
 
     <TabBar IsVisible="{Binding AppState, Converter={StaticResource IsEqualConverter}, ConverterParameter=LoggedIn}"
             Route="loggedin">
-        <Tab Title="Home" Route="blog">
+        <Tab x:Name="HomeTab" Title="Home" Route="blog">
             <Tab.Icon>
                 <FontImageSource FontFamily="FluentSystemIcons" 
                                  Glyph="{x:Static fonts:FluentSystemIcons.IconIc_fluent_home_32_regular}" 
