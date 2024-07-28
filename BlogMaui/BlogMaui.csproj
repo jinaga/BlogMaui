@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net8.0-ios;net8.0-maccatalyst;net8.0-android</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
@@ -50,16 +50,16 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="Jinaga" Version="0.12.8" />
-    <PackageReference Include="Jinaga.Maui" Version="0.12.8" />
-    <PackageReference Include="Jinaga.Store.SQLite" Version="0.12.8" />
+    <PackageReference Include="Jinaga" Version="1.0.0" />
+    <PackageReference Include="Jinaga.Maui" Version="1.0.0" />
+    <PackageReference Include="Jinaga.Store.SQLite" Version="1.0.0" />
     <PackageReference Include="MetroLog.Maui" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
     <PackageReference Include="WinUIEx" Version="2.3.4" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240627000" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
     <Compile Update="Areas\Blog\Posts\PostListPage.xaml.cs">
       <DependentUpon>PostListPage.xaml</DependentUpon>
     </Compile>
