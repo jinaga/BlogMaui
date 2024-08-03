@@ -3,40 +3,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:BlogMaui.Areas.Blog.Sites"
              xmlns:fonts="clr-namespace:BlogMaui.Fonts"
+             xmlns:components="clr-namespace:BlogMaui.Components"
              x:Class="BlogMaui.Areas.Blog.Sites.SiteEditPage"
              x:DataType="local:SiteEditViewModel"
              Title="Edit Site">
     <VerticalStackLayout>
-        <Label Text="Name"
-               FontSize="Medium"
-               Margin="10,10,10,0"/>
-        <Grid ColumnDefinitions="*,Auto"
-                Margin="5,0,5,5">
-                <Entry Grid.Column="0"
-                        Text="{Binding Name}"
-                        Placeholder="Enter site name"
-                        FontSize="Medium"/>
-                <ImageButton Grid.Column="1"
-                        Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_merge_24_regular}, Color={AppThemeBinding Light=Black, Dark=White}}"
-                        Padding="5"
-                        Command="{Binding MergeNamesCommand}"
-                        IsVisible="{Binding ShouldMergeNames}" />
-        </Grid>
-        <Label Text="Domain"
-                FontSize="Medium"
-                Margin="10,10,10,0"/>
-        <Grid ColumnDefinitions="*,Auto"
-                Margin="5,0,5,5">
-                <Entry Grid.Column="0"
-                        Text="{Binding Domain}"
-                        Placeholder="Enter site domain"
-                        FontSize="Medium"/>
-                <ImageButton Grid.Column="1"
-                        Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_merge_24_regular}, Color={AppThemeBinding Light=Black, Dark=White}}"
-                        Padding="5"
-                        Command="{Binding MergeDomainsCommand}"
-                        IsVisible="{Binding ShouldMergeDomains}" />
-        </Grid>
+        <components:XLabeledEntry
+                LabelText="Name"
+                EntryText="{Binding Name}"
+                Placeholder="Enter site name"
+                ButtonCommand="{Binding MergeNamesCommand}"
+                ButtonIsVisible="{Binding ShouldMergeNames}"
+                ControlTemplate="{StaticResource Key=XLabeledEntryTemplate}" />
+        <components:XLabeledEntry
+                LabelText="Domain"
+                EntryText="{Binding Domain}"
+                Placeholder="Enter site domain"
+                ButtonCommand="{Binding MergeDomainsCommand}"
+                ButtonIsVisible="{Binding ShouldMergeDomains}"
+                ControlTemplate="{StaticResource Key=XLabeledEntryTemplate}" />
         <HorizontalStackLayout>
             <Button Text="Save"
                     Command="{Binding SaveCommand}"

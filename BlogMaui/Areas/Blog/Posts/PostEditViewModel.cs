@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BlogMaui.Components;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace BlogMaui.Areas.Blog.Posts;
@@ -11,10 +11,11 @@ public partial class PostEditViewModel : ObservableObject
     [ObservableProperty]
     private string title = string.Empty;
 
-    public ObservableCollection<string> Candidates { get; }
     [ObservableProperty]
-    private string selectedCandidate = string.Empty;
+    private bool shouldMergeTitles;
+    private List<string> titleCandidates;
 
+    public ICommand MergeTitlesCommand { get; }
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
 
@@ -28,19 +29,26 @@ public partial class PostEditViewModel : ObservableObject
         this.post = post;
         this.titles = titles;
 
+        titleCandidates = titles.Select(t => t.value).Order().Distinct().ToList();
         Title = titles
             .Select(t => t.value)
             .Order()
             .FirstOrDefault() ?? string.Empty;
-        Candidates = new ObservableCollection<string>(titles.Select(t => t.value));
+        ShouldMergeTitles = titleCandidates.Count > 1;
 
+        MergeTitlesCommand = new AsyncRelayCommand(HandleMergeTitles);
         SaveCommand = new AsyncRelayCommand(HandleSave);
         CancelCommand = new AsyncRelayCommand(HandleCancel);
     }
 
-    partial void OnSelectedCandidateChanged(string value)
+    private async Task HandleMergeTitles()
     {
-        Title = value;
+        var mergeViewModel = new MergeViewModel(titleCandidates, selection => Title = selection);
+        var currentPage = Shell.Current.CurrentPage;
+        if (currentPage.Parent is NavigationPage navigationPage)
+        {
+            await navigationPage.PushAsync(new MergePage(mergeViewModel));
+        }
     }
 
     private async Task HandleSave()
