@@ -2,27 +2,10 @@
 <?xaml-comp compile="true" ?>
 <ResourceDictionary 
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:fonts="clr-namespace:BlogMaui.Fonts">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" >
 
-    <ControlTemplate x:Key="XLabeledEntryTemplate">
-        <StackLayout>
-            <Label Text="{Binding LabelText, Source={RelativeSource TemplatedParent}}"
-                   FontSize="Medium"
-                   Margin="10,10,10,0"/>
-            <Grid ColumnDefinitions="*,Auto"
-                  Margin="5,0,5,5">
-                <Entry Grid.Column="0"
-                       Text="{Binding EntryText, Source={RelativeSource TemplatedParent}}"
-                       Placeholder="{Binding Placeholder, Source={RelativeSource TemplatedParent}}"
-                       FontSize="Medium"/>
-                <ImageButton Grid.Column="1"
-                             Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_merge_24_regular}, Color={AppThemeBinding Light=Black, Dark=White}}"
-                             Padding="5"
-                             Command="{Binding ButtonCommand, Source={RelativeSource TemplatedParent}}"
-                             IsVisible="{Binding ButtonIsVisible, Source={RelativeSource TemplatedParent}}" />
-            </Grid>
-        </StackLayout>
-    </ControlTemplate>
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="XLabeledEntry.xaml" />
+    </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>
