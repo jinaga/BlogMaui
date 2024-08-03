@@ -2,22 +2,18 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:BlogMaui.Areas.Blog.Posts"
+             xmlns:components="clr-namespace:BlogMaui.Components"
              x:Class="BlogMaui.Areas.Blog.Posts.PostEditPage"
              x:DataType="local:PostEditViewModel"
              Title="Edit Post">
     <VerticalStackLayout>
-        <Label Text="Title"
-               FontSize="Medium"
-               Margin="10,10,10,0"/>
-        <Entry Text="{Binding Title}"
-               Placeholder="Enter post title"
-               FontSize="Medium"
-               Margin="5,0,5,5"/>
-        <Picker Title="Candidates"
-                ItemsSource="{Binding Candidates}"
-                SelectedItem="{Binding SelectedCandidate}"
-                FontSize="Medium"
-                Margin="5"/>
+        <components:XLabeledEntry
+                LabelText="Title"
+                EntryText="{Binding Title}"
+                Placeholder="Enter post title"
+                ButtonCommand="{Binding MergeTitlesCommand}"
+                ButtonIsVisible="{Binding ShouldMergeTitles}"
+                ControlTemplate="{StaticResource Key=XLabeledEntryTemplate}" />
         <HorizontalStackLayout>
             <Button Text="Save"
                     Command="{Binding SaveCommand}"
