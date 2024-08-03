@@ -34,7 +34,7 @@ public partial class SiteListViewModel : ObservableObject, ILifecycleManaged
         this.userProvider = userProvider;
         this.logger = logger;
 
-        NewSiteCommand = new AsyncRelayCommand(HandleNewSite, () => user != null);
+        NewSiteCommand = new AsyncRelayCommand(HandleNewSite);
     }
 
     public void Load()

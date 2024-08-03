@@ -12,7 +12,7 @@
             Text="{Binding Status, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" FontSize="Large" Margin="15,5" />
         <HorizontalStackLayout toolkit:DockLayout.DockPosition="Bottom">
             <Button Text="View Logs" Command="{Binding ViewLogs, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" Margin="10" />
-            <Button Text="New Site" Command="{Binding NewSite}" Margin="10" />
+            <Button Text="New Site" Command="{Binding NewSiteCommand}" Margin="10" />
         </HorizontalStackLayout>
         <ScrollView>
             <ListView CachingStrategy="RecycleElement" ItemsSource="{Binding Sites}">
