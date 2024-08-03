@@ -2,6 +2,11 @@ namespace BlogMaui.Components;
 
 public partial class XLabeledEntry : ContentView
 {
+    public XLabeledEntry()
+    {
+        InitializeComponent();
+    }
+
     public static readonly BindableProperty LabelTextProperty =
         BindableProperty.Create(nameof(LabelText), typeof(string), typeof(XLabeledEntry), default(string));
 

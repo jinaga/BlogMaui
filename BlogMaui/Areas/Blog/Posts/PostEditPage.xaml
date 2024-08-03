@@ -12,8 +12,7 @@
                 EntryText="{Binding Title}"
                 Placeholder="Enter post title"
                 ButtonCommand="{Binding MergeTitlesCommand}"
-                ButtonIsVisible="{Binding ShouldMergeTitles}"
-                ControlTemplate="{StaticResource Key=XLabeledEntryTemplate}" />
+                ButtonIsVisible="{Binding ShouldMergeTitles}" />
         <HorizontalStackLayout>
             <Button Text="Save"
                     Command="{Binding SaveCommand}"

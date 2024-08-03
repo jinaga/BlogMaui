@@ -13,15 +13,13 @@
                 EntryText="{Binding Name}"
                 Placeholder="Enter site name"
                 ButtonCommand="{Binding MergeNamesCommand}"
-                ButtonIsVisible="{Binding ShouldMergeNames}"
-                ControlTemplate="{StaticResource Key=XLabeledEntryTemplate}" />
+                ButtonIsVisible="{Binding ShouldMergeNames}" />
         <components:XLabeledEntry
                 LabelText="Domain"
                 EntryText="{Binding Domain}"
                 Placeholder="Enter site domain"
                 ButtonCommand="{Binding MergeDomainsCommand}"
-                ButtonIsVisible="{Binding ShouldMergeDomains}"
-                ControlTemplate="{StaticResource Key=XLabeledEntryTemplate}" />
+                ButtonIsVisible="{Binding ShouldMergeDomains}" />
         <HorizontalStackLayout>
             <Button Text="Save"
                     Command="{Binding SaveCommand}"

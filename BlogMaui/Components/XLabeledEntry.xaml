@@ -1,28 +1,25 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<?xaml-comp compile="true" ?>
-<ResourceDictionary 
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:fonts="clr-namespace:BlogMaui.Fonts">
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:BlogMaui.Fonts"
+             x:Name="this"
+             x:Class="BlogMaui.Components.XLabeledEntry" >
 
-    <ControlTemplate x:Key="XLabeledEntryTemplate">
-        <StackLayout>
-            <Label Text="{Binding LabelText, Source={RelativeSource TemplatedParent}}"
-                   FontSize="Medium"
-                   Margin="10,10,10,0"/>
-            <Grid ColumnDefinitions="*,Auto"
-                  Margin="5,0,5,5">
-                <Entry Grid.Column="0"
-                       Text="{Binding EntryText, Source={RelativeSource TemplatedParent}}"
-                       Placeholder="{Binding Placeholder, Source={RelativeSource TemplatedParent}}"
-                       FontSize="Medium"/>
-                <ImageButton Grid.Column="1"
-                             Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_merge_24_regular}, Color={AppThemeBinding Light=Black, Dark=White}}"
-                             Padding="5"
-                             Command="{Binding ButtonCommand, Source={RelativeSource TemplatedParent}}"
-                             IsVisible="{Binding ButtonIsVisible, Source={RelativeSource TemplatedParent}}" />
-            </Grid>
-        </StackLayout>
-    </ControlTemplate>
+    <StackLayout BindingContext="{x:Reference this}">
+        <Label Text="{Binding LabelText}"
+                FontSize="Medium"
+                Margin="10,10,10,0"/>
+        <Grid ColumnDefinitions="*,Auto"
+                Margin="5,0,5,5">
+            <Entry Grid.Column="0"
+                    Text="{Binding EntryText}"
+                    Placeholder="{Binding Placeholder}"
+                    FontSize="Medium"/>
+            <ImageButton Grid.Column="1"
+                            Source="{FontImageSource FontFamily=FluentSystemIcons, Glyph={x:Static fonts:FluentSystemIcons.IconIc_fluent_merge_24_regular}, Color={AppThemeBinding Light=Black, Dark=White}}"
+                            Padding="5"
+                            Command="{Binding ButtonCommand}"
+                            IsVisible="{Binding ButtonIsVisible}" />
+        </Grid>
+    </StackLayout>
 
-</ResourceDictionary>
+</ContentView>
