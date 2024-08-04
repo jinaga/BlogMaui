@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Jinaga;
 using Jinaga.Maui.Authentication;
 using Jinaga.Maui.Binding;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 
 namespace BlogMaui.Areas.Blog.Sites;
 
@@ -16,7 +18,10 @@ public partial class SiteListViewModel : ObservableObject, ILifecycleManaged
     private readonly UserProvider userProvider;
     private readonly ILogger<SiteListViewModel> logger;
 
+    public ICommand NewSiteCommand { get; }
+
     private UserProvider.Handler? handler;
+    private User? user;
 
     [ObservableProperty]
     private bool loading = false;
@@ -28,6 +33,8 @@ public partial class SiteListViewModel : ObservableObject, ILifecycleManaged
         this.jinagaClient = jinagaClient;
         this.userProvider = userProvider;
         this.logger = logger;
+
+        NewSiteCommand = new AsyncRelayCommand(HandleNewSite);
     }
 
     public void Load()
@@ -41,6 +48,7 @@ public partial class SiteListViewModel : ObservableObject, ILifecycleManaged
 
         handler = userProvider.AddHandler(user =>
         {
+            this.user = user;
             Loading = true;
 
             var sites = Given<User>.Match((user, facts) =>
@@ -91,6 +99,7 @@ public partial class SiteListViewModel : ObservableObject, ILifecycleManaged
 
             return () =>
             {
+                this.user = null;
                 observer.Stop();
                 observer = null;
                 Sites.Clear();
@@ -130,5 +139,17 @@ public partial class SiteListViewModel : ObservableObject, ILifecycleManaged
         {
             Loading = false;
         }
+    }
+
+    private async Task HandleNewSite()
+    {
+        if (user == null)
+        {
+            return;
+        }
+
+        var siteNewViewModel = new SiteNewViewModel(jinagaClient, user);
+        var siteNewPage = new SiteNewPage(siteNewViewModel);
+        await Shell.Current.Navigation.PushModalAsync(siteNewPage);
     }
 }

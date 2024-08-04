@@ -1,3 +1,5 @@
+using System.Windows.Input;
+
 namespace BlogMaui.Components;
 
 public partial class XLabeledEntry : ContentView
@@ -17,7 +19,7 @@ public partial class XLabeledEntry : ContentView
     }
 
     public static readonly BindableProperty EntryTextProperty =
-        BindableProperty.Create(nameof(EntryText), typeof(string), typeof(XLabeledEntry), default(string));
+        BindableProperty.Create(nameof(EntryText), typeof(string), typeof(XLabeledEntry), default(string), BindingMode.TwoWay);
 
     public string EntryText
     {
@@ -35,11 +37,11 @@ public partial class XLabeledEntry : ContentView
     }
 
     public static readonly BindableProperty ButtonCommandProperty =
-        BindableProperty.Create(nameof(ButtonCommand), typeof(Command), typeof(XLabeledEntry), default(Command));
+        BindableProperty.Create(nameof(ButtonCommand), typeof(ICommand), typeof(XLabeledEntry), default(ICommand));
 
-    public Command ButtonCommand
+    public ICommand ButtonCommand
     {
-        get => (Command)GetValue(ButtonCommandProperty);
+        get => (ICommand)GetValue(ButtonCommandProperty);
         set => SetValue(ButtonCommandProperty, value);
     }
 
