@@ -33,6 +33,7 @@
         <HorizontalStackLayout Grid.Row="4">
             <Button Text="Refresh" Command="{Binding Refresh}" Margin="10" />
             <Button Text="View Logs" Command="{Binding ViewLogs, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" Margin="10" />
+            <Button Text="New Post" Command="{Binding NewPostCommand}" Margin="10" />
         </HorizontalStackLayout>
     </Grid>
 

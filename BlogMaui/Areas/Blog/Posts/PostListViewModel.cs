@@ -31,6 +31,7 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable, I
 
     public ICommand Edit { get; }
     public ICommand Refresh { get; }
+    public ICommand NewPostCommand { get; }
 
     public PostListViewModel(JinagaClient jinagaClient, ILogger<PostListViewModel> logger)
     {
@@ -39,6 +40,7 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable, I
 
         Edit = new AsyncRelayCommand(HandleEdit);
         Refresh = new AsyncRelayCommand(HandleRefresh);
+        NewPostCommand = new AsyncRelayCommand(HandleNewPost);
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -183,6 +185,23 @@ public partial class PostListViewModel : ObservableObject, IQueryAttributable, I
         finally
         {
             Loading = false;
+        }
+    }
+
+    private async Task HandleNewPost()
+    {
+        try
+        {
+            if (site != null)
+            {
+                var viewModel = new PostNewViewModel(jinagaClient, site, site.creator);
+                var page = new NavigationPage(new PostNewPage(viewModel));
+                await Shell.Current.Navigation.PushModalAsync(page);
+            }
+        }
+        catch (Exception x)
+        {
+            logger.LogError(x, "Error while handling new post");
         }
     }
 
