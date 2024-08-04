@@ -19,7 +19,7 @@ public partial class XLabeledEntry : ContentView
     }
 
     public static readonly BindableProperty EntryTextProperty =
-        BindableProperty.Create(nameof(EntryText), typeof(string), typeof(XLabeledEntry), default(string));
+        BindableProperty.Create(nameof(EntryText), typeof(string), typeof(XLabeledEntry), default(string), BindingMode.TwoWay);
 
     public string EntryText
     {
