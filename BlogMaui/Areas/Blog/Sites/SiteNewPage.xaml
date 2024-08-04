@@ -2,31 +2,35 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:BlogMaui.Areas.Blog.Sites"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:fonts="clr-namespace:BlogMaui.Fonts"
              xmlns:components="clr-namespace:BlogMaui.Components"
              x:Class="BlogMaui.Areas.Blog.Sites.SiteNewPage"
              x:DataType="local:SiteNewViewModel"
              Title="New Site">
 
-    <VerticalStackLayout>
-        <components:XLabeledEntry
-                LabelText="Name"
-                EntryText="{Binding Name}"
-                Placeholder="Enter site name" />
-        <components:XLabeledEntry
-                LabelText="Domain"
-                EntryText="{Binding Domain}"
-                Placeholder="Enter site domain" />
-        <HorizontalStackLayout>
+    <toolkit:DockLayout>
+        <HorizontalStackLayout toolkit:DockLayout.DockPosition="Bottom"
+                                Padding="5">
             <Button Text="Save"
                     Command="{Binding SaveCommand}"
                     FontSize="Medium"
-                    Margin="10,10,5,10"/>
+                    Margin="5"/>
             <Button Text="Cancel"
                     Command="{Binding CancelCommand}"
                     FontSize="Medium"
-                    Margin="5,10,10,10"/>
+                    Margin="5"/>
         </HorizontalStackLayout>
-    </VerticalStackLayout>
+        <VerticalStackLayout>
+            <components:XLabeledEntry
+                    LabelText="Name"
+                    EntryText="{Binding Name}"
+                    Placeholder="Enter site name" />
+            <components:XLabeledEntry
+                    LabelText="Domain"
+                    EntryText="{Binding Domain}"
+                    Placeholder="Enter site domain" />
+        </VerticalStackLayout>
+    </toolkit:DockLayout>
 
 </ContentPage>
