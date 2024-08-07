@@ -2,12 +2,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
+using Microsoft.Extensions.Logging;
 using System.Collections.Immutable;
 using System.Windows.Input;
 
 namespace BlogMaui.Areas.Blog.Posts;
 public partial class PostEditViewModel : ObservableObject
 {
+    private ILogger<PostEditViewModel> logger;
+
     [ObservableProperty]
     private string title = string.Empty;
 
@@ -23,7 +26,7 @@ public partial class PostEditViewModel : ObservableObject
     private readonly Post post;
     private readonly ImmutableList<PostTitle> titles;
 
-    public PostEditViewModel(JinagaClient jinagaClient, Post post, ImmutableList<PostTitle> titles)
+    public PostEditViewModel(JinagaClient jinagaClient, Post post, ImmutableList<PostTitle> titles, MetroLog.ILogger<PostEditViewModel> logger)
     {
         this.jinagaClient = jinagaClient;
         this.post = post;
@@ -39,10 +42,13 @@ public partial class PostEditViewModel : ObservableObject
         MergeTitlesCommand = new AsyncRelayCommand(HandleMergeTitles);
         SaveCommand = new AsyncRelayCommand(HandleSave);
         CancelCommand = new AsyncRelayCommand(HandleCancel);
+        this.logger = logger;
     }
 
     private async Task HandleMergeTitles()
     {
+        logger.LogInformation("Merging titles: {titles}", string.Join(", ", titleCandidates));
+
         var mergeViewModel = new MergeViewModel(titleCandidates, selection => Title = selection);
         var currentPage = Shell.Current.CurrentPage;
         if (currentPage.Parent is NavigationPage navigationPage)
