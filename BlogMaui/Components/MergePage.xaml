@@ -6,12 +6,13 @@
              x:DataType="local:MergeViewModel">
     <toolkit:DockLayout>
         <ScrollView>
-            <ListView CachingStrategy="RecycleElement" ItemsSource="{Binding Candidates}"
+            <ListView CachingStrategy="RetainElement" ItemsSource="{Binding Candidates}"
                     SelectedItem="{Binding SelectedCandidate}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <TextCell Text="{Binding}"
-                            TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}" />
+                            TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                            DetailColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray200}}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
