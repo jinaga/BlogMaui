@@ -78,7 +78,7 @@ public partial class PostViewModel : ObservableObject, IQueryAttributable, ILife
     {
         if (post != null)
         {
-            var viewModel = new PostEditViewModel(jinagaClient, post, titles);
+            var viewModel = new PostEditViewModel(jinagaClient, post, titles, logger);
             await Shell.Current.Navigation.PushModalAsync(new PostEditPage(viewModel));
         }
     }

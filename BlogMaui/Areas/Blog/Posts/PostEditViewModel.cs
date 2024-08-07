@@ -9,7 +9,7 @@ using System.Windows.Input;
 namespace BlogMaui.Areas.Blog.Posts;
 public partial class PostEditViewModel : ObservableObject
 {
-    private ILogger<PostEditViewModel> logger;
+    private ILogger logger;
 
     [ObservableProperty]
     private string title = string.Empty;
@@ -26,7 +26,7 @@ public partial class PostEditViewModel : ObservableObject
     private readonly Post post;
     private readonly ImmutableList<PostTitle> titles;
 
-    public PostEditViewModel(JinagaClient jinagaClient, Post post, ImmutableList<PostTitle> titles, ILogger<PostEditViewModel> logger)
+    public PostEditViewModel(JinagaClient jinagaClient, Post post, ImmutableList<PostTitle> titles, ILogger logger)
     {
         this.jinagaClient = jinagaClient;
         this.post = post;
