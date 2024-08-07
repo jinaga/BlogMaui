@@ -1,4 +1,4 @@
-﻿using BlogMaui.Components;
+using BlogMaui.Components;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jinaga;
@@ -26,7 +26,7 @@ public partial class PostEditViewModel : ObservableObject
     private readonly Post post;
     private readonly ImmutableList<PostTitle> titles;
 
-    public PostEditViewModel(JinagaClient jinagaClient, Post post, ImmutableList<PostTitle> titles, MetroLog.ILogger<PostEditViewModel> logger)
+    public PostEditViewModel(JinagaClient jinagaClient, Post post, ImmutableList<PostTitle> titles, ILogger<PostEditViewModel> logger)
     {
         this.jinagaClient = jinagaClient;
         this.post = post;
