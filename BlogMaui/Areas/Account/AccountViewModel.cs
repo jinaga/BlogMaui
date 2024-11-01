@@ -105,6 +105,9 @@ public partial class AccountViewModel : ObservableObject, ILifecycleManaged
                 Title = "Exported Facts (Factual)",
                 File = new ShareFile(tempFile)
             });
+
+            // RequestAsync does not wait for the user to complete the share operation.
+            // We therefore cannot delete the temporary file here.
         }
         catch (Exception ex)
         {
