@@ -113,11 +113,7 @@ public static class JinagaConfig
                 !facts.Any<UserName>(next =>
                     next.prior.Contains(name))
             select name
-        )).With(Given<User>.Match((user, facts) =>
-            from self in facts.OfType<User>()
-            where self == user
-            select self
-        ))
+        )).With(user => user)
 
         // Distribute sites with names and domains to the site creator.
         .Share(Given<User>.Match((user, facts) =>
@@ -142,11 +138,7 @@ public static class JinagaConfig
                             next.prior.Contains(domain))
                     select domain
             }
-        )).With(Given<User>.Match((user, facts) =>
-            from self in facts.OfType<User>()
-            where self == user
-            select self
-        ))
+        )).With(user => user)
 
         // Distribute site names to the site creator.
         .Share(Given<Site>.Match((site, facts) =>
