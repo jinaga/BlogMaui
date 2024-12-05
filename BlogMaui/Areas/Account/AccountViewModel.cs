@@ -1,8 +1,11 @@
 ﻿using BlogMaui.Areas.Blog;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Jinaga;
 using Jinaga.Maui.Authentication;
 using Jinaga.Maui.Binding;
+using Microsoft.Extensions.Logging;
+using System.Windows.Input;
 
 namespace BlogMaui.Areas.Account;
 public partial class AccountViewModel : ObservableObject, ILifecycleManaged
@@ -12,13 +15,19 @@ public partial class AccountViewModel : ObservableObject, ILifecycleManaged
 
     private readonly JinagaClient jinagaClient;
     private readonly UserProvider userProvider;
+    private readonly ILogger<AccountViewModel> logger;
 
     private UserProvider.Handler? handler;
 
-    public AccountViewModel(JinagaClient jinagaClient, UserProvider userProvider)
+    public ICommand ExportFactsCommand { get; }
+
+    public AccountViewModel(JinagaClient jinagaClient, UserProvider userProvider, ILogger<AccountViewModel> logger)
     {
         this.jinagaClient = jinagaClient;
         this.userProvider = userProvider;
+        this.logger = logger;
+
+        ExportFactsCommand = new AsyncRelayCommand(HandleExportFacts);
     }
 
     public void Load()
@@ -74,6 +83,40 @@ public partial class AccountViewModel : ObservableObject, ILifecycleManaged
         {
             userProvider.RemoveHandler(handler);
             handler = null;
+        }
+    }
+
+    private async Task HandleExportFacts()
+    {
+        var tempFile = Path.GetTempFileName();
+        try
+        {
+            // Export facts to the temporary file
+            logger.LogInformation("Exporting facts to {tempFile}", tempFile);
+            using (var fileStream = File.OpenWrite(tempFile))
+            {
+                await jinagaClient.ExportFactsToFactual(fileStream);
+            }
+
+            // Share the file
+            logger.LogInformation("Sharing {tempFile}", tempFile);
+            await Share.Default.RequestAsync(new ShareFileRequest
+            {
+                Title = "Exported Facts (Factual)",
+                File = new ShareFile(tempFile)
+            });
+
+            // RequestAsync does not wait for the user to complete the share operation.
+            // We therefore cannot delete the temporary file here.
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to export facts");
+
+            // Clean up the temporary file if something went wrong
+            if (File.Exists(tempFile))
+                File.Delete(tempFile);
+            throw;
         }
     }
 }
