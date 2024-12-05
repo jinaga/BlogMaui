@@ -50,9 +50,9 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="Jinaga" Version="1.0.15-g5523d80e5b" />
-    <PackageReference Include="Jinaga.Maui" Version="1.0.3-g5523d80e5b" />
-    <PackageReference Include="Jinaga.Store.SQLite" Version="1.0.8-g5523d80e5b" />
+    <PackageReference Include="Jinaga" Version="1.0.34" />
+    <PackageReference Include="Jinaga.Maui" Version="1.0.0" />
+    <PackageReference Include="Jinaga.Store.SQLite" Version="1.0.0" />
     <PackageReference Include="MetroLog.Maui" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
