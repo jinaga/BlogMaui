@@ -34,6 +34,9 @@
     <CodesignProvision>Blog MAUI Provisioning</CodesignProvision>
     <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Debug'">
+    <RuntimeIdentifier>iossimulator-x64</RuntimeIdentifier>
+  </PropertyGroup>
   <ItemGroup>
     <!-- App Icon -->
     <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#EEEEEE" />
