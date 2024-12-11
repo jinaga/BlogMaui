@@ -21,6 +21,7 @@ public partial class AccountViewModel : ObservableObject, ILifecycleManaged
     private UserProvider.Handler? handler;
 
     public ICommand ExportFactsCommand { get; }
+    public ICommand PurgeCommand { get; }
 
     public AccountViewModel(JinagaClient jinagaClient, UserProvider userProvider, ILogger<AccountViewModel> logger)
     {
@@ -30,6 +31,7 @@ public partial class AccountViewModel : ObservableObject, ILifecycleManaged
         this.exportToShare = false;
 
         ExportFactsCommand = new AsyncRelayCommand(HandleExportFacts);
+        PurgeCommand = new AsyncRelayCommand(HandlePurge);
     }
 
     public void Load()
@@ -136,5 +138,10 @@ public partial class AccountViewModel : ObservableObject, ILifecycleManaged
             var exportedFactsPage = new ExportedFactsPage(exportedFacts);
             await Shell.Current.Navigation.PushModalAsync(exportedFactsPage);
         }
+    }
+
+    private async Task HandlePurge()
+    {
+        await jinagaClient.Purge();
     }
 }
