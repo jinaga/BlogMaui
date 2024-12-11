@@ -1,4 +1,3 @@
-
 using Microsoft.Maui.Controls;
 
 namespace BlogMaui.Areas.Account
@@ -9,6 +8,11 @@ namespace BlogMaui.Areas.Account
         {
             InitializeComponent();
             ExportedFactsLabel.Text = exportedFacts;
+        }
+
+        private void OnBackButtonClicked(object sender, EventArgs e)
+        {
+            Shell.Current.Navigation.PopAsync();
         }
     }
 }
