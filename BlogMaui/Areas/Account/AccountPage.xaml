@@ -13,6 +13,7 @@
         <HorizontalStackLayout Grid.Row="1">
             <Button Text="Log Out" Command="{Binding LogOut, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type root:AppShellViewModel}}}" Margin="10" />
             <Button Text="Export Facts" Command="{Binding ExportFactsCommand}" Margin="10" />
+            <Button Text="Purge" Command="{Binding PurgeCommand}" Margin="10" />
         </HorizontalStackLayout>
     </Grid>
 </ContentPage>
