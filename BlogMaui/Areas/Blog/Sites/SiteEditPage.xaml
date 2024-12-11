@@ -29,6 +29,11 @@
                     Command="{Binding CancelCommand}"
                     FontSize="Medium"
                     Margin="5,10,10,10"/>
+            <Button Text="Delete"
+                    Command="{Binding DeleteCommand}"
+                    FontSize="Medium"
+                    Margin="5,10,10,10"
+                    BackgroundColor="Red"/>
         </HorizontalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

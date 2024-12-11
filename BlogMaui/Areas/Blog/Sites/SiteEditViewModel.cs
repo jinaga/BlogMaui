@@ -27,6 +27,7 @@ public partial class SiteEditViewModel : ObservableObject
     public ICommand MergeDomainsCommand { get; }
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
+    public ICommand DeleteCommand { get; }
     
     private JinagaClient jinagaClient;
     private Site site;
@@ -52,6 +53,7 @@ public partial class SiteEditViewModel : ObservableObject
         MergeDomainsCommand = new AsyncRelayCommand(HandleMergeDomains);
         SaveCommand = new AsyncRelayCommand(HandleSave);
         CancelCommand = new AsyncRelayCommand(HandleCancel);
+        DeleteCommand = new AsyncRelayCommand(HandleDelete);
     }
 
     private async Task HandleMergeNames()
@@ -95,6 +97,12 @@ public partial class SiteEditViewModel : ObservableObject
 
     private async Task HandleCancel()
     {
+        await Shell.Current.Navigation.PopModalAsync();
+    }
+
+    private async Task HandleDelete()
+    {
+        await jinagaClient.Fact(new SiteDeleted(site, DateTime.UtcNow));
         await Shell.Current.Navigation.PopModalAsync();
     }
 }
