@@ -3,11 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BlogMaui.Areas.Account.ExportedFactsPage"
              Title="Exported Facts">
-    <ScrollView>
-        <Label x:Name="ExportedFactsLabel" 
-               Text="" 
-               VerticalOptions="Start" 
-               HorizontalOptions="FillAndExpand" 
-               Padding="10"/>
-    </ScrollView>
+    <Grid>
+        <ScrollView>
+            <Label x:Name="ExportedFactsLabel" 
+                   Text="" 
+                   VerticalOptions="Start" 
+                   HorizontalOptions="FillAndExpand" 
+                   Padding="10"/>
+        </ScrollView>
+        <Button Text="Back" 
+                Clicked="OnBackButtonClicked" 
+                VerticalOptions="End" 
+                HorizontalOptions="Start" 
+                Margin="10"/>
+    </Grid>
 </ContentPage>
