@@ -84,6 +84,7 @@ public static class JinagaConfig
             opt.SQLitePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "blog.db");
+            opt.PurgeConditions = DefinePurgeConditions;
             opt.LoggerFactory = services.GetRequiredService<ILoggerFactory>();
         });
         return jinagaClient;
@@ -93,6 +94,8 @@ public static class JinagaConfig
         AuthorizationRules.Describe(Authorize);
     public static string Distribution() =>
         DistributionRules.Describe(Distribute);
+    public static string Purge() =>
+        PurgeConditions.Describe(DefinePurgeConditions);
 
     private static AuthorizationRules Authorize(AuthorizationRules r) => r
         .Any<User>()
@@ -186,4 +189,8 @@ public static class JinagaConfig
                     next.prior.Contains(title))
             select title
         )).With(post => post.site.creator);
+
+    private static PurgeConditions DefinePurgeConditions(PurgeConditions p) => p
+        .Purge<Site>().WhenExists<SitePurged>(purged => purged.deleted.site)
+        ;
 }

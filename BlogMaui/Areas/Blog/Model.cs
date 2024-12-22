@@ -14,6 +14,9 @@ public record SiteDeleted(Site site, DateTime deletedAt) { }
 [FactType("Blog.Site.Restored")]
 public record SiteRestored(SiteDeleted deleted) { }
 
+[FactType("Blog.Site.Purged")]
+public record SitePurged(SiteDeleted deleted) { }
+
 [FactType("Blog.Site.Name")]
 public record SiteName(Site site, string value, SiteName[] prior) { }
 
