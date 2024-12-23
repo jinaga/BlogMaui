@@ -1,7 +1,4 @@
-﻿using Android.App;
-using Android.Runtime;
-
-namespace BlogMaui;
+﻿namespace BlogMaui;
 [Application]
 public class MainApplication : MauiApplication
 {
