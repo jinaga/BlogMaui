@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using BlogMaui.Areas.Blog;
 using Jinaga;
+using Jinaga.Extensions;
 using Jinaga.Http;
 using Jinaga.Maui.Authentication;
 using Jinaga.Store.SQLite;
@@ -125,7 +126,8 @@ public static class JinagaConfig
                 !facts.Any<SiteDeleted>(deleted =>
                     deleted.site == site &&
                         !facts.Any<SiteRestored>(restored =>
-                            restored.deleted == deleted))
+                            restored.deleted == deleted)) &&
+                site.Successors().No<SitePurged>(purged => purged.deleted.site)
             select new {
                 site,
                 names =

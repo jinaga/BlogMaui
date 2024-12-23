@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using Jinaga;
+using Jinaga.Extensions;
 using Jinaga.Maui.Authentication;
 using Jinaga.Maui.Binding;
 using System.Windows.Input;
@@ -56,7 +57,8 @@ public partial class SiteListViewModel : ObservableObject, ILifecycleManaged
                 where site.creator == user &&
                     !facts.Any<SiteDeleted>(deleted => deleted.site == site &&
                         !facts.Any<SiteRestored>(restored => restored.deleted == deleted)
-                    )
+                    ) &&
+                    site.Successors().No<SitePurged>(purged => purged.deleted.site)
                 select new
                 {
                     site,
