@@ -34,6 +34,9 @@
     <CodesignProvision>Blog MAUI Provisioning</CodesignProvision>
     <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Debug'">
+    <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
+  </PropertyGroup>
   <ItemGroup>
     <!-- App Icon -->
     <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#EEEEEE" />
@@ -50,9 +53,9 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="Jinaga" Version="1.0.34" />
-    <PackageReference Include="Jinaga.Maui" Version="1.0.0" />
-    <PackageReference Include="Jinaga.Store.SQLite" Version="1.0.0" />
+    <PackageReference Include="Jinaga" Version="1.0.51-g23c008c521" />
+    <PackageReference Include="Jinaga.Maui" Version="1.0.3-g23c008c521" />
+    <PackageReference Include="Jinaga.Store.SQLite" Version="1.0.29-g23c008c521" />
     <PackageReference Include="MetroLog.Maui" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />

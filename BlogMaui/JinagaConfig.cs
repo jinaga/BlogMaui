@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using BlogMaui.Areas.Blog;
 using Jinaga;
+using Jinaga.Extensions;
 using Jinaga.Http;
 using Jinaga.Maui.Authentication;
 using Jinaga.Store.SQLite;
@@ -84,6 +85,7 @@ public static class JinagaConfig
             opt.SQLitePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "blog.db");
+            opt.PurgeConditions = DefinePurgeConditions;
             opt.LoggerFactory = services.GetRequiredService<ILoggerFactory>();
         });
         return jinagaClient;
@@ -93,6 +95,8 @@ public static class JinagaConfig
         AuthorizationRules.Describe(Authorize);
     public static string Distribution() =>
         DistributionRules.Describe(Distribute);
+    public static string Purge() =>
+        PurgeConditions.Describe(DefinePurgeConditions);
 
     private static AuthorizationRules Authorize(AuthorizationRules r) => r
         .Any<User>()
@@ -122,7 +126,8 @@ public static class JinagaConfig
                 !facts.Any<SiteDeleted>(deleted =>
                     deleted.site == site &&
                         !facts.Any<SiteRestored>(restored =>
-                            restored.deleted == deleted))
+                            restored.deleted == deleted)) &&
+                site.Successors().No<SitePurged>(purged => purged.deleted.site)
             select new {
                 site,
                 names =
@@ -186,4 +191,8 @@ public static class JinagaConfig
                     next.prior.Contains(title))
             select title
         )).With(post => post.site.creator);
+
+    private static PurgeConditions DefinePurgeConditions(PurgeConditions p) => p
+        .Purge<Site>().WhenExists<SitePurged>(purged => purged.deleted.site)
+        ;
 }
