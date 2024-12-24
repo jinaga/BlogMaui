@@ -17,6 +17,19 @@ You will need the following credentials from your Apple Developer account:
 - The .p8 private key file (AuthKey.p8)
 
 You can find these in the App Store Connect under "Users and Access" -> "Keys".
+Store the .p8 file in the `keys` directory.
+Set environment variables for the Issuer ID and Key ID:
+
+```bash
+export APPLE_ISSUER_ID="your_issuer_id"
+export APPLE_KEY_ID="your_key_id"
+```
+
+If you write these export statements to a file in the `keys` folder named `.env`, you can load them into your environment by running:
+
+```bash
+source keys/.env
+```
 
 ### Ensure `openssl` is installed
 
@@ -26,7 +39,8 @@ Make sure `openssl` is installed on your system. You can check by running:
 openssl version
 ```
 
-If it is not installed, you can install it using your package manager. For example, on macOS you can use:
+If it is not installed, you can install it using your package manager.
+For example, on macOS you can use:
 
 ```bash
 brew install openssl
@@ -34,7 +48,8 @@ brew install openssl
 
 ### Set up a Python virtual environment
 
-It is recommended to set up a Python virtual environment to manage dependencies. You can do this by running:
+It is recommended to set up a Python virtual environment to manage dependencies.
+You can do this by running:
 
 ```bash
 python3 -m venv venv
@@ -43,7 +58,8 @@ source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 
 ### Install required Python packages
 
-Before running the script, make sure to install the required Python packages. You can do this by running:
+Before running the script, make sure to install the required Python packages.
+You can do this by running:
 
 ```bash
 pip install -r requirements.txt
