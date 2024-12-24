@@ -3,11 +3,12 @@ import jwt
 import time
 import uuid
 import requests
+import os
 
-# Fill these in with your actual values.
-ISSUER_ID = "YOUR_ISSUER_ID"
-KEY_ID = "YOUR_KEY_ID"
-P8_PRIVATE_KEY_PATH = "AuthKey.p8"  # The .p8 file from App Store Connect
+# Load these from environment variables
+ISSUER_ID = os.getenv("APPLE_ISSUER_ID")
+KEY_ID = os.getenv("APPLE_KEY_ID")
+P8_PRIVATE_KEY_PATH = f"keys/AuthKey_{KEY_ID}.p8"  # The .p8 file from App Store Connect
 CSR_PATH = "keys/ios-dev.csr"   # The CSR you generated in step 1
 
 def generate_jwt_token(issuer_id, key_id, private_key):

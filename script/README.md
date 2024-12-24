@@ -76,11 +76,16 @@ You'll need this password later.
 ```bash
 openssl genrsa -out keys/ios-dev.key 2048
 openssl req -new -key keys/ios-dev.key -out keys/ios-dev.csr \
-  -subj "/C=US/ST=TX/L=Dallas/O=JinagaLLC/CN=JinagaLLC"
+  -subj "/C=US/ST=Texas/L=Dallas/O=Jinaga LLC/CN=jinaga.com" \
+  -passin stdin
 ```
 
 You'll upload this CSR to Apple via the script below.
 
 ## Create a distribution certificate
 
-Run the Python script to upload the CSR to Apple and create a distribution certificate.
+Run the Python script `apple-distribution-certificate.py` to upload the CSR to Apple and create a distribution certificate.
+
+```bash
+python apple-distribution-certificate.py
+```
