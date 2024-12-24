@@ -51,8 +51,14 @@ def create_distribution_certificate(token, base64_csr):
         }
     }
 
-    resp = requests.post(url, headers=headers, json=body)
-    resp.raise_for_status()  # raise exception if HTTP errors occur
+    try:
+        resp = requests.post(url, headers=headers, json=body)
+        resp.raise_for_status()  # raise exception if HTTP errors occur
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 409:
+            print("Error: You have already created three distribution certificates. Please delete old certificates in your Apple Developer account.")
+        else:
+            raise
     return resp.json()
 
 if __name__ == "__main__":
