@@ -14,15 +14,17 @@ This notebook will guide you through the process and automate it using Python.
 You will need the following credentials from your Apple Developer account:
 - Issuer ID
 - Key ID
-- The .p8 private key file (AuthKey.p8)
+- The .p8 private key file (AuthKey_XXXXXXXXXX.p8)
 
-You can find these in the App Store Connect under "Users and Access" -> "Keys".
+You can find these in the App Store Connect under [Users and Access, Integrations, App Store Connect API](https://appstoreconnect.apple.com/access/integrations/api).
+The issuer ID looks like a GUID.
+The key ID is a 10-character string with numbers and letters.
 Store the .p8 file in the `keys` directory.
 Set environment variables for the Issuer ID and Key ID:
 
 ```bash
-export APPLE_ISSUER_ID="your_issuer_id"
-export APPLE_KEY_ID="your_key_id"
+export APPLE_ISSUER_ID="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+export APPLE_KEY_ID="XXXXXXXXXX"
 ```
 
 If you write these export statements to a file in the `keys` folder named `.env`, you can load them into your environment by running:
