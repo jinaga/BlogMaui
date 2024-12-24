@@ -6,6 +6,7 @@ name: .NET build for iOS
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -43,6 +44,8 @@ jobs:
       run: xcodebuild -version
     - name: Install workloads
       run: dotnet workload restore
+    - name: Add GitHub package source
+      run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/jinaga/index.json"
     - name: Copy production settings
       run: cp ./Settings/Settings.Production.cs ./BlogMaui/
     - name: Restore build and publish

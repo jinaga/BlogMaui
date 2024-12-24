@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BlogMaui.Areas.Account.ExportedFactsPage"
+             Title="Exported Facts">
+    <Grid>
+        <ScrollView>
+            <Label x:Name="ExportedFactsLabel" 
+                   Text="" 
+                   VerticalOptions="Start" 
+                   HorizontalOptions="FillAndExpand" 
+                   Padding="10"/>
+        </ScrollView>
+        <ImageButton Source="circle_arrow_left.png" 
+                     Clicked="OnBackButtonClicked" 
+                     VerticalOptions="End" 
+                     HorizontalOptions="Start" 
+                     Margin="10" 
+                     BackgroundColor="Transparent" 
+                     Opacity="0.75"/>
+    </Grid>
+</ContentPage>

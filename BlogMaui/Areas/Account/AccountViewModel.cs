@@ -16,18 +16,22 @@ public partial class AccountViewModel : ObservableObject, ILifecycleManaged
     private readonly JinagaClient jinagaClient;
     private readonly UserProvider userProvider;
     private readonly ILogger<AccountViewModel> logger;
+    private readonly bool exportToShare;
 
     private UserProvider.Handler? handler;
 
     public ICommand ExportFactsCommand { get; }
+    public ICommand PurgeCommand { get; }
 
     public AccountViewModel(JinagaClient jinagaClient, UserProvider userProvider, ILogger<AccountViewModel> logger)
     {
         this.jinagaClient = jinagaClient;
         this.userProvider = userProvider;
         this.logger = logger;
+        this.exportToShare = false;
 
         ExportFactsCommand = new AsyncRelayCommand(HandleExportFacts);
+        PurgeCommand = new AsyncRelayCommand(HandlePurge);
     }
 
     public void Load()
@@ -88,35 +92,56 @@ public partial class AccountViewModel : ObservableObject, ILifecycleManaged
 
     private async Task HandleExportFacts()
     {
-        var tempFile = Path.GetTempFileName();
-        try
+        if (exportToShare)
         {
-            // Export facts to the temporary file
-            logger.LogInformation("Exporting facts to {tempFile}", tempFile);
-            using (var fileStream = File.OpenWrite(tempFile))
+            var tempFile = Path.GetTempFileName();
+            try
             {
-                await jinagaClient.ExportFactsToFactual(fileStream);
+                // Export facts to the temporary file
+                logger.LogInformation("Exporting facts to {tempFile}", tempFile);
+                using (var fileStream = File.OpenWrite(tempFile))
+                {
+                    await jinagaClient.ExportFactsToFactual(fileStream);
+                }
+
+                // Share the file
+                logger.LogInformation("Sharing {tempFile}", tempFile);
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = "Exported Facts (Factual)",
+                    File = new ShareFile(tempFile)
+                });
+
+                // RequestAsync does not wait for the user to complete the share operation.
+                // We therefore cannot delete the temporary file here.
             }
-
-            // Share the file
-            logger.LogInformation("Sharing {tempFile}", tempFile);
-            await Share.Default.RequestAsync(new ShareFileRequest
+            catch (Exception ex)
             {
-                Title = "Exported Facts (Factual)",
-                File = new ShareFile(tempFile)
-            });
+                logger.LogError(ex, "Failed to export facts");
 
-            // RequestAsync does not wait for the user to complete the share operation.
-            // We therefore cannot delete the temporary file here.
+                // Clean up the temporary file if something went wrong
+                if (File.Exists(tempFile))
+                    File.Delete(tempFile);
+                throw;
+            }
         }
-        catch (Exception ex)
+        else
         {
-            logger.LogError(ex, "Failed to export facts");
+            // Export facts to a string
+            using var memoryStream = new MemoryStream();
+            await jinagaClient.ExportFactsToFactual(memoryStream);
+            memoryStream.Position = 0;
+            using var reader = new StreamReader(memoryStream);
+            var exportedFacts = await reader.ReadToEndAsync();
 
-            // Clean up the temporary file if something went wrong
-            if (File.Exists(tempFile))
-                File.Delete(tempFile);
-            throw;
+            // Navigate to the ExportedFactsPage
+            var exportedFactsPage = new ExportedFactsPage(exportedFacts);
+            await Shell.Current.Navigation.PushModalAsync(exportedFactsPage);
         }
+    }
+
+    private async Task HandlePurge()
+    {
+        await jinagaClient.Purge();
     }
 }
