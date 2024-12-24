@@ -7,7 +7,41 @@ The process involves creating a certificate, an App ID, and a provisioning profi
 The provisioning process is a bit cumbersome and involves multiple steps.
 This notebook will guide you through the process and automate it using Python.
 
-## Install required Python packages
+## Prerequisites
+
+### Obtain Apple credentials
+
+You will need the following credentials from your Apple Developer account:
+- Issuer ID
+- Key ID
+- The .p8 private key file (AuthKey.p8)
+
+You can find these in the App Store Connect under "Users and Access" -> "Keys".
+
+### Ensure `openssl` is installed
+
+Make sure `openssl` is installed on your system. You can check by running:
+
+```bash
+openssl version
+```
+
+If it is not installed, you can install it using your package manager. For example, on macOS you can use:
+
+```bash
+brew install openssl
+```
+
+### Set up a Python virtual environment
+
+It is recommended to set up a Python virtual environment to manage dependencies. You can do this by running:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+```
+
+### Install required Python packages
 
 Before running the script, make sure to install the required Python packages. You can do this by running:
 
