@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # Read and base64-encode the CSR
     with open(CSR_PATH, "rb") as f:
         csr_data = f.read()
-    base64_csr = base64.b64encode(csr_data).decode("utf-8")
+    base64_csr = csr_data.decode("utf-8")
 
     # Create the certificate via Apple’s API
     response_json = create_distribution_certificate(token, base64_csr)
