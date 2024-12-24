@@ -7,6 +7,14 @@ The process involves creating a certificate, an App ID, and a provisioning profi
 The provisioning process is a bit cumbersome and involves multiple steps.
 This notebook will guide you through the process and automate it using Python.
 
+## Install required Python packages
+
+Before running the script, make sure to install the required Python packages. You can do this by running:
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Generate your private key and CSR
 
 If you haven’t already, create the private key/CSR pair locally (this key is different from the .p8 Apple gives you; this is specifically for the iOS distribution certificate).
