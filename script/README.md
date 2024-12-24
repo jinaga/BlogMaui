@@ -89,3 +89,16 @@ Run the Python script `apple-distribution-certificate.py` to upload the CSR to A
 ```bash
 python apple-distribution-certificate.py
 ```
+
+Convert the downloaded `distribution.cer` file to a `distribution.pem` file:
+
+```bash
+openssl x509 -inform der -in keys/distribution.cer -out keys/distribution.pem
+```
+
+Combine the private key and certificate into a single `distribution.p12` file.
+Enter the password you created when generating the private key.
+
+```bash
+openssl pkcs12 -export -out keys/distribution.p12 -inkey keys/ios-dev.key -in keys/distribution.pem
+```
