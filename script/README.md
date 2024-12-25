@@ -222,6 +222,13 @@ Save this ID as you will need it later.
 python apple-bundle-id.py
 ```
 
+If the script fails with a 409 error, then the bundle ID already exists.
+You can list the bundle IDs to find the ID:
+
+```bash
+python list-bundle-ids.py
+```
+
 ### Create an App ID
 
 Run the Python script `apple-app-id.py` to create an App ID.
