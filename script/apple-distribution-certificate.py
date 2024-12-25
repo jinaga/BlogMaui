@@ -85,4 +85,8 @@ if __name__ == "__main__":
     with open("keys/distribution.cer", "wb") as f:
         f.write(cert_data)
 
+    # The certificate ID is in the response
+    cert_id = response_json["data"]["id"]
+    print(f"Successfully created distribution certificate with ID: {cert_id}")
+
     print("Successfully created distribution certificate and saved as keys/distribution.cer")

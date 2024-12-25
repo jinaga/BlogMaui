@@ -84,7 +84,12 @@ Log in to GitHub using the CLI:
 gh auth login
 ```
 
-## Generate your private key and CSR
+## Generate an iOS distribution certificate
+
+You will need an iOS distribution certificate to deploy your app to TestFlight.
+This certificate is different from the development certificate you use to run your app on a device during development.
+
+### Generate your private key and CSR
 
 Create a private key/CSR pair (this key is different from the .p8 Apple gives you; this is specifically for the iOS distribution certificate).
 Enter a password when prompted.
@@ -99,13 +104,16 @@ openssl req -new -key keys/ios-dev.key -out keys/ios-dev.csr \
 
 You'll upload this CSR to Apple via the script below.
 
-## Create a distribution certificate
+### Create a distribution certificate
 
 Run the Python script `apple-distribution-certificate.py` to upload the CSR to Apple and create a distribution certificate.
 
 ```bash
 python apple-distribution-certificate.py
 ```
+
+This script outputs the certificate ID.
+Save this ID as you will need it later.
 
 Convert the downloaded `distribution.cer` file to a `distribution.pem` file:
 
@@ -149,7 +157,7 @@ PKCS7 Data
 Shrouded Keybag: pbeWithSHA1And3-KeyTripleDES-CBC, Iteration 2048
 ```
 
-## Configuring the GitHub Action Workflow
+### Configuring the GitHub Action Workflow
 
 Edit the secrets in your GitHub organization settings.
 Set `DISTRIBUTION_P12` to the contents of the `distribution.p12` file.
@@ -166,4 +174,42 @@ gh secret set DISTRIBUTION_P12_PASSWORD --body "$DISTRIBUTION_P12_PASSWORD"
 gh secret set APPSTORE_ISSUER_ID --body "$APPLE_ISSUER_ID"
 gh secret set APPSTORE_KEY_ID --body "$APPLE_KEY_ID"
 gh secret set APPSTORE_PRIVATE_KEY --body "$(cat keys/AuthKey_$APPLE_KEY_ID.p8)"
+```
+
+## Create a Provisioning Profile
+
+You will need a provisioning profile to distribute your app to TestFlight.
+This profile allows your TestFlight users to install your app on their devices.
+
+### Save the Certificate ID
+
+You will need the certificate ID from the previous step.
+If you did not collect this ID, then run the Python script `list-certificates.py` to list the certificates.
+
+```bash
+python list-certificates.py
+```
+
+Save the certificate ID to a variable:
+
+```bash
+CERTIFICATE_ID="XXXXXXXXXX"
+```
+
+### Create an App ID
+
+Run the Python script `apple-app-id.py` to create an App ID.
+This script outputs the App ID.
+Save this ID as you will need it later.
+
+```bash
+python apple-app-id.py
+```
+
+### Create a Provisioning Profile
+
+To create a provisioning profile, run the Python script `apple-provisioning-profile.py`.
+
+```bash
+python apple-provisioning-profile.py
 ```
