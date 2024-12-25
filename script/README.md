@@ -213,6 +213,17 @@ CERTIFICATE_ID="XXXXXXXXXX"
 export CERTIFICATE_ID
 ```
 
+Also update the `.csproj` file with the certificate ID:
+
+```xml
+<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
+    <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+    <CodesignKey>iOS Distribution: My Name (XXXXXXXXXX)</CodesignKey>
+    <CodesignProvision>My App Provisioning</CodesignProvision>
+    <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
+</PropertyGroup>
+```
+
 ### Create a Bundle ID
 
 Run the Python script `apple-bundle-id.py` to create a bundle ID.

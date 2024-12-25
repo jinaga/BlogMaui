@@ -30,7 +30,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
     <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
-    <CodesignKey>Apple Distribution: Michael Perry (K84SA4SSQ9)</CodesignKey>
+    <CodesignKey>iOS Distribution: Michael Perry (38NHT3TF38)</CodesignKey>
     <CodesignProvision>Blog MAUI Provisioning</CodesignProvision>
     <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
