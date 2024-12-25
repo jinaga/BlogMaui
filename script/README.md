@@ -260,3 +260,13 @@ To create a provisioning profile, run the Python script `apple-provisioning-prof
 ```bash
 python apple-provisioning-profile.py
 ```
+
+## List Provisioning Profiles
+
+To list the provisioning profiles associated with your Apple Developer account, run the Python script `list-provisioning-profiles.py`.
+
+```bash
+python list-provisioning-profiles.py
+```
+
+This script will output the profile IDs, names, and types of the provisioning profiles.
