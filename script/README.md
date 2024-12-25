@@ -163,13 +163,13 @@ openssl pkcs12 -info -in keys/distribution.p12 -passin pass:$DISTRIBUTION_P12_PA
 ```
 
 It will output information about the certificate, including the common name (CN).
-Copy the common name and update your `.csproj` file.
+Copy the common name and update your `.csproj` file with the common name as `CodesignKey`.
 
 ```xml
 <PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
     <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
     <CodesignKey>iPhone Distribution: My Name (XXXXXXXXXX)</CodesignKey>
-    <CodesignProvision>My App Provisioning</CodesignProvision>
+    <CodesignProvision>My App Profile</CodesignProvision>
     <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
 </PropertyGroup>
 ```
@@ -260,6 +260,17 @@ To create a provisioning profile, run the Python script `apple-provisioning-prof
 ```bash
 python apple-provisioning-profile.py
 ```
+
+This script outputs the provisioning profile name.
+Update your `.csproj` file with the provisioning profile name as `CodesignProvision`.
+
+```xml
+<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
+    <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+    <CodesignKey>iPhone Distribution: My Name (XXXXXXXXXX)</CodesignKey>
+    <CodesignProvision>My App Profile</CodesignProvision>
+    <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
+</PropertyGroup>
 
 ## List Provisioning Profiles
 

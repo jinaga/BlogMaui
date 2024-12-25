@@ -76,6 +76,7 @@ if __name__ == "__main__":
     # 4) Extract the provisioning profile from the response
     profile_attributes = response_json["data"]["attributes"]
     profile_content_b64 = profile_attributes["profileContent"]
+    name = profile_attributes["name"]
     profile_data = base64.b64decode(profile_content_b64)
 
     # 5) Save to a .mobileprovision file
@@ -83,4 +84,4 @@ if __name__ == "__main__":
     with open(filename, "wb") as f:
         f.write(profile_data)
 
-    print(f"Provisioning profile created and saved as '{filename}'")
+    print(f"Provisioning profile '{name}' created and saved as '{filename}'")
