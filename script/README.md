@@ -9,6 +9,22 @@ This notebook will guide you through the process and automate it using Python.
 
 ## Prerequisites
 
+### Define your app variables
+
+These scripts will need to know about your app.
+Define the following environment variables in a file named `.app` in the `keys` directory:
+
+```bash
+export APP_NAME="MyApp"
+export APP_BUNDLE_ID="com.mycompany.myapp"
+```
+
+You can load them into your environment by running:
+
+```bash
+source keys/.app
+```
+
 ### Obtain Apple credentials
 
 You will need the following credentials from your Apple Developer account:
@@ -20,14 +36,14 @@ You can find these in the App Store Connect under [Users and Access, Integration
 The issuer ID looks like a GUID.
 The key ID is a 10-character string with numbers and letters.
 Store the .p8 file in the `keys` directory.
-Set environment variables for the Issuer ID and Key ID:
+Set environment variables for the Issuer ID and Key ID in a file named `.env` in the `keys` directory:
 
 ```bash
 export APPLE_ISSUER_ID="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 export APPLE_KEY_ID="XXXXXXXXXX"
 ```
 
-If you write these export statements to a file in the `keys` folder named `.env`, you can load them into your environment by running:
+You can load them into your environment by running:
 
 ```bash
 source keys/.env
@@ -194,6 +210,16 @@ Save the certificate ID to a variable:
 
 ```bash
 CERTIFICATE_ID="XXXXXXXXXX"
+```
+
+### Create a Bundle ID
+
+Run the Python script `apple-bundle-id.py` to create a bundle ID.
+This script outputs the bundle ID.
+Save this ID as you will need it later.
+
+```bash
+python apple-bundle-id.py
 ```
 
 ### Create an App ID

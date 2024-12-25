@@ -1,9 +1,7 @@
-import time
-import uuid
-import jwt
 import base64
 import requests
 import os
+from jwt_helper import generate_jwt_token
 
 # Load these from environment variables
 ISSUER_ID = os.getenv("APPLE_ISSUER_ID")
@@ -18,28 +16,6 @@ BUNDLE_ID = "BUNDLE_ID_FROM_DEVELOPER_PORTAL"  # Example: "ABCD1234EF.my.bundlei
 CERTIFICATE_IDS = [
     CERTIFICATE_ID
 ]
-
-def generate_jwt_token(issuer_id, key_id, private_key):
-    issued_at = int(time.time())
-    # Apple recommends tokens valid for up to 20 minutes
-    expiration_time = issued_at + (20 * 60)
-
-    headers = {
-        "alg": "ES256",
-        "kid": key_id,
-        "typ": "JWT"
-    }
-
-    payload = {
-        "iss": issuer_id,
-        "iat": issued_at,
-        "exp": expiration_time,
-        "aud": "appstoreconnect-v1",
-        "jti": str(uuid.uuid4())
-    }
-
-    token = jwt.encode(payload, private_key, algorithm="ES256", headers=headers)
-    return token
 
 def create_profile(token, profile_name, profile_type, bundle_id, certificate_ids):
     url = "https://api.appstoreconnect.apple.com/v1/profiles"
