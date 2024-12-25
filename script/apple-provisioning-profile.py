@@ -1,7 +1,6 @@
 import base64
 import requests
 import os
-import json
 from jwt_helper import generate_jwt_token
 
 # Load these from environment variables
@@ -14,10 +13,10 @@ NAME = os.getenv("APP_NAME")
 PROFILE_NAME = f"{NAME} Profile"
 PROFILE_TYPE = "IOS_APP_STORE"  # For TestFlight or App Store distribution
 CERTIFICATE_ID = os.getenv("CERTIFICATE_ID")  # The ID of the distribution certificate
-BUNDLE_ID = os.getenv("APP_BUNDLE_ID")  # Example: "com.mycompany.myapp"
+APP_ID = os.getenv("APP_ID")
 CERTIFICATE_IDS = [CERTIFICATE_ID]
 
-def create_profile(token, profile_name, profile_type, bundle_id, certificate_ids):
+def create_profile(token, profile_name, profile_type, app_id, certificate_ids):
     url = "https://api.appstoreconnect.apple.com/v1/profiles"
     headers = {
         "Authorization": f"Bearer {token}",
@@ -35,7 +34,7 @@ def create_profile(token, profile_name, profile_type, bundle_id, certificate_ids
                 "bundleId": {
                     "data": {
                         "type": "bundleIds",
-                        "id": bundle_id
+                        "id": app_id
                     }
                 },
                 "certificates": {
@@ -51,7 +50,10 @@ def create_profile(token, profile_name, profile_type, bundle_id, certificate_ids
     }
 
     resp = requests.post(url, headers=headers, json=body)
-    resp.raise_for_status()  # raise an exception if there's a 4xx/5xx error
+    if resp.status_code >= 400:
+        print(f"Error: {resp.status_code}")
+        print(resp.text)
+        resp.raise_for_status()  # raise an exception if there's a 4xx/5xx error
     return resp.json()
 
 if __name__ == "__main__":
@@ -67,7 +69,7 @@ if __name__ == "__main__":
         token,
         PROFILE_NAME,
         PROFILE_TYPE,
-        BUNDLE_ID,
+        APP_ID,
         CERTIFICATE_IDS
     )
 
