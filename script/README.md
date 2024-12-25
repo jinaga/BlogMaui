@@ -210,6 +210,7 @@ Save the certificate ID to a variable:
 
 ```bash
 CERTIFICATE_ID="XXXXXXXXXX"
+export CERTIFICATE_ID
 ```
 
 ### Create a Bundle ID
@@ -248,6 +249,7 @@ Save the App ID to a variable:
 
 ```bash
 APP_ID="XXXXXXXXXX"
+export APP_ID
 ```
 
 ### Create a Provisioning Profile

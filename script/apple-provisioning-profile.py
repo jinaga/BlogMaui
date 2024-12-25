@@ -1,6 +1,7 @@
 import base64
 import requests
 import os
+import json
 from jwt_helper import generate_jwt_token
 
 # Load these from environment variables
@@ -9,13 +10,12 @@ KEY_ID = os.getenv("APPLE_KEY_ID")
 P8_PRIVATE_KEY_PATH = f"keys/AuthKey_{KEY_ID}.p8"  # The .p8 file from App Store Connect
 
 # Provide the info for the provisioning profile
-PROFILE_NAME = "MyProvisioningProfile"
+NAME = os.getenv("APP_NAME")
+PROFILE_NAME = f"{NAME} Profile"
 PROFILE_TYPE = "IOS_APP_STORE"  # For TestFlight or App Store distribution
 CERTIFICATE_ID = os.getenv("CERTIFICATE_ID")  # The ID of the distribution certificate
-BUNDLE_ID = "BUNDLE_ID_FROM_DEVELOPER_PORTAL"  # Example: "ABCD1234EF.my.bundleid"
-CERTIFICATE_IDS = [
-    CERTIFICATE_ID
-]
+BUNDLE_ID = os.getenv("APP_BUNDLE_ID")  # Example: "com.mycompany.myapp"
+CERTIFICATE_IDS = [CERTIFICATE_ID]
 
 def create_profile(token, profile_name, profile_type, bundle_id, certificate_ids):
     url = "https://api.appstoreconnect.apple.com/v1/profiles"
