@@ -123,13 +123,30 @@ Combine the private key and certificate into a single `distribution.p12` file.
 Use the generated password to protect the p12 file.
 
 ```bash
-openssl pkcs12 -export -out keys/distribution.p12 -inkey keys/ios-dev.key -in keys/distribution.pem -passout pass:$DISTRIBUTION_P12_PASSWORD
+openssl pkcs12 -export \
+  -inkey keys/ios-dev.key \
+  -in keys/distribution.pem \
+  -out keys/distribution.p12 \
+  -descert -keypbe PBE-SHA1-3DES -certpbe PBE-SHA1-3DES \
+  -macalg sha1 -iter 2048 \
+  -passout pass:$DISTRIBUTION_P12_PASSWORD
 ```
 
 Verify the p12 file:
 
 ```bash
 openssl pkcs12 -info -in keys/distribution.p12 -passin pass:$DISTRIBUTION_P12_PASSWORD -noout
+```
+
+It should write out the following information:
+
+```
+MAC: sha1, Iteration 2048
+MAC length: 20, salt length: 8
+PKCS7 Encrypted data: pbeWithSHA1And3-KeyTripleDES-CBC, Iteration 2048
+Certificate bag
+PKCS7 Data
+Shrouded Keybag: pbeWithSHA1And3-KeyTripleDES-CBC, Iteration 2048
 ```
 
 ## Configuring the GitHub Action Workflow
