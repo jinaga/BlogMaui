@@ -7,3 +7,5 @@ Settings.Local.cs
 .DS_Store
 Notebooks/settings.json
 set-variables.sh
+script/keys/
+script/venv/
