@@ -116,7 +116,7 @@ openssl x509 -inform der -in keys/distribution.cer -out keys/distribution.pem
 Generate a password to protect the p12 file:
 
 ```bash
-DISTRIBUTION_P12_PASSWORD="$(openssl rand -base64 32)"
+DISTRIBUTION_P12_PASSWORD="$(openssl rand -hex 32)"
 ```
 
 Combine the private key and certificate into a single `distribution.p12` file.
@@ -124,6 +124,12 @@ Use the generated password to protect the p12 file.
 
 ```bash
 openssl pkcs12 -export -out keys/distribution.p12 -inkey keys/ios-dev.key -in keys/distribution.pem -passout pass:$DISTRIBUTION_P12_PASSWORD
+```
+
+Verify the p12 file:
+
+```bash
+openssl pkcs12 -info -in keys/distribution.p12 -passin pass:$DISTRIBUTION_P12_PASSWORD -noout
 ```
 
 ## Configuring the GitHub Action Workflow
