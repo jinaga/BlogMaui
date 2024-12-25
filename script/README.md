@@ -67,9 +67,26 @@ You can do this by running:
 pip install -r requirements.txt
 ```
 
+### Install the GitHub CLI
+
+You will need the GitHub CLI to set secrets in your GitHub repository.
+You can install it by following the instructions [here](https://cli.github.com/).
+
+On macOS, you can install it using Homebrew:
+
+```bash
+brew install gh
+```
+
+Log in to GitHub using the CLI:
+
+```bash
+gh auth login
+```
+
 ## Generate your private key and CSR
 
-If you haven’t already, create the private key/CSR pair locally (this key is different from the .p8 Apple gives you; this is specifically for the iOS distribution certificate).
+Create a private key/CSR pair (this key is different from the .p8 Apple gives you; this is specifically for the iOS distribution certificate).
 Enter a password when prompted.
 You'll need this password later.
 
@@ -96,9 +113,38 @@ Convert the downloaded `distribution.cer` file to a `distribution.pem` file:
 openssl x509 -inform der -in keys/distribution.cer -out keys/distribution.pem
 ```
 
-Combine the private key and certificate into a single `distribution.p12` file.
-Enter the password you created when generating the private key.
+Generate a password to protect the p12 file:
 
 ```bash
-openssl pkcs12 -export -out keys/distribution.p12 -inkey keys/ios-dev.key -in keys/distribution.pem
+DISTRIBUTION_P12_PASSWORD="$(openssl rand -base64 32)"
+```
+
+Combine the private key and certificate into a single `distribution.p12` file.
+Use the generated password to protect the p12 file.
+
+```bash
+openssl pkcs12 -export -out keys/distribution.p12 -inkey keys/ios-dev.key -in keys/distribution.pem -passout pass:$DISTRIBUTION_P12_PASSWORD
+```
+
+## Configuring the GitHub Action Workflow
+
+Edit the secrets in your GitHub organization settings.
+Set `DISRIBUTION_P12_PASSWORD` to the password you generated to protect the p12 file.
+Set `APPSTORE_ISSUER_ID` to the issuer ID (GUID) from the App Store Connect API key.
+Set `APPSTORE_KEY_ID` to the key ID (10 character code) from the App Store Connect API key.
+Set `APPSTORE_PRIVATE_KEY` to the contents of the .p8 file.
+
+You can do that using the `gh` command line tool:
+
+```bash
+gh secret set DISRIBUTION_P12_PASSWORD --body "$DISTRIBUTION_P12_PASSWORD"
+gh secret set APPSTORE_ISSUER_ID --body "$APPLE_ISSUER_ID"
+gh secret set APPSTORE_KEY_ID --body "$APPLE_KEY_ID"
+gh secret set APPSTORE_PRIVATE_KEY --body "$(cat keys/AuthKey_$APPLE_KEY_ID.p8)"
+```
+
+Copy the `distribution.p12` file to the root of the repository and commit it.
+
+```bash
+cp keys/distribution.p12 ..
 ```
