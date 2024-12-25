@@ -6,27 +6,15 @@ from jwt_helper import generate_jwt_token
 ISSUER_ID = os.getenv("APPLE_ISSUER_ID")
 KEY_ID = os.getenv("APPLE_KEY_ID")
 P8_PRIVATE_KEY_PATH = f"keys/AuthKey_{KEY_ID}.p8"  # The .p8 file from App Store Connect
-NAME = os.getenv("APP_NAME")
-IDENTIFIER = os.getenv("APP_BUNDLE_ID")
 
-def create_app_id(token, name, identifier, platform="IOS"):
+def list_app_ids(token):
     url = "https://api.appstoreconnect.apple.com/v1/bundleIds"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
-    body = {
-        "data": {
-            "type": "bundleIds",
-            "attributes": {
-                "name": name,         # A human-readable name in the developer portal
-                "identifier": identifier,  # e.g. "com.example.myapp"
-                "platform": platform  # "IOS" is most common
-            }
-        }
-    }
 
-    resp = requests.post(url, headers=headers, json=body)
+    resp = requests.get(url, headers=headers)
     resp.raise_for_status()  # Raise on 4xx/5xx
     return resp.json()
 
@@ -38,8 +26,6 @@ if __name__ == "__main__":
     # Generate a JWT
     token = generate_jwt_token(ISSUER_ID, KEY_ID, p8_key_contents)
 
-    platform = "IOS"
-
-    result = create_app_id(token, NAME, IDENTIFIER, platform)
-    app_id = result["data"]["id"]
-    print("Created App ID:", app_id)
+    result = list_app_ids(token)
+    for app_id in result["data"]:
+        print(f"App ID: {app_id['id']}, Name: {app_id['attributes']['name']}, Identifier: {app_id['attributes']['identifier']}")

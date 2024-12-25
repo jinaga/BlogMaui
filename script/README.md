@@ -215,15 +215,13 @@ CERTIFICATE_ID="XXXXXXXXXX"
 ### Create a Bundle ID
 
 Run the Python script `apple-bundle-id.py` to create a bundle ID.
-This script outputs the bundle ID.
-Save this ID as you will need it later.
 
 ```bash
 python apple-bundle-id.py
 ```
 
 If the script fails with a 409 error, then the bundle ID already exists.
-You can list the bundle IDs to find the ID:
+You can list the bundle IDs to verify:
 
 ```bash
 python list-bundle-ids.py
@@ -237,6 +235,19 @@ Save this ID as you will need it later.
 
 ```bash
 python apple-app-id.py
+```
+
+If the script fails with a 409 error, then the App ID already exists.
+You can list the App IDs to find the one you need:
+
+```bash
+python list-app-ids.py
+```
+
+Save the App ID to a variable:
+
+```bash
+APP_ID="XXXXXXXXXX"
 ```
 
 ### Create a Provisioning Profile
