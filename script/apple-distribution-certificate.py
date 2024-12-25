@@ -62,6 +62,6 @@ if __name__ == "__main__":
 
     # The certificate ID is in the response
     cert_id = response_json["data"]["id"]
-    print(f"Successfully created distribution certificate with ID: {cert_id}")
-
-    print("Successfully created distribution certificate and saved as keys/distribution.cer")
+    display_name = response_json["data"]["attributes"]["displayName"]
+    name = response_json["data"]["attributes"]["name"]
+    print(f"Successfully created distribution certificate with ID: {cert_id}, Name: {name}, Display Name: {display_name}")

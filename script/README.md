@@ -159,18 +159,19 @@ openssl pkcs12 -export \
 Verify the p12 file:
 
 ```bash
-openssl pkcs12 -info -in keys/distribution.p12 -passin pass:$DISTRIBUTION_P12_PASSWORD -noout
+openssl pkcs12 -info -in keys/distribution.p12 -passin pass:$DISTRIBUTION_P12_PASSWORD -nokeys
 ```
 
-It should write out the following information:
+It will output information about the certificate, including the common name (CN).
+Copy the common name and update your `.csproj` file.
 
-```
-MAC: sha1, Iteration 2048
-MAC length: 20, salt length: 8
-PKCS7 Encrypted data: pbeWithSHA1And3-KeyTripleDES-CBC, Iteration 2048
-Certificate bag
-PKCS7 Data
-Shrouded Keybag: pbeWithSHA1And3-KeyTripleDES-CBC, Iteration 2048
+```xml
+<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
+    <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+    <CodesignKey>iPhone Distribution: My Name (XXXXXXXXXX)</CodesignKey>
+    <CodesignProvision>My App Provisioning</CodesignProvision>
+    <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
+</PropertyGroup>
 ```
 
 ### Configuring the GitHub Action Workflow
@@ -211,17 +212,6 @@ Save the certificate ID to a variable:
 ```bash
 CERTIFICATE_ID="XXXXXXXXXX"
 export CERTIFICATE_ID
-```
-
-Also update the `.csproj` file with the certificate ID:
-
-```xml
-<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
-    <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
-    <CodesignKey>iOS Distribution: My Name (XXXXXXXXXX)</CodesignKey>
-    <CodesignProvision>My App Provisioning</CodesignProvision>
-    <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
-</PropertyGroup>
 ```
 
 ### Create a Bundle ID
